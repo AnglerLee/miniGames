@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SECURITY BREAKER v1.0</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="matrix-bg"></canvas>
+
+    <!-- Admin Button (Hidden Trigger) -->
+    <div id="admin-btn" class="settings-icon">⚙️</div>
+
+    <div class="hacker-container">
+        <div class="monitor-screen">
+            <div class="status-bar">
+                <span>SYS.OP.MODE: HACKING</span>
+                <span id="target-display">TARGET: SCANNING...</span>
+            </div>
+
+            <!-- PHASES -->
+
+            <!-- 1. Scanning -->
+            <div id="scanning-screen" class="screen-section">
+                <div class="title-large">SCANNING...</div>
+                <div class="scan-animation">
+                    <div class="radar-sweep"></div>
+                    <div style="font-size: 3rem; color: #030;">LOADING PROTOCOLS</div>
+                </div>
+                <p>Establishing connection to secure server...</p>
+            </div>
+
+            <!-- 2. Input -->
+            <div id="input-screen" class="screen-section hidden">
+                <div class="title-large">ENTER ACCESS CODE</div>
+
+                <div class="input-group">
+                    <input type="password" id="passwordInput" placeholder="----" maxlength="4" readonly>
+                </div>
+
+                <div id="msg-box" class="message-box"></div>
+
+                <!-- Virtual Keypad (for cleaner look than native keyboard) -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px;">
+                    <button class="btn-hack" onclick="addDigit(1)">1</button>
+                    <button class="btn-hack" onclick="addDigit(2)">2</button>
+                    <button class="btn-hack" onclick="addDigit(3)">3</button>
+                    <button class="btn-hack" onclick="addDigit(4)">4</button>
+                    <button class="btn-hack" onclick="addDigit(5)">5</button>
+                    <button class="btn-hack" onclick="addDigit(6)">6</button>
+                    <button class="btn-hack" onclick="addDigit(7)">7</button>
+                    <button class="btn-hack" onclick="addDigit(8)">8</button>
+                    <button class="btn-hack" onclick="addDigit(9)">9</button>
+                    <button class="btn-hack" style="color: #ff5555" onclick="clearInput()">C</button>
+                    <button class="btn-hack" onclick="addDigit(0)">0</button>
+                    <button class="btn-hack" style="color: #55ff55" onclick="hack()">></button>
+                </div>
+            </div>
+
+            <!-- 3. Success -->
+            <div id="success-screen" class="screen-section hidden">
+                <div class="access-granted">ACCESS GRANTED</div>
+                <p style="margin-top: 20px;">System Protection Disabled.</p>
+                <button class="btn-hack" style="margin-top: 30px;" onclick="location.href='../../index.html'">EXIT
+                    SYSTEM</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="admin-modal" class="settings-modal hidden">
+        <h2 style="color: var(--hacker-green); margin-top:0;">SYS ADMIN CONFIG</h2>
+        <label>TARGET NAME:</label>
+        <input type="text" id="conf-target">
+        <label>PASSWORD (4 digits):</label>
+        <input type="number" id="conf-pass" maxlength="4">
+        <div style="margin-top: 20px; text-align: right;">
+            <button class="btn-hack" style="padding: 0.5rem 1rem;" onclick="closeAdmin()">CANCEL</button>
+            <button class="btn-hack" style="padding: 0.5rem 1rem;" onclick="saveConfig()">SAVE</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

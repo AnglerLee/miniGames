@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>짝 맞추기 🃏</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <style>
+        .game-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 15px 0;
+        }
+        
+        .difficulty-btn {
+            padding: 10px 8px;
+            border: 2px solid var(--secondary-color);
+            background: white;
+            color: var(--secondary-color);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .difficulty-btn.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .cards-grid {
+            display: grid;
+            gap: 8px;
+            width: 100%;
+            margin: 15px auto;
+            perspective: 1000px;
+        }
+        
+        .cards-grid.easy {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .cards-grid.medium {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        
+        .cards-grid.hard {
+            grid-template-columns: repeat(5, 1fr);
+        }
+        
+        .card {
+            aspect-ratio: 1;
+            position: relative;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        
+        .card:hover:not(.flipped):not(.matched) {
+            transform: scale(1.05);
+        }
+        
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card.matched {
+            animation: matchPulse 0.6s ease;
+        }
+        
+        @keyframes matchPulse {
+            0%, 100% { transform: rotateY(180deg) scale(1); }
+            50% { transform: rotateY(180deg) scale(1.2); }
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-size: 40px;
+        }
+        
+        .card-front {
+            background: white;
+            border: 3px solid var(--primary-color);
+            font-size: 45px;
+            transform: rotateY(180deg);
+        }
+        
+        .card.matched .card-front {
+            border-color: var(--success-color);
+            background: #e8f5e9;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 100%;
+            margin: 15px auto;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 12px 8px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .stat-value.timer {
+            color: var(--warning-color);
+        }
+        
+        .stat-value.combo {
+            color: var(--success-color);
+        }
+        
+        .combo-display {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--success-color);
+            margin: 10px 0;
+            min-height: 30px;
+            animation: comboAppear 0.3s ease;
+        }
+        
+        @keyframes comboAppear {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .action-btn {
+            padding: 12px 16px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.hint {
+            background: var(--warning-color);
+        }
+        
+        .action-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .best-record {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-light);
+            margin: 10px 0;
+        }
+        
+        .best-record strong {
+            color: var(--success-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1 class="game-title">🃏 짝 맞추기</h1>
+            <a href="../../index.html" class="home-btn">홈으로</a>
+        </div>
+        
+        <div class="game-area">
+            <div class="game-controls" id="difficultySelector">
+                <button class="difficulty-btn" data-level="easy">쉬움 (3쌍)</button>
+                <button class="difficulty-btn active" data-level="medium">보통 (8쌍)</button>
+                <button class="difficulty-btn" data-level="hard">어려움 (12쌍)</button>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-label">시간</div>
+                    <div class="stat-value timer" id="timer">00:00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">시도</div>
+                    <div class="stat-value" id="moves">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">콤보</div>
+                    <div class="stat-value combo" id="combo">0</div>
+                </div>
+            </div>
+            
+            <div class="combo-display" id="comboDisplay"></div>
+            
+            <div class="best-record" id="bestRecord"></div>
+            
+            <div class="cards-grid medium" id="cardsGrid"></div>
+            
+            <div class="action-buttons">
+                <button class="action-btn hint" id="hintBtn">💡 힌트 (3)</button>
+                <button class="action-btn" id="resetBtn">🔄 새 게임</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../../assets/js/common.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

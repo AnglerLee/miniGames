@@ -1,0 +1,116 @@
+/* Game specific styles */
+.game-area {
+    text-align: center;
+    position: relative;
+    padding: 20px;
+}
+
+#timer {
+    font-size: 100px;
+    font-weight: bold;
+    margin: 40px 0;
+    font-family: 'Courier New', Courier, monospace;
+    /* Monospace for stable width */
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+/* Blind Mode Styles */
+.blind-mode-active #timer {
+    color: transparent;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    /* Subtle hint or just completely hidden */
+}
+
+/* Dark mode support for blind mode hint */
+[data-theme="dark"] .blind-mode-active #timer {
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.control-panel {
+    margin-top: 30px;
+}
+
+#result {
+    font-size: 24px;
+    margin-top: 30px;
+    min-height: 1.5em;
+    font-weight: bold;
+}
+
+.diff-value {
+    font-size: 0.8em;
+    color: #666;
+    margin-left: 10px;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.success-anim {
+    animation: pulse 0.5s ease-in-out;
+    color: var(--success-color) !important;
+}
+
+.fail-anim {
+    animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+    color: var(--danger-color) !important;
+}
+
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
+
+/* Mode Toggle Switch */
+.mode-switch {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 10px 20px;
+    border-radius: 30px;
+}
+
+.switch-label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+/* Instructions */
+.target-time {
+    font-size: 32px;
+    color: var(--primary-color);
+    font-weight: bold;
+}

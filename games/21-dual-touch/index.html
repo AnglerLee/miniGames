@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>동시 터치 협동 🤝</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1>🤝 동시 터치 협동</h1>
+            <a href="../../index.html" class="home-btn">홈으로</a>
+        </div>
+
+        <div class="game-area">
+            <div class="settings-panel">
+                <label for="difficultySelect">난이도:</label>
+                <select id="difficultySelect">
+                    <option value="easy">Easy (0.1s)</option>
+                    <option value="normal" selected>Normal (0.05s)</option>
+                    <option value="hard">Hard (0.01s)</option>
+                </select>
+                <button id="startBtn" class="start-btn">게임 시작</button>
+            </div>
+
+            <p class="instruction-text" style="text-align: center; display: none;" id="instructionText">
+                두 버튼을 동시에 누르세요!
+            </p>
+
+            <div class="touch-zone-container">
+                <div class="connection-line">
+                    <div class="connection-active"></div>
+                </div>
+
+                <div class="touch-btn left" id="leftBtn">
+                    <i class="icon">👈</i>
+                </div>
+
+                <div class="touch-btn right" id="rightBtn">
+                    <i class="icon">👉</i>
+                </div>
+            </div>
+
+            <div class="status-display">
+                <div id="timer" class="timer-text">0.00s</div>
+                <div id="message" class="message-text">준비...</div>
+            </div>
+
+            <!-- Desktop helper -->
+            <div class="keyboard-hint">
+                (PC 테스트: 'A' + 'L' 키 동시 입력)
+            </div>
+        </div>
+    </div>
+
+    <script src="../../assets/js/common.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

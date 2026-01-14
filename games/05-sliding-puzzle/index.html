@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>숫자 퍼즐 🔢</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <style>
+        .game-controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            margin: 15px 0;
+        }
+        
+        .size-btn {
+            padding: 10px 8px;
+            border: 2px solid var(--secondary-color);
+            background: white;
+            color: var(--secondary-color);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .size-btn.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .puzzle-container {
+            width: 100%;
+            margin: 15px auto;
+        }
+        
+        .puzzle-grid {
+            display: grid;
+            gap: 6px;
+            background: #34495e;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-lg);
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .puzzle-grid.size-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .puzzle-grid.size-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        
+        .puzzle-tile {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .puzzle-grid.size-4 .puzzle-tile {
+            font-size: 28px;
+        }
+        
+        .puzzle-tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        
+        .puzzle-tile:hover:not(.empty) {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .puzzle-tile:active:not(.empty) {
+            transform: scale(0.95);
+        }
+        
+        .puzzle-tile.empty {
+            background: transparent;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+            cursor: default;
+        }
+        
+        .puzzle-tile.movable {
+            animation: pulse-border 1.5s infinite;
+        }
+        
+        @keyframes pulse-border {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(255, 215, 0, 0);
+            }
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 100%;
+            margin: 15px auto;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 12px 8px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .stat-value.timer {
+            color: var(--warning-color);
+        }
+        
+        .stat-value.best {
+            color: var(--success-color);
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .action-btn {
+            padding: 12px 16px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.hint {
+            background: var(--warning-color);
+        }
+        
+        .action-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .best-record {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-light);
+            margin: 10px 0;
+        }
+        
+        .best-record strong {
+            color: var(--success-color);
+        }
+        
+        .preview-image {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .preview-image img {
+            max-width: 150px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1 class="game-title">🔢 숫자 퍼즐</h1>
+            <a href="../../index.html" class="home-btn">홈으로</a>
+        </div>
+        
+        <div class="game-area">
+            <div class="game-controls" id="sizeSelector">
+                <button class="size-btn active" data-size="3">3×3 (쉬움)</button>
+                <button class="size-btn" data-size="4">4×4 (어려움)</button>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-label">시간</div>
+                    <div class="stat-value timer" id="timer">00:00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">이동</div>
+                    <div class="stat-value" id="moves">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">최고 기록</div>
+                    <div class="stat-value best" id="bestRecord">-</div>
+                </div>
+            </div>
+            
+            <div class="best-record" id="bestRecordText"></div>
+            
+            <div class="puzzle-container">
+                <div class="puzzle-grid size-3" id="puzzleGrid"></div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-btn hint" id="hintBtn">💡 힌트 (3)</button>
+                <button class="action-btn" id="resetBtn">🔄 새 게임</button>
+            </div>
+            
+            <p style="text-align: center; color: var(--text-light); margin: 20px 0;">
+                빈 칸과 인접한 숫자를 클릭하여 이동하세요!
+            </p>
+        </div>
+    </div>
+    
+    <script src="../../assets/js/common.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

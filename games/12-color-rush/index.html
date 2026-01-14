@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>색깔 스피드 🌈</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <style>
+        .game-container {
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .game-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+        
+        .stat-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .color-card {
+            background: white;
+            padding: 40px 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 15px 0;
+            box-shadow: var(--shadow-lg);
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .color-word {
+            font-size: 56px;
+            font-weight: bold;
+            margin: 25px 0;
+        }
+        
+        .question {
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+        
+        .answer-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 350px;
+        }
+        
+        .answer-btn {
+            width: 100%;
+            height: 80px;
+            font-size: 36px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+            font-weight: bold;
+        }
+        
+        .answer-btn.yes {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .answer-btn.no {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .answer-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .answer-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .feedback {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            min-height: 35px;
+            margin: 15px 0;
+        }
+        
+        .feedback.correct {
+            color: var(--success-color);
+        }
+        
+        .feedback.wrong {
+            color: var(--danger-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1 class="game-title">🌈 색깔 스피드</h1>
+            <a href="../../index.html" class="home-btn">홈으로</a>
+        </div>
+        
+        <div class="game-area">
+            <div class="game-container">
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">문제</div>
+                        <div class="stat-value" id="questionNum">1 / 15</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">정답</div>
+                        <div class="stat-value" id="correctCount">0</div>
+                    </div>
+                </div>
+                
+                <div class="color-card">
+                    <div class="question">글자와 색깔이 같나요?</div>
+                    <div class="color-word" id="colorWord">빨강</div>
+                    
+                    <div class="answer-buttons">
+                        <button class="answer-btn yes" id="yesBtn">O</button>
+                        <button class="answer-btn no" id="noBtn">X</button>
+                    </div>
+                </div>
+                
+                <div class="feedback" id="feedback"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../../assets/js/common.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

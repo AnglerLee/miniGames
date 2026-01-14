@@ -1,0 +1,264 @@
+.game-container {
+    background: #1a1a1a;
+    color: white;
+    border: 2px solid #555;
+    position: relative;
+    overflow: hidden;
+}
+
+.game-header h1 {
+    color: #ff3333;
+    text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    animation: fadeIn 0.5s ease;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Intro Screen */
+.mission-card {
+    background: #333;
+    padding: 20px;
+    border-radius: 15px;
+    border-left: 5px solid #ff3333;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.mission-card h2 {
+    color: #ff9999;
+    margin-bottom: 15px;
+}
+
+.mission-desc {
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.tutorial-box {
+    background: #222;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.tutorial-icon {
+    font-size: 30px;
+}
+
+/* Status Bar */
+.status-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.timer-box {
+    font-size: 24px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #ffcc00;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stability-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    margin-left: 20px;
+}
+
+.stability-meter {
+    flex: 1;
+    height: 20px;
+    background: #333;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #555;
+}
+
+.stability-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff3333, #ffff00, #33ff33);
+    border-radius: 10px;
+    transition: width 0.2s linear;
+}
+
+/* Bomb & Leveler */
+.bomb-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    background: #2a2a2a;
+    border-radius: 50%;
+    border: 5px solid #444;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.bomb-body {
+    position: absolute;
+    top: 20px;
+    text-align: center;
+    width: 100%;
+    z-index: 1;
+}
+
+.bomb-timer {
+    font-family: 'Digital-7', 'Courier New', monospace;
+    font-size: 28px;
+    color: #ff0000;
+    background: #000;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    border: 1px solid #333;
+}
+
+.bomb-emoji {
+    font-size: 40px;
+    display: block;
+    margin-top: 5px;
+    opacity: 0.5;
+}
+
+.leveler-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, #334455 0%, #112233 100%);
+    border-radius: 50%;
+    border: 2px solid #556677;
+    overflow: hidden;
+}
+
+.target-zone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border: 2px dashed #00ff00;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.crosshair-h,
+.crosshair-v {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 1;
+}
+
+.crosshair-h {
+    top: 50%;
+    width: 100%;
+    height: 1px;
+}
+
+.crosshair-v {
+    left: 50%;
+    height: 100%;
+    width: 1px;
+}
+
+.level-bubble {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Start at center */
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle at 10px 10px, #00ffff, #008888);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    z-index: 3;
+    transition: top 0.1s ease-out, left 0.1s ease-out;
+    /* Smooth movement */
+}
+
+.message-area {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ccc;
+    height: 24px;
+}
+
+/* Danger Overlay */
+.danger-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 40%, rgba(255, 0, 0, 0.8) 100%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 900;
+}
+
+.danger-overlay.active {
+    animation: flash 1s infinite alternate;
+}
+
+@keyframes flash {
+    0% {
+        opacity: 0.3;
+    }
+
+    100% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    25% {
+        transform: translate(-5px, 5px);
+    }
+
+    50% {
+        transform: translate(5px, -5px);
+    }
+
+    75% {
+        transform: translate(-5px, -5px);
+    }
+}
+
+.shaking {
+    animation: shake 0.2s infinite;
+}

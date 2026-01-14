@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>절대음감 스톱워치 ⏱️</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1>⏱️ 절대음감 스톱워치</h1>
+            <a href="../../index.html" class="home-btn">홈으로</a>
+        </div>
+
+        <div class="game-area">
+            <div class="mode-switch">
+                <label class="switch-label" for="blindModeCheck">🙈 블라인드 모드</label>
+                <input type="checkbox" id="blindModeCheck" style="transform: scale(1.5);">
+            </div>
+
+            <p style="font-size:24px; margin-bottom: 10px;">
+                정확히 <strong class="target-time">5.00초</strong>에 멈춰보세요!
+            </p>
+
+            <div id="timer">0.00</div>
+
+            <div class="control-panel">
+                <button class="btn btn-primary btn-large" id="startBtn">시작</button>
+                <button class="btn btn-danger btn-large" id="stopBtn" style="display:none">정지</button>
+            </div>
+
+            <p id="result"></p>
+        </div>
+    </div>
+
+    <script src="../../assets/js/common.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

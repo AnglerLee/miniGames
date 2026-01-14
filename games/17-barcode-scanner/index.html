@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바코드 스캐너 📱</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.8.4/dist/quagga.min.js"></script>
+    <style>
+        .scanner-container {
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        /* 난이도 선택 */
+        .difficulty-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 15px 0;
+        }
+        
+        .difficulty-btn {
+            padding: 10px 8px;
+            border: 2px solid var(--secondary-color);
+            background: white;
+            color: var(--secondary-color);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .difficulty-btn.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        /* 통계 대시보드 */
+        .stats-dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 12px 8px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        /* 미션 표시 */
+        .mission-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .mission-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .mission-text {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .mission-hint {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        /* 카메라 뷰 */
+        .camera-view {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 15px auto;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            display: none;
+        }
+        
+        .camera-view.active {
+            display: block;
+        }
+        
+        #scanner-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+        
+        #scanner-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* 스캔 가이드 */
+        .scan-guide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 150px;
+            border: 3px solid #2ecc71;
+            border-radius: 10px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        .scan-guide::before,
+        .scan-guide::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #2ecc71;
+        }
+        
+        .scan-guide::before {
+            top: -3px;
+            left: -3px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .scan-guide::after {
+            bottom: -3px;
+            right: -3px;
+            border-left: none;
+            border-top: none;
+        }
+        
+        /* 스캔 라인 */
+        .scan-line {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: #2ecc71;
+            box-shadow: 0 0 10px #2ecc71;
+            animation: scanLine 2s ease-in-out infinite;
+            z-index: 11;
+            pointer-events: none;
+        }
+        
+        @keyframes scanLine {
+            0%, 100% {
+                transform: translateY(-75px);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(75px);
+                opacity: 1;
+            }
+        }
+        
+        /* 감지 오버레이 */
+        .detection-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(46, 204, 113, 0);
+            transition: background 0.3s;
+            pointer-events: none;
+            z-index: 9;
+        }
+        
+        .detection-overlay.detected {
+            background: rgba(46, 204, 113, 0.3);
+            animation: flash 0.5s;
+        }
+        
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* 카메라 컨트롤 */
+        .camera-controls {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 12;
+        }
+        
+        .camera-control-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+        }
+        
+        .camera-control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* 스캔 상태 */
+        .scan-status {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 12;
+        }
+        
+        .scan-status.detecting {
+            background: rgba(241, 196, 15, 0.9);
+            color: #000;
+        }
+        
+        .scan-status.success {
+            background: rgba(46, 204, 113, 0.9);
+        }
+        
+        /* 히스토리 */
+        .scan-history {
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .history-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+        
+        .history-item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 6px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            font-size: 13px;
+        }
+        
+        .history-code {
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-family: monospace;
+        }
+        
+        .history-time {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        
+        .history-status {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .history-status.success {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .history-status.duplicate {
+            background: var(--warning-color);
+            color: white;
+        }
+        
+        /* 수동 입력 */
+        .manual-input {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .manual-input-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .manual-input-field {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .manual-input-field input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            font-family: monospace;
+        }
+        
+        .manual-input-field button {
+            padding: 12px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        
+        /* 액션 버튼 */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .action-btn {
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
+        
+        .action-btn.primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .action-btn.secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .action-btn.danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .action-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* 상태 메시지 */
+        .status-message {
+            font-size: 14px;
+            font-weight: 500;
+            margin: 10px 0;
+            min-height: 20px;
+        }
+        
+        .status-message.success {
+            color: var(--success-color);
+        }
+        
+        .status-message.error {
+            color: var(--danger-color);
+        }
+        
+        /* 성공 체크마크 */
+        .success-checkmark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 100px;
+            height: 100px;
+            background: var(--success-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        
+        .success-checkmark.show {
+            animation: checkmarkPop 0.5s ease-out forwards;
+        }
+        
+        @keyframes checkmarkPop {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .success-checkmark::before {
+            content: '✓';
+            font-size: 60px;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1 class="game-title">📱 바코드 스캐너</h1>
+            <a href="../../index.html" class="home-btn">홈으로</a>
+        </div>
+        
+        <div class="game-area">
+            <div class="scanner-container">
+                <!-- 난이도 선택 -->
+                <div class="difficulty-selector" id="difficultySelector">
+                    <button class="difficulty-btn active" data-level="easy">쉬움</button>
+                    <button class="difficulty-btn" data-level="medium">보통</button>
+                    <button class="difficulty-btn" data-level="hard">어려움</button>
+                </div>
+                
+                <!-- 통계 -->
+                <div class="stats-dashboard">
+                    <div class="stat-box">
+                        <div class="stat-label">스캔 시도</div>
+                        <div class="stat-value" id="scanAttempts">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">성공</div>
+                        <div class="stat-value" style="color: var(--success-color);" id="successScans">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">진행</div>
+                        <div class="stat-value" style="color: var(--primary-color);" id="missionProgress">0/1</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">시간</div>
+                        <div class="stat-value" style="color: var(--warning-color);" id="timeDisplay">00:00</div>
+                    </div>
+                </div>
+                
+                <!-- 미션 표시 -->
+                <div class="mission-display">
+                    <div class="mission-icon" id="missionIcon">🍜</div>
+                    <div class="mission-text" id="missionText">라면 바코드 찾기</div>
+                    <div class="mission-hint" id="missionHint">주방에서 찾아보세요!</div>
+                </div>
+                
+                <!-- 카메라 뷰 -->
+                <div class="camera-view" id="cameraView">
+                    <div id="scanner-container">
+                        <div class="detection-overlay" id="detectionOverlay"></div>
+                        <div class="scan-guide"></div>
+                        <div class="scan-line"></div>
+                        <div class="scan-status" id="scanStatus">바코드를 가까이 대주세요</div>
+                        <div class="camera-controls">
+                            <button class="camera-control-btn" id="flashBtn" title="플래시">💡</button>
+                            <button class="camera-control-btn" id="switchCameraBtn" title="카메라 전환">🔄</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 스캔 히스토리 -->
+                <div class="scan-history" id="scanHistory" style="display: none;">
+                    <div class="history-title">📋 스캔 기록</div>
+                    <div id="historyList"></div>
+                </div>
+                
+                <!-- 수동 입력 -->
+                <div class="manual-input">
+                    <div class="manual-input-title">🔢 바코드 직접 입력</div>
+                    <div class="manual-input-field">
+                        <input type="text" id="manualInput" placeholder="바코드 번호 입력" maxlength="13">
+                        <button id="manualSubmitBtn">확인</button>
+                    </div>
+                </div>
+                
+                <!-- 상태 메시지 -->
+                <div class="status-message" id="statusMessage">카메라를 시작하세요</div>
+                
+                <!-- 액션 버튼 -->
+                <div class="action-buttons">
+                    <button class="action-btn primary" id="startCameraBtn">📷 카메라 시작</button>
+                    <button class="action-btn secondary" id="stopCameraBtn" style="display: none;">⏹️ 정지</button>
+                    <button class="action-btn secondary" id="clearHistoryBtn">🗑️ 기록 초기화</button>
+                    <button class="action-btn danger" id="resetBtn">🔄 재시작</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 성공 체크마크 -->
+    <div class="success-checkmark" id="successCheckmark"></div>
+    
+    <script src="../../assets/js/common.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

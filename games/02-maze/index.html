@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미로 탈출 🌀</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <style>
+        #mazeCanvas {
+            border: 3px solid var(--secondary-color);
+            border-radius: 10px;
+            display: block;
+            margin: 15px auto;
+            width: 100%;
+            max-width: 100%;
+            touch-action: none;
+            background: white;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .game-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            width: 100%;
+            margin: 15px auto;
+            gap: 8px;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 12px 8px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .stat-value.best {
+            color: var(--success-color);
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .control-btn {
+            width: 65px;
+            height: 65px;
+            font-size: 26px;
+            margin: 4px;
+            border: none;
+            background: linear-gradient(135deg, var(--secondary-color), #1565C0);
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .control-btn:active {
+            transform: scale(0.9);
+        }
+        
+        .control-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .hint-btn {
+            padding: 12px 16px;
+            background: var(--warning-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
+        
+        .hint-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .hint-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .message {
+            text-align: center;
+            font-size: 18px;
+            color: var(--text-light);
+            margin: 15px 0;
+            font-weight: 500;
+            min-height: 28px;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .pulsing {
+            animation: pulse 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1 class="game-title">🌀 미로 탈출</h1>
+            <a href="../../index.html" class="home-btn">홈으로</a>
+        </div>
+        
+        <div class="game-area">
+            <div class="message" id="message">출발점에서 도착점까지 가세요!</div>
+            
+            <div class="game-stats">
+                <div class="stat-box">
+                    <div class="stat-label">이동 횟수</div>
+                    <div class="stat-value" id="moves">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">재시도</div>
+                    <div class="stat-value" id="attempts">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">최고 기록</div>
+                    <div class="stat-value best" id="bestRecord">-</div>
+                </div>
+            </div>
+            
+            <canvas id="mazeCanvas" width="400" height="400"></canvas>
+            
+            <div class="action-buttons">
+                <button class="hint-btn" id="hintBtn">💡 힌트 (3)</button>
+                <button class="hint-btn" id="resetBtn" style="background: var(--secondary-color)">🔄 다시 시작</button>
+            </div>
+            
+            <div class="controls">
+                <div class="control-row">
+                    <button class="control-btn" id="upBtn">↑</button>
+                </div>
+                <div class="control-row">
+                    <button class="control-btn" id="leftBtn">←</button>
+                    <button class="control-btn" id="downBtn">↓</button>
+                    <button class="control-btn" id="rightBtn">→</button>
+                </div>
+            </div>
+            
+            <p style="text-align: center; color: var(--text-light); font-size: 14px;">
+                키보드 화살표 키 또는 화면 스와이프로도 조작 가능
+            </p>
+        </div>
+    </div>
+    
+    <script src="../../assets/js/common.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

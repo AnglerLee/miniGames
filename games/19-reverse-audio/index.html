@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>리버스 오디오 🔄</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1>🔄 리버스 오디오</h1>
+            <a href="../../index.html" class="home-btn">홈으로</a>
+        </div>
+
+        <div class="game-area">
+            <!-- 난이도 및 모드 선택 -->
+            <div id="setupPhase" class="phase-container active">
+                <p class="status-text">외계인 언어 해독 게임</p>
+                
+                <!-- 난이도 선택 -->
+                <div class="difficulty-selector">
+                    <button class="difficulty-btn active" data-level="easy">쉬움</button>
+                    <button class="difficulty-btn" data-level="medium">보통</button>
+                    <button class="difficulty-btn" data-level="hard">어려움</button>
+                </div>
+                
+                <!-- 게임 모드 선택 -->
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="quiz">퀴즈 모드</button>
+                    <button class="mode-btn" data-mode="custom">커스텀 모드</button>
+                </div>
+                
+                <!-- 통계 대시보드 -->
+                <div class="stats-dashboard">
+                    <div class="stat-box">
+                        <div class="stat-label">정답</div>
+                        <div class="stat-value" id="correctCount">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">시도</div>
+                        <div class="stat-value" id="attemptCount">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">연속</div>
+                        <div class="stat-value" style="color: var(--success-color);" id="streakCount">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">정답률</div>
+                        <div class="stat-value" style="color: var(--primary-color);" id="accuracyRate">0%</div>
+                    </div>
+                </div>
+                
+                <button id="startQuizBtn" class="btn btn-primary btn-large" style="width: 100%;">
+                    🎮 게임 시작
+                </button>
+            </div>
+
+            <!-- Audio Visualizer (Shared) -->
+            <div class="visualizer-container" style="display: none;" id="visualizerContainer">
+                <canvas id="audioVisualizer" width="600" height="150"></canvas>
+                <div class="play-status" id="playStatus">⏸️ 정지</div>
+            </div>
+
+            <!-- PHASE 1: Parent Recording (커스텀 모드) -->
+            <div id="parentPhase" class="phase-container">
+                <p class="status-text">1. 목소리를 녹음하세요</p>
+
+                <div class="control-group">
+                    <button id="recordBtn" class="btn-record">🎙️</button>
+                    <button id="stopRecordBtn" class="btn-record recording hidden">⏹️</button>
+                </div>
+
+                <button id="previewBtn" class="btn btn-secondary btn-small" disabled>🔊 내 목소리 확인</button>
+
+                <div class="secret-input-area">
+                    <p>2. 정답 단어를 입력하세요</p>
+                    <input type="text" id="secretInput" placeholder="예: 냉장고, 사과, 사랑해">
+                    <button id="startCustomGameBtn" class="btn btn-primary btn-large" style="margin-top:15px; width:100%;" disabled>
+                        게임 시작!
+                    </button>
+                </div>
+            </div>
+
+            <!-- PHASE 2: Child Guessing -->
+            <div id="childPhase" class="phase-container">
+                <p class="status-text" id="missionText">외계인 언어를 해독하세요!</p>
+                
+                <!-- 힌트 표시 -->
+                <div class="hint-display" id="hintDisplay"></div>
+
+                <div class="control-group">
+                    <button id="childPlayBtn" class="btn btn-primary btn-large">🔊 소리 재생</button>
+                    <button id="stopPlayBtn" class="btn btn-secondary" style="display: none;">⏹️ 정지</button>
+                </div>
+
+                <div class="playback-controls">
+                    <p>속도와 방향 조절</p>
+                    <div class="slider-container">
+                        <label class="slider-label">⏪ 역방향</label>
+                        <input type="range" id="speedRange" min="-2.0" max="2.0" step="0.25" value="-1.0">
+                        <label class="slider-label">⏩ 정방향</label>
+                    </div>
+                    <div id="speedValue" class="speed-display">⏮️ 거꾸로 1.0x</div>
+                </div>
+
+                <div class="answer-area">
+                    <input type="text" id="answerInput" placeholder="무슨 내용일까요?">
+                    <div class="answer-buttons">
+                        <button id="submitAnswerBtn" class="btn btn-primary btn-large">✅ 정답 확인</button>
+                        <button id="hintBtn" class="btn btn-secondary">💡 힌트</button>
+                        <button id="skipBtn" class="btn btn-secondary">⏭️ 건너뛰기</button>
+                    </div>
+                </div>
+                
+                <button id="backToMenuBtn" class="btn btn-secondary btn-small" style="width: 100%; margin-top: 15px;">
+                    🏠 메뉴로
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../assets/js/common.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

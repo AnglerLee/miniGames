@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 설정 🔧</title>
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <div class="admin-header">
+            <h1>🔧 게임 관리자 설정</h1>
+            <a href="index.html" class="btn btn-secondary">게임 목록으로</a>
+        </div>
+        
+        <div class="admin-intro">
+            <p>각 게임의 비밀번호와 힌트를 설정하세요. 아이들이 게임을 클리어하면 여기서 설정한 내용이 표시됩니다.</p>
+        </div>
+        
+        <div class="admin-actions">
+            <button class="btn btn-primary" id="saveAllBtn">💾 모두 저장</button>
+            <button class="btn btn-danger" id="resetAllBtn">🔄 전체 초기화</button>
+        </div>
+        
+        <div class="games-settings" id="gamesSettings"></div>
+    </div>
+    
+    <script src="assets/js/admin.js"></script>
+</body>
+</html>

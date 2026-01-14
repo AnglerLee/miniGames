@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>컬러 헌터 🎨</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1>🎨 컬러 헌터</h1>
+            <a href="../../index.html" class="home-btn">홈으로</a>
+        </div>
+
+        <div class="game-area">
+            <!-- Mission Area -->
+            <div class="mission-box">
+                <p class="mission-text">다음 색깔의 물건을 찾으세요!</p>
+                <div id="targetColorName" class="target-color-display">???</div>
+            </div>
+
+            <!-- Camera Viewport -->
+            <div id="cameraSection" class="camera-container hidden">
+                <video id="cameraFeed" autoplay playsinline muted></video>
+                <canvas id="cameraCanvas" style="display:none;"></canvas>
+
+                <!-- Overlay Elements -->
+                <div class="camera-overlay">
+                    <div class="crosshair"></div>
+                </div>
+                <div class="camera-instruction">십자선에 물건을 맞추세요</div>
+            </div>
+
+            <!-- Fallback Viewport (If no camera) -->
+            <div id="fallbackSection" class="fallback-ui">
+                <p>카메라를 사용할 수 없어요 😢</p>
+                <p>직접 비슷한 색을 선택해주세요.</p>
+                <input type="color" id="fallbackColorPicker" value="#ff0000"
+                    style="width: 100px; height: 100px; margin: 20px;">
+                <button id="checkFallbackBtn" class="btn btn-primary">이 색깔로 확인하기</button>
+                <button id="retryCameraBtn" class="btn btn-secondary btn-small" style="margin-top:20px;">카메라 다시
+                    시도</button>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button id="captureBtn" class="btn-capture" aria-label="색깔 캡처" disabled></button>
+            </div>
+
+            <button id="useFallbackBtn" class="btn btn-text"
+                style="margin-top: 15px; color: #aaa; font-size: 0.8rem;">카메라가 안 되나요? 수동 모드</button>
+        </div>
+    </div>
+
+    <script src="../../assets/js/common.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

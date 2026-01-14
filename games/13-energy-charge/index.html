@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>에너지 충전 ⚡</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <style>
+        .energy-container {
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        /* 난이도 선택 */
+        .difficulty-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 15px 0;
+        }
+        
+        .difficulty-btn {
+            padding: 10px 8px;
+            border: 2px solid var(--secondary-color);
+            background: white;
+            color: var(--secondary-color);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .difficulty-btn.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        /* 게임 모드 선택 */
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            margin: 15px 0;
+        }
+        
+        .mode-btn {
+            padding: 10px;
+            border: 2px solid var(--primary-color);
+            background: white;
+            color: var(--primary-color);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .mode-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        /* 통계 대시보드 */
+        .stats-dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 12px 8px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .stat-value.timer {
+            color: var(--warning-color);
+        }
+        
+        .stat-value.record {
+            color: var(--success-color);
+        }
+        
+        /* 배터리 아이콘 */
+        .battery-icon {
+            font-size: 100px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .battery-icon.charging {
+            animation: batteryPulse 1s infinite;
+        }
+        
+        @keyframes batteryPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* 에너지 바 */
+        .energy-bar-container {
+            width: 100%;
+            height: 60px;
+            background: #ecf0f1;
+            border-radius: 30px;
+            border: 4px solid var(--secondary-color);
+            overflow: hidden;
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .energy-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c, #f39c12);
+            background-size: 200% 100%;
+            animation: energyFlow 1.5s linear infinite;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 22px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes energyFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        
+        /* 흔들기 인디케이터 */
+        .shake-indicator {
+            font-size: 70px;
+            margin: 15px 0;
+        }
+        
+        .shake-indicator.shaking {
+            animation: shake 0.3s infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-8px) rotate(-3deg); }
+            75% { transform: translateX(8px) rotate(3deg); }
+        }
+        
+        /* 화면 흔들림 효과 */
+        .energy-container.screen-shake {
+            animation: screenShake 0.3s;
+        }
+        
+        @keyframes screenShake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+            20%, 40%, 60%, 80% { transform: translateX(3px); }
+        }
+        
+        /* 민감도 조절 */
+        .sensitivity-control {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .sensitivity-label {
+            font-size: 13px;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .sensitivity-slider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #ddd;
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        .sensitivity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .sensitivity-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .sensitivity-value {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+        
+        /* 액션 버튼 */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .action-btn {
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
+        
+        .action-btn.primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .action-btn.secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .action-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* 인스트럭션 */
+        .instruction {
+            font-size: 16px;
+            color: var(--text-dark);
+            margin: 15px 0;
+            font-weight: 500;
+            min-height: 22px;
+        }
+        
+        .status-message {
+            font-size: 14px;
+            color: var(--text-light);
+            margin: 10px 0;
+            min-height: 20px;
+        }
+        
+        /* 멀티플레이어 UI */
+        .player-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .player-card {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border: 2px solid transparent;
+        }
+        
+        .player-card.active {
+            border-color: var(--primary-color);
+            background: #e8f5e9;
+        }
+        
+        .player-name {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+        
+        .player-record {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        /* 파티클 컨테이너 */
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1 class="game-title">⚡ 에너지 충전</h1>
+            <a href="../../index.html" class="home-btn">홈으로</a>
+        </div>
+        
+        <div class="game-area">
+            <div class="energy-container" id="energyContainer">
+                <!-- 난이도 선택 -->
+                <div class="difficulty-selector" id="difficultySelector">
+                    <button class="difficulty-btn" data-level="easy">쉬움</button>
+                    <button class="difficulty-btn active" data-level="medium">보통</button>
+                    <button class="difficulty-btn" data-level="hard">어려움</button>
+                </div>
+                
+                <!-- 게임 모드 선택 -->
+                <div class="mode-selector" id="modeSelector">
+                    <button class="mode-btn active" data-mode="single">싱글 플레이</button>
+                    <button class="mode-btn" data-mode="multi">2인 대결</button>
+                </div>
+                
+                <!-- 통계 대시보드 -->
+                <div class="stats-dashboard" id="statsDashboard">
+                    <div class="stat-box">
+                        <div class="stat-label">에너지</div>
+                        <div class="stat-value" id="energyPercent">0%</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">시간</div>
+                        <div class="stat-value timer" id="timeDisplay">--:--</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">흔들기</div>
+                        <div class="stat-value" id="shakeCount">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">최고기록</div>
+                        <div class="stat-value record" id="bestRecord">-</div>
+                    </div>
+                </div>
+                
+                <!-- 멀티플레이어 정보 (숨김) -->
+                <div class="player-info" id="playerInfo" style="display: none;">
+                    <div class="player-card" id="player1Card">
+                        <div class="player-name">플레이어 1</div>
+                        <div class="player-record" id="player1Record">-</div>
+                    </div>
+                    <div class="player-card" id="player2Card">
+                        <div class="player-name">플레이어 2</div>
+                        <div class="player-record" id="player2Record">-</div>
+                    </div>
+                </div>
+                
+                <!-- 배터리 아이콘 -->
+                <div class="battery-icon" id="batteryIcon">🔋</div>
+                
+                <!-- 인스트럭션 -->
+                <div class="instruction" id="instruction">
+                    폰을 흔들어서 에너지를 충전하세요!
+                </div>
+                
+                <!-- 에너지 바 -->
+                <div class="energy-bar-container">
+                    <div class="energy-bar" id="energyBar">0%</div>
+                </div>
+                
+                <!-- 흔들기 인디케이터 -->
+                <div class="shake-indicator" id="shakeIndicator">📱</div>
+                
+                <!-- 민감도 조절 -->
+                <div class="sensitivity-control" id="sensitivityControl">
+                    <div class="sensitivity-label">흔들기 민감도</div>
+                    <input type="range" class="sensitivity-slider" id="sensitivitySlider" 
+                           min="1" max="5" value="3" step="1">
+                    <div class="sensitivity-value" id="sensitivityValue">보통 (3)</div>
+                </div>
+                
+                <!-- 액션 버튼 -->
+                <div class="action-buttons">
+                    <button class="action-btn primary" id="startBtn">시작하기</button>
+                    <button class="action-btn secondary" id="resetBtn" style="display: none;">다시 시작</button>
+                </div>
+                
+                <div class="status-message" id="statusMessage"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 파티클 효과용 컨테이너 -->
+    <div class="particle-container" id="particleContainer"></div>
+    
+    <script src="../../assets/js/common.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

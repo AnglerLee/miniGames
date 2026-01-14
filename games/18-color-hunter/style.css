@@ -1,0 +1,169 @@
+/* Color Hunter Styles */
+.game-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Mission Display */
+.mission-box {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+    border: 2px solid var(--border-color, #444);
+}
+
+.mission-text {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.target-color-display {
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    color: #000;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+/* Camera Container */
+.camera-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/4;
+    background-color: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+#cameraFeed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1); /* Mirror effect */
+}
+
+/* Crosshair Overlay */
+.camera-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.crosshair {
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.crosshair::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background-color: red;
+    border-radius: 50%;
+}
+
+/* Instructions on Camera */
+.camera-instruction {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    pointer-events: none;
+    font-size: 0.9rem;
+    background-color: rgba(0,0,0,0.3);
+    padding: 5px;
+}
+
+/* Fallback UI */
+.fallback-ui {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--bg-card, #222);
+    border-radius: 12px;
+}
+
+.fallback-ui.active {
+    display: flex;
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    width: 100%;
+}
+
+.btn-capture {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: white;
+    border: 4px solid #ccc;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.btn-capture::after {
+    content: '';
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background-color: var(--primary-color, #4facfe);
+    display: block;
+}
+
+.btn-capture:active {
+    transform: scale(0.95);
+}
+
+.btn-capture:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .camera-container {
+        aspect-ratio: 9/16; /* Full screen-ish on mobile */
+        max-height: 60vh;
+    }
+}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>폭탄 해체 💣</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container game-container">
+        <div class="game-header">
+            <h1>💣 폭탄 해체</h1>
+            <a href="../../index.html" class="home-btn">홈으로</a>
+        </div>
+
+        <div class="game-area">
+            <!-- 게임 시작 전 안내 -->
+            <div id="introScreen" class="screen active">
+                <div class="mission-card">
+                    <h2>⚠️ 미션: 불안정한 폭탄</h2>
+                    <p class="mission-desc">
+                        폭탄의 수평 센서가 매우 민감합니다.<br>
+                        폭탄을 안전한 장소로 옮겨야 합니다.
+                    </p>
+                    <div class="tutorial-box">
+                        <div class="tutorial-icon">📱</div>
+                        <p>폰을 바닥과 <strong>완전한 수평</strong>으로 만드세요.</p>
+                    </div>
+                </div>
+                <button id="startBtn" class="btn btn-primary btn-large btn-block">미션 시작</button>
+            </div>
+
+            <!-- 게임 플레이 화면 -->
+            <div id="gameScreen" class="screen">
+                <div class="status-bar">
+                    <div class="timer-box">
+                        <span class="icon">⏱️</span>
+                        <span id="timerDisplay">30.00</span>
+                    </div>
+                    <div class="stability-box">
+                        <span class="icon">❤️</span>
+                        <div class="stability-meter">
+                            <div id="stabilityBar" class="stability-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bomb-container">
+                    <div class="bomb-body">
+                        <div class="bomb-timer" id="bombTimer">30:00</div>
+                        <span class="bomb-emoji">💣</span>
+                    </div>
+                    <div class="leveler-container">
+                        <!-- 십자선 -->
+                        <div class="crosshair-h"></div>
+                        <div class="crosshair-v"></div>
+                        <!-- 수평계 공기방울 -->
+                        <div id="levelBubble" class="level-bubble"></div>
+                        <!-- 중심 타겟 -->
+                        <div class="target-zone"></div>
+                    </div>
+                </div>
+
+                <div id="messageArea" class="message-area">수평을 유지하세요!</div>
+            </div>
+        </div>
+
+        <!-- 위험 경고 오버레이 -->
+        <div id="dangerOverlay" class="danger-overlay"></div>
+    </div>
+
+    <script src="../../assets/js/common.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

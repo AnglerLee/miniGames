@@ -1,0 +1,258 @@
+:root {
+    --hacker-green: #0f0;
+    --hacker-bg: #000;
+    --hacker-dark-green: #003300;
+    --scan-line-color: rgba(0, 255, 0, 0.1);
+}
+
+body {
+    background-color: var(--hacker-bg);
+    color: var(--hacker-green);
+    font-family: 'Courier New', Courier, monospace;
+    /* Terminal look */
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.hacker-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+}
+
+/* Matrix Background Canvas */
+#matrix-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.3;
+}
+
+/* UI Elements */
+.monitor-screen {
+    border: 2px solid var(--hacker-green);
+    box-shadow: 0 0 20px var(--hacker-green);
+    background-color: rgba(0, 20, 0, 0.8);
+    padding: 2rem;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+    z-index: 20;
+}
+
+.status-bar {
+    border-bottom: 1px solid var(--hacker-green);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.title-large {
+    font-size: 2rem;
+    text-shadow: 0 0 10px var(--hacker-green);
+    margin-bottom: 2rem;
+    animation: glitch 2s infinite;
+}
+
+.input-group {
+    margin: 2rem 0;
+}
+
+#passwordInput {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--hacker-green);
+    color: var(--hacker-green);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 3rem;
+    text-align: center;
+    letter-spacing: 1rem;
+    width: 100%;
+    outline: none;
+}
+
+#passwordInput::placeholder {
+    color: var(--hacker-dark-green);
+    font-size: 1.5rem;
+    letter-spacing: normal;
+}
+
+.btn-hack {
+    background: var(--hacker-dark-green);
+    color: var(--hacker-green);
+    border: 1px solid var(--hacker-green);
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.btn-hack:hover {
+    background: var(--hacker-green);
+    color: black;
+    box-shadow: 0 0 15px var(--hacker-green);
+}
+
+.message-box {
+    margin-top: 1rem;
+    min-height: 1.5em;
+    font-weight: bold;
+}
+
+.scan-animation {
+    width: 100%;
+    height: 200px;
+    border: 1px dashed var(--hacker-green);
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.radar-sweep {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: var(--hacker-green);
+    box-shadow: 0 0 10px var(--hacker-green);
+    animation: scan 2s linear infinite;
+    top: 0;
+}
+
+/* Utility Animations */
+@keyframes scan {
+    0% {
+        top: 0%;
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+    }
+}
+
+@keyframes glitch {
+    0% {
+        transform: skew(0deg);
+    }
+
+    20% {
+        transform: skew(-2deg);
+    }
+
+    40% {
+        transform: skew(2deg);
+    }
+
+    60% {
+        transform: skew(-1deg);
+    }
+
+    80% {
+        transform: skew(1deg);
+    }
+
+    100% {
+        transform: skew(0deg);
+    }
+}
+
+.hidden {
+    display: none !important;
+}
+
+.access-granted {
+    color: var(--hacker-green);
+    font-size: 2.5rem;
+    border: 5px solid var(--hacker-green);
+    padding: 2rem;
+    animation: blink 0.5s step-end infinite alternate;
+}
+
+.access-denied {
+    color: red;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    75% {
+        transform: translateX(10px);
+    }
+}
+
+/* Settings Icon */
+.settings-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    opacity: 0.1;
+    cursor: pointer;
+    z-index: 100;
+}
+
+.settings-icon:hover {
+    opacity: 1;
+}
+
+.settings-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: black;
+    border: 2px solid var(--hacker-green);
+    padding: 2rem;
+    z-index: 100;
+}
+
+.settings-modal input {
+    display: block;
+    margin: 10px 0;
+    padding: 5px;
+    background: #002200;
+    color: #0f0;
+    border: 1px solid #0f0;
+}
