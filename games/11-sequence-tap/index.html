@@ -1,42 +1,55 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>순서대로 터치하기 🔢</title>
     <link rel="stylesheet" href="../../assets/css/common.css">
     <style>
-        .game-container {
-            max-width: 450px;
-            margin: 0 auto;
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
-        
+
+        .game-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 60vh;
+        }
+
+        /* 통계 컨테이너 단순화 및 타이머 강조 (Math Race 참조) */
         .game-stats {
             display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            width: 100%;
         }
-        
+
         .stat-item {
             text-align: center;
         }
-        
-        .stat-label {
-            font-size: 14px;
-            color: var(--text-light);
-        }
-        
-        .stat-value {
-            font-size: 28px;
+
+        .stat-value.timer {
+            font-size: 3.5rem;
             font-weight: bold;
             color: var(--secondary-color);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1;
         }
-        
+
         .stat-value.time-warning {
             color: var(--danger-color);
             animation: pulse 1s infinite;
         }
-        
+
         .tap-area {
             position: relative;
             width: 100%;
@@ -48,7 +61,7 @@
             margin: 15px 0;
             overflow: hidden;
         }
-        
+
         .tap-button {
             position: absolute;
             width: 55px;
@@ -66,35 +79,45 @@
             box-shadow: var(--shadow-lg);
             border: 3px solid var(--secondary-color);
         }
-        
+
         .tap-button:hover {
             transform: scale(1.1);
         }
-        
+
         .tap-button:active {
             transform: scale(0.9);
         }
-        
+
         .tap-button.tapped {
             background: var(--success-color);
             color: white;
             border-color: var(--success-color);
             pointer-events: none;
         }
-        
+
         .tap-button.wrong {
             background: var(--danger-color);
             color: white;
             border-color: var(--danger-color);
             animation: shake 0.5s;
         }
-        
+
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
         }
-        
+
         .message {
             text-align: center;
             font-size: 18px;
@@ -104,34 +127,31 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="game-header">
             <h1 class="game-title">🔢 순서대로 터치하기</h1>
             <a href="../../index.html" class="home-btn">홈으로</a>
         </div>
-        
+
         <div class="game-area">
             <div class="game-container">
                 <div class="game-stats">
                     <div class="stat-item">
-                        <div class="stat-label">다음 번호</div>
-                        <div class="stat-value" id="nextNumber">1</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">남은 시간</div>
-                        <div class="stat-value" id="timer">15</div>
+                        <div class="stat-value timer" id="timer">0</div>
                     </div>
                 </div>
-                
+
                 <div class="tap-area" id="tapArea">
                     <div class="message" id="message">1부터 순서대로 눌러주세요!</div>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <script src="../../assets/js/common.js"></script>
     <script src="game.js"></script>
 </body>
+
 </html>
