@@ -1,61 +1,130 @@
-// 관리자 설정 스크립트 (13 Energy Charge)
+const SETTINGS_KEY = 'energy_charge_settings';
 const GAME_ID = 'game13';
-const form = document.getElementById('settingsForm');
-const resetBtn = document.getElementById('resetBtn');
 
-// 설정 로드
+// 기본 설정 값
+const DEFAULT_SETTINGS = {
+    threshold: 30,    // 흔들기 임계값
+    increment: 3,     // 충전 증가량
+    timeLimit: 30,    // 시간 제한
+    theme: 'default'  // 테마
+};
+
+// 요소 참조
+const thresholdInput = document.getElementById('thresholdInput');
+const thresholdValue = document.getElementById('thresholdValue');
+const incrementInput = document.getElementById('incrementInput');
+const incrementValue = document.getElementById('incrementValue');
+const timeInput = document.getElementById('timeInput');
+const timeValue = document.getElementById('timeValue');
+const themeSelector = document.getElementById('themeSelector');
+
+// 미니게임 정보 요소
+const secretCodeInput = document.getElementById('secretCodeInput');
+const hintMessageInput = document.getElementById('hintMessageInput');
+const successMessageInput = document.getElementById('successMessageInput');
+
+const saveBtn = document.getElementById('saveBtn');
+const resetBtn = document.getElementById('resetDefaultsBtn');
+
+// 초기화
+function init() {
+    loadSettings();
+    setupEventListeners();
+}
+
+// 설정 불러오기
 function loadSettings() {
-    // 1. 글로벌 설정 로드
-    const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-    const myConfig = globalConfigs[GAME_ID] || {};
+    // 1. 게임 내부 설정 로드
+    const saved = localStorage.getItem(SETTINGS_KEY);
+    const settings = saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
 
-    document.getElementById('secretCode').value = myConfig.secretCode || '';
-    document.getElementById('hintMessage').value = myConfig.hintMessage || '';
-    document.getElementById('successMessage').value = myConfig.successMessage || '';
-    
-    // 게임별 추가 설정 로드 로직이 필요하면 여기에 추가
+    updateRangeUI(thresholdInput, thresholdValue, settings.threshold, formatThreshold);
+    updateRangeUI(incrementInput, incrementValue, settings.increment, v => `${v}%`);
+    updateRangeUI(timeInput, timeValue, settings.timeLimit, v => v === 0 ? '무제한' : `${v}초`);
+
+    themeSelector.value = settings.theme;
+
+    // 2. 미니게임 공통 설정 로드
+    let gameConfig = {};
+    if (typeof getGameConfig === 'function') {
+        gameConfig = getGameConfig(GAME_ID);
+    } else {
+        const configStr = localStorage.getItem('treasureHunt_gameConfigs');
+        const configs = configStr ? JSON.parse(configStr) : {};
+        gameConfig = configs[GAME_ID] || {};
+    }
+
+    secretCodeInput.value = gameConfig.secretCode || '';
+    hintMessageInput.value = gameConfig.hintMessage || '';
+    successMessageInput.value = gameConfig.successMessage || '축하합니다! 게임을 클리어했어요!';
+}
+
+// 헬퍼 함수들
+function formatThreshold(val) {
+    if (val < 20) return `쉬움 (${val})`;
+    if (val < 35) return `보통 (${val})`;
+    return `어려움 (${val})`;
+}
+
+function updateRangeUI(input, valueDisplay, value, formatter) {
+    input.value = value;
+    valueDisplay.textContent = formatter(parseFloat(value));
+}
+
+// 이벤트 리스너 설정
+function setupEventListeners() {
+    thresholdInput.addEventListener('input', (e) => {
+        updateRangeUI(thresholdInput, thresholdValue, e.target.value, formatThreshold);
+    });
+
+    incrementInput.addEventListener('input', (e) => {
+        updateRangeUI(incrementInput, incrementValue, e.target.value, v => `${v}%`);
+    });
+
+    timeInput.addEventListener('input', (e) => {
+        updateRangeUI(timeInput, timeValue, parseFloat(e.target.value), v => v === 0 ? '무제한' : `${v}초`);
+    });
+
+    saveBtn.addEventListener('click', saveSettings);
+    resetBtn.addEventListener('click', resetToDefaults);
 }
 
 // 설정 저장
-function saveSettings(e) {
-    e.preventDefault();
-
-    // 1. 글로벌 설정 저장
-    const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-    
-    // 기존 설정을 유지하면서 업데이트
-    globalConfigs[GAME_ID] = {
-        ...globalConfigs[GAME_ID],
-        secretCode: document.getElementById('secretCode').value.trim(),
-        hintMessage: document.getElementById('hintMessage').value.trim(),
-        successMessage: document.getElementById('successMessage').value.trim(),
-        isActive: true,
-        lastUpdated: new Date().toISOString()
+function saveSettings() {
+    // 1. 게임 내부 설정 저장
+    const settings = {
+        threshold: parseFloat(thresholdInput.value),
+        increment: parseFloat(incrementInput.value),
+        timeLimit: parseFloat(timeInput.value),
+        theme: themeSelector.value
     };
-    
-    localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(globalConfigs));
 
-    alert('설정이 저장되었습니다!');
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+
+    // 2. 미니게임 공통 설정 저장
+    const configStr = localStorage.getItem('treasureHunt_gameConfigs');
+    const configs = configStr ? JSON.parse(configStr) : {};
+
+    configs[GAME_ID] = {
+        secretCode: secretCodeInput.value,
+        hintMessage: hintMessageInput.value,
+        successMessage: successMessageInput.value,
+        isActive: true
+    };
+
+    localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(configs));
+
+    alert('설정이 저장되었습니다.');
+    // 저장 후 페이지 이동하지 않음 (14-secret-knock flow)
 }
 
-// 설정 초기화
-function resetSettings() {
-    if (confirm('모든 설정을 초기화하시겠습니까?')) {
-        // 글로벌 설정에서 해당 게임 데이터만 초기화하려면 신중해야 함.
-        // 여기서는 입력 필드만 비우거나, 저장된 데이터를 삭제할 수 있음.
-        
-        const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-        if(globalConfigs[GAME_ID]) {
-            delete globalConfigs[GAME_ID];
-            localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(globalConfigs));
-        }
-        
-        loadSettings();
-        alert('초기화되었습니다.');
+// 기본값으로 초기화
+function resetToDefaults() {
+    if (confirm('모든 설정을 기본값으로 초기화하시겠습니까?')) {
+        localStorage.removeItem(SETTINGS_KEY);
+        loadSettings(); // Reload UI
+        alert('설정이 초기화되었습니다.');
     }
 }
 
-form.addEventListener('submit', saveSettings);
-resetBtn.addEventListener('click', resetSettings);
-
-loadSettings();
+init();
