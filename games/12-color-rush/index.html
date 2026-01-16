@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,153 +9,249 @@
     <style>
         .game-container {
             width: 100%;
+            max-width: 400px;
             margin: 0 auto;
         }
-        
-        .game-stats {
+
+        .status-header {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin: 15px 0;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
         }
-        
-        .stat-item {
-            background: white;
-            padding: 12px;
-            border-radius: 10px;
+
+        .status-item {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 10px;
+            border-radius: 12px;
             text-align: center;
             box-shadow: var(--shadow);
-        }
-        
-        .stat-label {
-            font-size: 11px;
-            color: var(--text-light);
-            margin-bottom: 3px;
-        }
-        
-        .stat-value {
-            font-size: 22px;
-            font-weight: bold;
-            color: var(--secondary-color);
-        }
-        
-        .color-card {
-            background: white;
-            padding: 40px 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin: 15px 0;
-            box-shadow: var(--shadow-lg);
-            min-height: 250px;
+            border: 2px solid transparent;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
         }
-        
+
+        .status-label {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .timer-box .timer {
+            font-family: 'Courier New', monospace;
+            color: var(--secondary-color);
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .timer-box .timer.warning {
+            color: var(--danger-color);
+            animation: pulse 1s infinite;
+        }
+
+        .score-box .stat-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--primary-color);
+        }
+
+        .color-card {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: var(--shadow-lg);
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #f0f0f0;
+        }
+
         .color-word {
-            font-size: 56px;
-            font-weight: bold;
-            margin: 25px 0;
+            font-size: 64px;
+            font-weight: 900;
+            margin: 30px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            line-height: 1.2;
         }
-        
+
+        .color-word.pop {
+            transform: scale(1.1);
+        }
+
         .question {
             font-size: 18px;
-            color: var(--text-dark);
-            margin-bottom: 20px;
+            color: var(--text-light);
+            font-weight: 600;
+            background: #f8f9fa;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 0 auto 10px;
         }
-        
+
         .answer-buttons {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin: 0 auto;
+            gap: 15px;
+            margin-top: auto;
             width: 100%;
-            max-width: 350px;
         }
-        
+
         .answer-btn {
             width: 100%;
-            height: 80px;
-            font-size: 36px;
-            border-radius: 12px;
+            height: 85px;
+            font-size: 42px;
+            border-radius: 16px;
             border: none;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: var(--shadow);
-            font-weight: bold;
+            transition: all 0.1s;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+            font-weight: 900;
+            position: relative;
+            top: 0;
         }
-        
+
+        .answer-btn:active,
+        .answer-btn.pressed {
+            top: 4px;
+            box-shadow: none;
+        }
+
         .answer-btn.yes {
-            background: var(--success-color);
+            background: linear-gradient(145deg, #4CAF50, #45a049);
             color: white;
         }
-        
+
         .answer-btn.no {
-            background: var(--danger-color);
+            background: linear-gradient(145deg, #f44336, #d32f2f);
             color: white;
         }
-        
-        .answer-btn:hover {
-            transform: scale(1.05);
-        }
-        
-        .answer-btn:active {
-            transform: scale(0.95);
-        }
-        
+
         .feedback {
             text-align: center;
             font-size: 24px;
-            font-weight: bold;
-            min-height: 35px;
-            margin: 15px 0;
+            font-weight: 900;
+            height: 40px;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.2s;
         }
-        
+
+        .feedback.show {
+            opacity: 1;
+        }
+
         .feedback.correct {
             color: var(--success-color);
         }
-        
-        .feedback.wrong {
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        @keyframes floatUpFade {
+            0% {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -30px);
+                opacity: 0;
+            }
+        }
+
+        .timer.penalty {
+            color: var(--danger-color) !important;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .penalty-float {
+            position: fixed;
             color: var(--danger-color);
+            font-weight: bold;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 100;
+            transform: translate(-50%, 0);
+            animation: floatUpFade 0.8s ease-out forwards;
+            text-shadow: 1px 1px 0 #fff;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="game-header">
             <h1 class="game-title">🌈 색깔 스피드</h1>
             <a href="../../index.html" class="home-btn">홈으로</a>
         </div>
-        
+
         <div class="game-area">
             <div class="game-container">
-                <div class="game-stats">
-                    <div class="stat-item">
-                        <div class="stat-label">문제</div>
-                        <div class="stat-value" id="questionNum">1 / 15</div>
+                <!-- Game Status Header (Timer & Score) -->
+                <div class="status-header">
+                    <div class="status-item timer-box">
+                        <div class="status-label">남은 시간</div>
+                        <div class="timer" id="timer">00:00</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-label">정답</div>
-                        <div class="stat-value" id="correctCount">0</div>
+                    <div class="status-item score-box">
+                        <div class="status-label">목표 달성</div>
+                        <div class="stat-value" id="correctCount">0 / 0</div>
                     </div>
                 </div>
-                
-                <div class="color-card">
+
+                <div class="color-card" id="gameCard">
                     <div class="question">글자와 색깔이 같나요?</div>
-                    <div class="color-word" id="colorWord">빨강</div>
-                    
+                    <div class="color-word" id="colorWord">준비</div>
+
                     <div class="answer-buttons">
-                        <button class="answer-btn yes" id="yesBtn">O</button>
-                        <button class="answer-btn no" id="noBtn">X</button>
+                        <button class="answer-btn yes" id="yesBtn" disabled>O</button>
+                        <button class="answer-btn no" id="noBtn" disabled>X</button>
                     </div>
                 </div>
-                
+
                 <div class="feedback" id="feedback"></div>
             </div>
         </div>
     </div>
-    
+
     <script src="../../assets/js/common.js"></script>
     <script src="game.js"></script>
 </body>
+
 </html>

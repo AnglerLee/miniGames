@@ -25,7 +25,7 @@ function getGameConfig(gameId) {
 // 성공 화면 표시
 function showSuccessScreen(gameId) {
     const config = getGameConfig(gameId);
-    
+
     const modal = document.createElement('div');
     modal.className = 'modal active';
     modal.innerHTML = `
@@ -56,9 +56,9 @@ function showSuccessScreen(gameId) {
             </button>
         </div>
     `;
-    
+
     document.body.appendChild(modal);
-    
+
     // 진동 피드백 (지원하는 경우)
     if (navigator.vibrate) {
         navigator.vibrate([200, 100, 200]);
@@ -82,9 +82,9 @@ function showFailScreen(message = '아쉽지만 실패했어요. 다시 도전�
             </button>
         </div>
     `;
-    
+
     document.body.appendChild(modal);
-    
+
     if (navigator.vibrate) {
         navigator.vibrate(200);
     }
@@ -94,14 +94,14 @@ function showFailScreen(message = '아쉽지만 실패했어요. 다시 도전�
 function showInstructions(title, instructions, onStart) {
     const modal = document.createElement('div');
     modal.className = 'modal active';
-    
+
     let instructionHTML = '';
     if (Array.isArray(instructions)) {
         instructionHTML = '<ul>' + instructions.map(item => `<li>${item}</li>`).join('') + '</ul>';
     } else {
         instructionHTML = `<p>${instructions}</p>`;
     }
-    
+
     modal.innerHTML = `
         <div class="modal-content instruction-screen fade-in">
             <h2>${title}</h2>
@@ -111,9 +111,9 @@ function showInstructions(title, instructions, onStart) {
             </button>
         </div>
     `;
-    
+
     document.body.appendChild(modal);
-    
+
     document.getElementById('startGameBtn').addEventListener('click', () => {
         modal.remove();
         if (onStart) onStart();
@@ -123,14 +123,14 @@ function showInstructions(title, instructions, onStart) {
 // 타이머 생성
 function createTimer(duration, onTick, onComplete) {
     let timeLeft = duration;
-    
+
     const timerInterval = setInterval(() => {
         timeLeft--;
-        
+
         if (onTick) {
             onTick(timeLeft);
         }
-        
+
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             if (onComplete) {
@@ -138,10 +138,11 @@ function createTimer(duration, onTick, onComplete) {
             }
         }
     }, 1000);
-    
+
     return {
         stop: () => clearInterval(timerInterval),
-        getTimeLeft: () => timeLeft
+        getTimeLeft: () => timeLeft,
+        addTime: (seconds) => { timeLeft += seconds; }
     };
 }
 
@@ -172,13 +173,13 @@ function playSound(type) {
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
-    
+
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
-    
+
     gainNode.gain.value = 0.3;
-    
-    switch(type) {
+
+    switch (type) {
         case 'success':
             oscillator.frequency.value = 800;
             oscillator.type = 'sine';

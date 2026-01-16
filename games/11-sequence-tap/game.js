@@ -46,6 +46,10 @@ function startGame() {
     currentNumber = 1;
     // 재도전 횟수에 따라 시간 추가
     timeLeft = TIME_LIMIT + (retryCount * RETRY_BONUS);
+
+    // 타이머 디스플레이 즉시 초기화 (버그 수정)
+    timerEl.textContent = timeLeft;
+
     buttons = [];
     startTime = Date.now();
 
@@ -61,8 +65,17 @@ function createButtons() {
     const containerWidth = tapArea.clientWidth || 350; // 기본값 안전장치
     const containerHeight = tapArea.clientHeight || 350;
 
-    // 버튼 크기 (CSS 55px + 테두리 등 고려하여 여유있게 잡음 -> 60px)
-    const btnSize = 55;
+    // 안전한 배치 패딩 (버그 수정: padding 변수 정의)
+    const padding = 30; // 가장자리 여유공간
+
+    // 버튼 크기 동적 계산 (개수가 많으면 작게)
+    let btnSize = 55;
+    if (TOTAL_NUMBERS > 25) {
+        btnSize = 45;
+    } else if (TOTAL_NUMBERS > 20) {
+        btnSize = 50;
+    }
+
     const btnRadius = btnSize / 2;
     // 1/3 이상 겹치지 않게 하려면?
     // 두 원의 중심 거리가 d일 때, d가 2r이면 0% 겹침. d가 0이면 100% 겹침.
@@ -90,6 +103,14 @@ function createButtons() {
         button.className = 'tap-button';
         button.textContent = i;
         button.dataset.number = i;
+
+        // 동적 크기 적용
+        button.style.width = `${btnSize}px`;
+        button.style.height = `${btnSize}px`;
+        // 폰트 크기도 살짝 조절
+        if (btnSize < 50) {
+            button.style.fontSize = '20px';
+        }
 
         let validPosition = false;
         let x, y; // 픽셀 좌표 (중심점 기준 0,0 아님, 컨테이너 left-top 기준)
