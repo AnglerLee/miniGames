@@ -34,7 +34,7 @@ let settings = {
 };
 
 // 상수
-const MIN_MOTION_THRESHOLD = 5; // 최소 움직임 감지 임계값 (매우 낮게 설정하여 쉽게 반응)
+const MIN_MOTION_THRESHOLD = 15; // 기본 임계값 (중력 가속도 ~9.8 제외 및 노이즈 방지)
 
 // 게임 상태
 let energy = 0;
