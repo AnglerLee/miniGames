@@ -6,6 +6,7 @@ const resetBtn = document.getElementById('resetBtn');
 // 기본 설정값
 const DEFAULT_SETTINGS = {
     activeDifficulty: 'easy',
+    gameTheme: 'cat',
     timeEasy: 30,
     timeNormal: 60,
     timeHard: 90
@@ -13,16 +14,18 @@ const DEFAULT_SETTINGS = {
 
 // 설정 로드
 function loadSettings() {
-    // 1. 게임 전용 설정 로드 (Difficulty, Time)
+    // 1. 게임 전용 설정 로드
     const settings = JSON.parse(localStorage.getItem('mazeGameSettings')) || DEFAULT_SETTINGS;
     if (!settings.activeDifficulty) settings.activeDifficulty = 'easy';
+    if (!settings.gameTheme) settings.gameTheme = 'cat';
 
     document.getElementById('activeDifficulty').value = settings.activeDifficulty;
+    document.getElementById('gameTheme').value = settings.gameTheme;
     document.getElementById('timeEasy').value = settings.timeEasy;
     document.getElementById('timeNormal').value = settings.timeNormal;
     document.getElementById('timeHard').value = settings.timeHard;
 
-    // 2. 글로벌 설정 로드 (Secret Code, Hint, Success Msg)
+    // 2. 글로벌 설정 로드
     const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
     const myConfig = globalConfigs['game02'] || {};
 
@@ -38,6 +41,7 @@ function saveSettings(e) {
     // 1. 게임 전용 설정 저장
     const settings = {
         activeDifficulty: document.getElementById('activeDifficulty').value,
+        gameTheme: document.getElementById('gameTheme').value,
         timeEasy: parseInt(document.getElementById('timeEasy').value),
         timeNormal: parseInt(document.getElementById('timeNormal').value),
         timeHard: parseInt(document.getElementById('timeHard').value)

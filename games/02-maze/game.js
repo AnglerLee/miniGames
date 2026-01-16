@@ -42,6 +42,7 @@ let particles = [];
 // 관리자 설정 기본값
 const DEFAULT_SETTINGS = {
     activeDifficulty: 'easy',
+    gameTheme: 'cat',
     timeEasy: 30,
     timeNormal: 60,
     timeHard: 90
@@ -85,6 +86,13 @@ function initGame() {
 
     // 난이도 설정
     currentDifficulty = settings.activeDifficulty || 'easy';
+
+    // 테마 설정
+    if (settings.gameTheme && THEMES[settings.gameTheme]) {
+        currentTheme = THEMES[settings.gameTheme];
+    } else {
+        currentTheme = THEMES.cat;
+    }
 
     // 난이도별 그리드 설정 (Portrait)
     if (currentDifficulty === 'easy') {
@@ -257,12 +265,23 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
+// 테마 데이터 (이모지 & 색상)
+const THEMES = {
+    cat: { player: '😺', goal: '🧶', wall: '#FFB7B2', bg: '#FFF5F5', wallBorder: '#FF9E99' },
+    rabbit: { player: '🐰', goal: '🥕', wall: '#B5EAD7', bg: '#F5FFF5', wallBorder: '#98D8C0' },
+    unicorn: { player: '🦄', goal: '🌈', wall: '#E0BBE4', bg: '#FAF0FF', wallBorder: '#D291BC' },
+    panda: { player: '🐼', goal: '🎋', wall: '#A2D2FF', bg: '#F0F8FF', wallBorder: '#80C2FF' },
+    dog: { player: '🐶', goal: '🦴', wall: '#FFDAC1', bg: '#FFF8F0', wallBorder: '#FFC8A2' }
+};
+
+let currentTheme = THEMES.cat; // 기본 테마
+
 // 그리기 함수들
 function drawMaze() {
     if (!maze || maze.length === 0) return;
 
     // 배경
-    ctx.fillStyle = '#f8f9fa';
+    ctx.fillStyle = currentTheme.bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     for (let row = 0; row < ROWS; row++) {
@@ -270,9 +289,9 @@ function drawMaze() {
             if (maze[row][col] === 1) {
                 drawWall(col, row);
             } else {
-                ctx.strokeStyle = '#e9ecef';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                // 바닥 패턴 (체크무늬 등) - 심플하게 생략하거나 아주 연하게
+                // ctx.strokeStyle = 'rgba(0,0,0,0.03)';
+                // ctx.strokeRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
             }
         }
     }
@@ -287,37 +306,42 @@ function drawWall(col, row) {
     const x = col * CELL_SIZE;
     const y = row * CELL_SIZE;
 
-    const gradient = ctx.createLinearGradient(x, y, x + CELL_SIZE, y + CELL_SIZE);
-    gradient.addColorStop(0, '#34495e');
-    gradient.addColorStop(1, '#1a252f');
-
-    ctx.fillStyle = gradient;
+    // 파스텔 톤 벽 (둥근 사각형 느낌)
+    ctx.fillStyle = currentTheme.wall;
     ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
 
-    // 간단한 3D 효과
-    ctx.fillStyle = 'rgba(255,255,255,0.1)';
-    ctx.fillRect(x, y, CELL_SIZE, 2);
-    ctx.fillRect(x, y, 2, CELL_SIZE);
+    // 외곽선으로 입체감 살짝
+    ctx.strokeStyle = currentTheme.wallBorder;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, CELL_SIZE, CELL_SIZE);
+
+    // 하이라이트 (Cute 느낌)
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.beginPath();
+    ctx.arc(x + 10, y + 10, 3, 0, Math.PI * 2);
+    ctx.fill();
 }
 
 function drawPlayer() {
     const x = player.animX * CELL_SIZE + CELL_SIZE / 2;
     const y = player.animY * CELL_SIZE + CELL_SIZE / 2;
-    const radius = CELL_SIZE / 2 - 4;
 
-    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+    // 통통 튀는 애니메이션 (Y축 오프셋)
+    const bounce = Math.abs(Math.sin(Date.now() / 150)) * 5;
+
+    // 그림자
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
     ctx.beginPath();
-    ctx.ellipse(x, y + radius + 1, radius, radius / 3, 0, 0, Math.PI * 2);
+    ctx.ellipse(x, y + CELL_SIZE / 2 - 5, 8, 3, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    const gradient = ctx.createRadialGradient(x - radius / 3, y - radius / 3, 0, x, y, radius);
-    gradient.addColorStop(0, '#5DADE2');
-    gradient.addColorStop(1, '#2980B9');
-
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fill();
+    // 이모지 그리기
+    ctx.fillStyle = '#000000'; // 이모지 투명도 문제 해결 (그림자 alpha값 초기화)
+    const fontSize = Math.floor(CELL_SIZE * 0.8);
+    ctx.font = `${fontSize}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(currentTheme.player, x, y - bounce);
 }
 
 function drawGoal() {
@@ -325,15 +349,19 @@ function drawGoal() {
     const y = goal.y * CELL_SIZE + CELL_SIZE / 2;
 
     const pulse = Math.sin(goalAnimFrame * 0.1) * 3;
-    ctx.fillStyle = 'rgba(46, 204, 113, 0.3)';
+
+    // 목표 지점 강조 (빛)
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
     ctx.beginPath();
     ctx.arc(x, y, CELL_SIZE / 2 + pulse, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.font = `${Math.floor(CELL_SIZE * 0.7)}px Arial`;
+    ctx.fillStyle = '#000000'; // 텍스트 컬러 초기화
+    const fontSize = Math.floor(CELL_SIZE * 0.8);
+    ctx.font = `${fontSize}px Arial`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('🏁', x, y);
+    ctx.fillText(currentTheme.goal, x, y);
 }
 
 function drawHintArrow() {
@@ -349,7 +377,7 @@ function drawHintArrow() {
     else if (hintArrow.dy === 1) ctx.rotate(Math.PI / 2);
     else if (hintArrow.dy === -1) ctx.rotate(-Math.PI / 2);
 
-    ctx.fillStyle = '#f39c12';
+    ctx.fillStyle = '#f39c12'; // 힌트는 잘 보여야 하므로 유지
     ctx.beginPath();
     ctx.moveTo(size, 0);
     ctx.lineTo(-size / 2, -size / 2);
