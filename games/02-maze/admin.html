@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미로 탈출 - 관리자 설정</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <style>
+        .admin-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-save {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-reset {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-home {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <h1>🔧 게임 설정 (관리자)</h1>
+
+        <form id="settingsForm">
+            <div class="form-group"
+                style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
+                <label for="activeDifficulty">🎮 적용할 난이도</label>
+                <select id="activeDifficulty" class="form-input">
+                    <option value="easy">초급 (Easy)</option>
+                    <option value="normal">중급 (Normal)</option>
+                    <option value="hard">고급 (Hard)</option>
+                </select>
+                <p style="font-size: 13px; color: #666; margin-top: 5px;">* 게임 페이지 진입 시 이 난이도로 자동 시작됩니다.</p>
+            </div>
+
+            <h2>⏱ 난이도별 시간 제한 설정 (초)</h2>
+
+            <div class="form-group">
+                <label for="timeEasy">쉬움 (Easy) 시간 제한</label>
+                <input type="number" id="timeEasy" class="form-input" min="10" max="300" value="30">
+            </div>
+
+            <div class="form-group">
+                <label for="timeNormal">보통 (Normal) 시간 제한</label>
+                <input type="number" id="timeNormal" class="form-input" min="10" max="300" value="60">
+            </div>
+
+            <div class="form-group">
+                <label for="timeHard">어려움 (Hard) 시간 제한</label>
+                <input type="number" id="timeHard" class="form-input" min="10" max="300" value="90">
+            </div>
+
+            <h2>📝 게임 클리어 설정 (Global Config)</h2>
+            <div class="form-group">
+                <label for="secretCode">🔑 비밀번호/숫자 코드 (Clear Code)</label>
+                <input type="text" id="secretCode" class="form-input" placeholder="예: 1234, 소파뒤">
+            </div>
+            <div class="form-group">
+                <label for="hintMessage">💡 힌트 메시지 (Next Step Hint)</label>
+                <input type="text" id="hintMessage" class="form-input" placeholder="예: 거실 소파 뒤를 찾아봐!">
+            </div>
+            <div class="form-group">
+                <label for="successMessage">🎉 성공 메시지 (Success Message)</label>
+                <input type="text" id="successMessage" class="form-input" placeholder="예: 축하합니다!">
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-home" onclick="location.href='index.html'">게임으로</button>
+                <button type="button" class="btn btn-reset" id="resetBtn">초기화</button>
+                <button type="submit" class="btn btn-save">저장하기</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="../../assets/js/common.js"></script>
+    <script src="admin.js"></script>
+</body>
+
+</html>
