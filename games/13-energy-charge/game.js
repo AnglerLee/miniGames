@@ -109,7 +109,7 @@ function setupDifficultyButtons() {
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
             if (isCharging) return;
-            
+
             buttons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentDifficulty = btn.dataset.level;
@@ -124,11 +124,11 @@ function setupModeButtons() {
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
             if (isCharging) return;
-            
+
             buttons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentMode = btn.dataset.mode;
-            
+
             // 멀티플레이어 UI 표시/숨김
             if (currentMode === 'multi') {
                 playerInfo.style.display = 'grid';
@@ -146,12 +146,12 @@ function setupModeButtons() {
 // 민감도 슬라이더 설정
 function setupSensitivitySlider() {
     const labels = ['매우 낮음', '낮음', '보통', '높음', '매우 높음'];
-    
+
     sensitivitySlider.addEventListener('input', (e) => {
         sensitivity = parseInt(e.target.value);
         sensitivityValue.textContent = `${labels[sensitivity - 1]} (${sensitivity})`;
     });
-    
+
     // 초기값 설정
     sensitivityValue.textContent = `${labels[sensitivity - 1]} (${sensitivity})`;
 }
@@ -165,7 +165,7 @@ function setupActionButtons() {
             startMultiplayerGame();
         }
     });
-    
+
     resetBtn.addEventListener('click', () => {
         stopGame();
         resetGame();
@@ -177,7 +177,7 @@ function checkSensorSupport() {
     if (typeof DeviceMotionEvent === 'undefined') {
         statusMessageEl.textContent = '이 기기는 모션 센서를 지원하지 않습니다';
         statusMessageEl.style.color = 'var(--danger-color)';
-        
+
         // 대체 모드 제공
         setTimeout(() => {
             if (confirm('센서를 지원하지 않습니다. 화면 탭 모드로 시작하시겠습니까?')) {
@@ -186,7 +186,7 @@ function checkSensorSupport() {
         }, 1000);
         return;
     }
-    
+
     // iOS 13+ 권한 요청 필요
     if (typeof DeviceMotionEvent.requestPermission === 'function') {
         requestPermission();
@@ -220,26 +220,26 @@ function startGame() {
     gameStartTime = Date.now();
     elapsedTime = 0;
     lastMilestoneSound = 0;
-    
+
     const config = difficulties[currentDifficulty];
     timeLeft = config.timeLimit;
-    
+
     // UI 업데이트
     startBtn.style.display = 'none';
     resetBtn.style.display = 'block';
     difficultySelector.style.display = 'none';
     modeSelector.style.display = 'none';
     document.getElementById('sensitivityControl').style.display = 'none';
-    
+
     instructionEl.textContent = '폰을 흔들어주세요!';
     instructionEl.style.color = 'var(--primary-color)';
     statusMessageEl.textContent = '';
-    
+
     batteryIcon.classList.add('charging');
     shakeIndicator.classList.add('shaking');
-    
+
     updateStats();
-    
+
     // 타이머 시작
     if (config.timeLimit > 0) {
         startTimer();
@@ -249,10 +249,10 @@ function startGame() {
             updateTimeDisplay();
         }, 100);
     }
-    
+
     // 센서 시작
     window.addEventListener('devicemotion', handleMotion);
-    
+
     // 시작 사운드
     playSound('click');
 }
@@ -263,13 +263,13 @@ function startMultiplayerGame() {
     currentPlayer = 1;
     player1Time = 0;
     player2Time = 0;
-    
+
     player1Card.classList.add('active');
     player2Card.classList.remove('active');
-    
+
     instructionEl.textContent = '플레이어 1 차례!';
     statusMessageEl.textContent = '준비되면 시작하세요';
-    
+
     checkSensorSupport();
 }
 
@@ -278,9 +278,9 @@ function startTimer() {
     timerInterval = setInterval(() => {
         elapsedTime = Math.floor((Date.now() - gameStartTime) / 1000);
         timeLeft = difficulties[currentDifficulty].timeLimit - elapsedTime;
-        
+
         updateTimeDisplay();
-        
+
         if (timeLeft <= 0) {
             timeUp();
         }
@@ -290,12 +290,12 @@ function startTimer() {
 // 타이머 표시 업데이트
 function updateTimeDisplay() {
     const config = difficulties[currentDifficulty];
-    
+
     if (config.timeLimit > 0) {
         const mins = Math.floor(timeLeft / 60);
         const secs = timeLeft % 60;
         timeDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        
+
         if (timeLeft <= 10) {
             timeDisplay.style.color = 'var(--danger-color)';
         }
@@ -309,37 +309,37 @@ function updateTimeDisplay() {
 // 모션 이벤트 처리
 function handleMotion(event) {
     if (!isCharging) return;
-    
+
     const config = difficulties[currentDifficulty];
     const acceleration = event.accelerationIncludingGravity;
-    
+
     if (!acceleration) return;
-    
+
     // 가속도 변화량 계산 (민감도 적용)
     const x = Math.abs(acceleration.x || 0);
     const y = Math.abs(acceleration.y || 0);
     const z = Math.abs(acceleration.z || 0);
-    
+
     const totalAcceleration = x + y + z;
-    
+
     // 민감도에 따라 임계값 조정 (1=어려움, 5=쉬움)
     const adjustedThreshold = config.threshold * (6 - sensitivity) / 3;
     const now = Date.now();
-    
+
     if (totalAcceleration > adjustedThreshold && now - lastShakeTime > 100) {
         lastShakeTime = now;
         shakeCount++;
-        
+
         // 에너지 증가 (민감도와 강도에 따라)
         const intensity = Math.min(2, (totalAcceleration - adjustedThreshold) / 10);
         const increment = config.increment * sensitivity / 3 * (1 + intensity);
         energy = Math.min(config.targetEnergy, energy + increment);
-        
+
         updateStats();
         provideHapticFeedback();
         playShakeSound();
         triggerScreenShake();
-        
+
         // 마일스톤 사운드 (30%, 50%, 70%, 90%)
         const milestones = [30, 50, 70, 90];
         for (let milestone of milestones) {
@@ -349,7 +349,7 @@ function handleMotion(event) {
                 break;
             }
         }
-        
+
         // 완충 확인
         if (energy >= config.targetEnergy) {
             completeCharging();
@@ -364,7 +364,7 @@ function updateStats() {
     energyBar.style.width = `${percentage}%`;
     energyBar.textContent = `${percentage}%`;
     shakeCountEl.textContent = shakeCount;
-    
+
     // 배터리 아이콘 변경
     if (percentage < 30) {
         batteryIcon.textContent = '🪫';
@@ -394,7 +394,7 @@ function playShakeSound() {
 function playMilestoneSound(milestone) {
     const frequency = 400 + (milestone * 4);
     playTone(frequency, 0.2);
-    
+
     if (navigator.vibrate) {
         navigator.vibrate([50, 30, 50]);
     }
@@ -409,22 +409,35 @@ function triggerScreenShake() {
 }
 
 // 톤 재생 (마일스톤용)
+// 톤 재생 (마일스톤용)
+let toneContext = null;
+
+function getToneContext() {
+    if (!toneContext) {
+        toneContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (toneContext.state === 'suspended') {
+        toneContext.resume();
+    }
+    return toneContext;
+}
+
 function playTone(frequency, duration) {
     try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
+        const ctx = getToneContext();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
         oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
+        gainNode.connect(ctx.destination);
+
         oscillator.frequency.value = frequency;
         oscillator.type = 'sine';
         gainNode.gain.value = 0.3;
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + duration);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + duration);
     } catch (e) {
         console.log('Audio error:', e);
     }
@@ -433,16 +446,16 @@ function playTone(frequency, duration) {
 // 시간 초과
 function timeUp() {
     stopGame();
-    
+
     instructionEl.textContent = '시간 초과!';
     instructionEl.style.color = 'var(--danger-color)';
-    
+
     playSound('fail');
-    
+
     if (navigator.vibrate) {
         navigator.vibrate([200, 100, 200]);
     }
-    
+
     setTimeout(() => {
         showFailScreen(`${Math.floor(energy)}% 충전했어요! 100%까지 채워야 통과합니다.`);
     }, 1000);
@@ -451,36 +464,36 @@ function timeUp() {
 // 충전 완료
 function completeCharging() {
     const finalTime = elapsedTime;
-    
+
     stopGame();
-    
+
     instructionEl.textContent = '충전 완료!';
     instructionEl.style.color = 'var(--success-color)';
-    
+
     batteryIcon.classList.remove('charging');
     shakeIndicator.classList.remove('shaking');
-    
+
     // 파티클 효과
     createCelebrationParticles();
-    
+
     // 성공 사운드 및 진동
     playSound('success');
-    
+
     if (navigator.vibrate) {
         navigator.vibrate([100, 50, 100, 50, 200]);
     }
-    
+
     // 멀티플레이어 처리
     if (currentMode === 'multi') {
         handleMultiplayerCompletion(finalTime);
         return;
     }
-    
+
     // 최고 기록 저장
     const isNewRecord = saveBestRecord(finalTime, shakeCount);
-    
+
     setTimeout(() => {
-        const msg = isNewRecord ? 
+        const msg = isNewRecord ?
             `🎉 신기록! ${finalTime}초, ${shakeCount}번 흔들기` :
             `완료! ${finalTime}초, ${shakeCount}번 흔들기`;
         alert(msg);
@@ -494,31 +507,31 @@ function handleMultiplayerCompletion(time) {
         player1Time = time;
         player1Record.textContent = `${time}초`;
         player1Card.classList.remove('active');
-        
+
         // 플레이어 2 차례
         multiplayerPhase = 'player2';
         currentPlayer = 2;
         player2Card.classList.add('active');
-        
+
         setTimeout(() => {
             alert(`플레이어 1: ${time}초\n이제 플레이어 2 차례입니다!`);
             resetGame();
             instructionEl.textContent = '플레이어 2 차례!';
             checkSensorSupport();
         }, 1000);
-        
+
     } else if (multiplayerPhase === 'player2') {
         player2Time = time;
         player2Record.textContent = `${time}초`;
         player2Card.classList.remove('active');
-        
+
         // 결과 발표
         multiplayerPhase = 'results';
-        
+
         setTimeout(() => {
             const winner = player1Time < player2Time ? '플레이어 1' : '플레이어 2';
             const winTime = Math.min(player1Time, player2Time);
-            
+
             alert(`게임 종료!\n\n플레이어 1: ${player1Time}초\n플레이어 2: ${player2Time}초\n\n승자: ${winner} (${winTime}초)`);
             showSuccessScreen(GAME_ID);
         }, 1500);
@@ -528,7 +541,7 @@ function handleMultiplayerCompletion(time) {
 // 파티클 효과 생성
 function createCelebrationParticles() {
     const colors = ['#f39c12', '#e74c3c', '#2ecc71', '#3498db', '#9b59b6'];
-    
+
     for (let i = 0; i < 30; i++) {
         setTimeout(() => {
             createParticle(colors[Math.floor(Math.random() * colors.length)]);
@@ -547,16 +560,16 @@ function createParticle(color) {
     particle.style.top = '-20px';
     particle.style.pointerEvents = 'none';
     particle.style.zIndex = '9999';
-    
+
     particleContainer.appendChild(particle);
-    
+
     const duration = 2000 + Math.random() * 1000;
     const startTime = Date.now();
-    
+
     const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = elapsed / duration;
-        
+
         if (progress < 1) {
             const y = progress * window.innerHeight;
             const x = Math.sin(progress * Math.PI * 4) * 50;
@@ -567,21 +580,21 @@ function createParticle(color) {
             particle.remove();
         }
     };
-    
+
     animate();
 }
 
 // 게임 정지
 function stopGame() {
     isCharging = false;
-    
+
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
     }
-    
+
     window.removeEventListener('devicemotion', handleMotion);
-    
+
     batteryIcon.classList.remove('charging');
     shakeIndicator.classList.remove('shaking');
 }
@@ -589,30 +602,30 @@ function stopGame() {
 // 게임 리셋
 function resetGame() {
     stopGame();
-    
+
     energy = 0;
     shakeCount = 0;
     elapsedTime = 0;
     lastMilestoneSound = 0;
-    
+
     startBtn.style.display = 'block';
     resetBtn.style.display = 'none';
     difficultySelector.style.display = 'grid';
     modeSelector.style.display = 'grid';
     document.getElementById('sensitivityControl').style.display = 'block';
-    
+
     if (currentMode === 'single') {
         playerInfo.style.display = 'none';
     }
-    
+
     instructionEl.textContent = '폰을 흔들어서 에너지를 충전하세요!';
     instructionEl.style.color = 'var(--text-dark)';
     statusMessageEl.textContent = '';
-    
+
     batteryIcon.textContent = '🔋';
     timeDisplay.textContent = '--:--';
     timeDisplay.style.color = 'var(--warning-color)';
-    
+
     updateStats();
 }
 
@@ -620,7 +633,7 @@ function resetGame() {
 function loadBestRecord() {
     const recordKey = `energy_charge_best_${currentDifficulty}`;
     const bestTime = localStorage.getItem(recordKey);
-    
+
     if (bestTime) {
         bestRecordEl.textContent = `${bestTime}초`;
     } else {
@@ -632,16 +645,16 @@ function loadBestRecord() {
 function saveBestRecord(time, shakes) {
     const recordKey = `energy_charge_best_${currentDifficulty}`;
     const bestTime = localStorage.getItem(recordKey);
-    
+
     let isNewRecord = false;
-    
+
     if (!bestTime || time < parseInt(bestTime)) {
         localStorage.setItem(recordKey, time);
         localStorage.setItem(`${recordKey}_shakes`, shakes);
         bestRecordEl.textContent = `${time}초`;
         isNewRecord = true;
     }
-    
+
     return isNewRecord;
 }
 
@@ -651,32 +664,32 @@ function startTapMode() {
     startBtn.textContent = '탭 모드 시작';
     statusMessageEl.textContent = '센서 대신 화면 탭으로 충전합니다';
     statusMessageEl.style.color = 'var(--primary-color)';
-    
+
     energyContainer.addEventListener('click', handleTap);
-    
+
     startBtn.onclick = () => {
         isCharging = true;
         energy = 0;
         shakeCount = 0;
         gameStartTime = Date.now();
-        
+
         startBtn.style.display = 'none';
         resetBtn.style.display = 'block';
-        
+
         updateStats();
     };
 }
 
 function handleTap() {
     if (!isCharging) return;
-    
+
     shakeCount++;
     energy = Math.min(100, energy + 5);
-    
+
     updateStats();
     provideHapticFeedback();
     playSound('click');
-    
+
     if (energy >= 100) {
         energyContainer.removeEventListener('click', handleTap);
         completeCharging();

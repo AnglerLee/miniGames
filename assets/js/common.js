@@ -169,38 +169,58 @@ function randomInt(min, max) {
 }
 
 // 효과음 재생 (Web Audio API 사용)
+// 오디오 컨텍스트 싱글톤 관리
+let audioContext = null;
+
+function getAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+    return audioContext;
+}
+
+// 효과음 재생 (Web Audio API 사용)
 function playSound(type) {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    try {
+        const ctx = getAudioContext();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
 
-    gainNode.gain.value = 0.3;
+        gainNode.gain.value = 0.3;
 
-    switch (type) {
-        case 'success':
-            oscillator.frequency.value = 800;
-            oscillator.type = 'sine';
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
-            break;
-        case 'fail':
-            oscillator.frequency.value = 200;
-            oscillator.type = 'sawtooth';
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.3);
-            break;
-        case 'click':
-            oscillator.frequency.value = 400;
-            oscillator.type = 'square';
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.1);
-            break;
+        const now = ctx.currentTime;
+
+        switch (type) {
+            case 'success':
+                oscillator.frequency.setValueAtTime(800, now);
+                oscillator.type = 'sine';
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                oscillator.start(now);
+                oscillator.stop(now + 0.5);
+                break;
+            case 'fail':
+                oscillator.frequency.setValueAtTime(200, now);
+                oscillator.type = 'sawtooth';
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                oscillator.start(now);
+                oscillator.stop(now + 0.3);
+                break;
+            case 'click':
+                oscillator.frequency.setValueAtTime(400, now);
+                oscillator.type = 'square';
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                oscillator.start(now);
+                oscillator.stop(now + 0.1);
+                break;
+        }
+    } catch (e) {
+        console.warn('Audio play failed:', e);
     }
 }
 

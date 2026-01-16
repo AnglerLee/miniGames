@@ -110,17 +110,17 @@ function setupActionButtons() {
 // 패턴 표시 업데이트
 function updatePatternDisplay() {
     const pattern = patterns[currentDifficulty];
-    
+
     // 시각적 표시
     patternVisual.innerHTML = '';
     const knockCount = pattern.intervals.length + 1;
-    
+
     for (let i = 0; i < knockCount; i++) {
         const beat = document.createElement('div');
         beat.className = `knock-beat ${pattern.visual[i] || 'small'}`;
         beat.textContent = '🔨';
         patternVisual.appendChild(beat);
-        
+
         if (i < knockCount - 1) {
             const pause = document.createElement('div');
             pause.className = 'knock-pause';
@@ -128,7 +128,7 @@ function updatePatternDisplay() {
             patternVisual.appendChild(pause);
         }
     }
-    
+
     // 힌트 텍스트
     patternHint.innerHTML = `<strong>리듬:</strong> ${pattern.description}`;
 }
@@ -136,31 +136,31 @@ function updatePatternDisplay() {
 // 노크 처리
 function handleKnock() {
     if (!isPlaying || isDemoMode) return;
-    
+
     const now = Date.now();
     knockTimes.push(now);
-    
+
     // 시각적 피드백
     door.classList.add('knocking');
     setTimeout(() => door.classList.remove('knocking'), 300);
-    
+
     // 노크 표시
     rhythmDisplay.textContent += '🔨';
-    
+
     // 사운드
     playKnockSound();
-    
+
     // 진동
     if (navigator.vibrate) {
         navigator.vibrate(50);
     }
-    
+
     // 패턴 시각화 업데이트
     highlightPatternBeat(knockTimes.length - 1);
-    
+
     const pattern = patterns[currentDifficulty];
     const expectedKnocks = pattern.intervals.length + 1;
-    
+
     // 모든 노크 완료
     if (knockTimes.length === expectedKnocks) {
         isPlaying = false;
@@ -182,14 +182,14 @@ function highlightPatternBeat(index) {
 // 패턴 확인
 function checkPattern() {
     attempts++;
-    
+
     const pattern = patterns[currentDifficulty];
     const intervals = [];
-    
+
     for (let i = 1; i < knockTimes.length; i++) {
         intervals.push(knockTimes[i] - knockTimes[i - 1]);
     }
-    
+
     // 정확도 계산
     const accuracies = intervals.map((interval, i) => {
         const expected = pattern.intervals[i];
@@ -203,46 +203,46 @@ function checkPattern() {
             match: diff < pattern.tolerance
         };
     });
-    
+
     const allMatch = accuracies.every(a => a.match);
     const avgAccuracy = accuracies.reduce((sum, a) => sum + a.accuracy, 0) / accuracies.length;
-    
+
     // 정확도 바 표시
     displayAccuracy(accuracies);
-    
+
     if (allMatch) {
         // 성공!
         successCount++;
         rhythmFeedback.textContent = '✅ 정답! 문이 열렸습니다!';
         rhythmFeedback.className = 'rhythm-feedback success';
-        
+
         playSound('success');
-        
+
         if (navigator.vibrate) {
             navigator.vibrate([100, 50, 100, 50, 200]);
         }
-        
+
         // 최고 기록 저장
         saveBestRecord(attempts);
         updateStats();
-        
+
         setTimeout(() => {
             showSuccessScreen(GAME_ID);
         }, 1500);
-        
+
     } else {
         // 실패
         rhythmFeedback.textContent = `❌ 틀렸습니다 (정확도: ${Math.round(avgAccuracy)}%)`;
         rhythmFeedback.className = 'rhythm-feedback error';
-        
+
         playSound('fail');
-        
+
         if (navigator.vibrate) {
             navigator.vibrate(200);
         }
-        
+
         updateStats();
-        
+
         setTimeout(() => {
             resetAttempt();
         }, 2500);
@@ -253,22 +253,22 @@ function checkPattern() {
 function displayAccuracy(accuracies) {
     accuracyBars.style.display = 'block';
     accuracyBars.innerHTML = '';
-    
+
     accuracies.forEach((acc, i) => {
         const bar = document.createElement('div');
         bar.className = 'accuracy-bar';
-        
+
         const label = document.createElement('div');
         label.className = 'accuracy-label';
         label.textContent = `노크 ${i + 1}→${i + 2}: ${Math.round(acc.accuracy)}% (${acc.interval}ms vs ${acc.expected}ms)`;
-        
+
         const container = document.createElement('div');
         container.className = 'accuracy-fill-container';
-        
+
         const fill = document.createElement('div');
         fill.className = 'accuracy-fill';
         fill.style.width = `${acc.accuracy}%`;
-        
+
         if (acc.accuracy >= 70) {
             fill.classList.add('good');
         } else if (acc.accuracy >= 40) {
@@ -276,7 +276,7 @@ function displayAccuracy(accuracies) {
         } else {
             fill.classList.add('bad');
         }
-        
+
         container.appendChild(fill);
         bar.appendChild(label);
         bar.appendChild(container);
@@ -285,22 +285,35 @@ function displayAccuracy(accuracies) {
 }
 
 // 노크 사운드
+// 노크 사운드
+let knockContext = null;
+
+function getKnockContext() {
+    if (!knockContext) {
+        knockContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (knockContext.state === 'suspended') {
+        knockContext.resume();
+    }
+    return knockContext;
+}
+
 function playKnockSound() {
     try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
+        const ctx = getKnockContext();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
         oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.value = 200;
+        gainNode.connect(ctx.destination);
+
+        oscillator.frequency.setValueAtTime(200, ctx.currentTime);
         oscillator.type = 'square';
-        gainNode.gain.value = 0.3;
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.1);
     } catch (e) {
         playSound('click');
     }
@@ -309,40 +322,40 @@ function playKnockSound() {
 // 데모 재생
 async function playDemo() {
     if (isDemoMode) return;
-    
+
     isDemoMode = true;
     demoBtn.disabled = true;
-    
+
     const pattern = patterns[currentDifficulty];
     const demoIndicator = document.createElement('div');
     demoIndicator.className = 'demo-indicator';
     demoIndicator.textContent = '데모 재생 중...';
     document.body.appendChild(demoIndicator);
-    
+
     // 리듬 초기화
     rhythmDisplay.textContent = '';
     rhythmFeedback.textContent = '';
-    
+
     // 패턴 강조 초기화
     const beats = patternVisual.querySelectorAll('.knock-beat');
     beats.forEach(b => b.classList.remove('active'));
-    
+
     // 첫 노크
     await sleep(500);
     simulateKnock(0);
-    
+
     // 나머지 노크
     for (let i = 0; i < pattern.intervals.length; i++) {
         await sleep(pattern.intervals[i]);
         simulateKnock(i + 1);
     }
-    
+
     await sleep(1000);
-    
+
     demoIndicator.remove();
     demoBtn.disabled = false;
     isDemoMode = false;
-    
+
     rhythmDisplay.textContent = '';
     beats.forEach(b => b.classList.remove('active'));
 }
@@ -351,14 +364,14 @@ async function playDemo() {
 function simulateKnock(index) {
     door.classList.add('knocking');
     setTimeout(() => door.classList.remove('knocking'), 300);
-    
+
     rhythmDisplay.textContent += '🔨';
     playKnockSound();
-    
+
     if (navigator.vibrate) {
         navigator.vibrate(50);
     }
-    
+
     highlightPatternBeat(index);
 }
 
@@ -374,7 +387,7 @@ function resetAttempt() {
     rhythmFeedback.textContent = '';
     accuracyBars.style.display = 'none';
     isPlaying = true;
-    
+
     // 패턴 강조 초기화
     const beats = patternVisual.querySelectorAll('.knock-beat');
     beats.forEach(b => b.classList.remove('active'));
@@ -390,7 +403,7 @@ function updateStats() {
 function loadBestRecord() {
     const recordKey = `secret_knock_best_${currentDifficulty}`;
     const best = localStorage.getItem(recordKey);
-    
+
     if (best) {
         bestRecordEl.textContent = `${best}회`;
     } else {
@@ -402,7 +415,7 @@ function loadBestRecord() {
 function saveBestRecord(attemptCount) {
     const recordKey = `secret_knock_best_${currentDifficulty}`;
     const best = localStorage.getItem(recordKey);
-    
+
     if (!best || attemptCount < parseInt(best)) {
         localStorage.setItem(recordKey, attemptCount);
         bestRecordEl.textContent = `${attemptCount}회`;
