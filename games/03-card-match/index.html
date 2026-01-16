@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +13,7 @@
             gap: 6px;
             margin: 15px 0;
         }
-        
+
         .difficulty-btn {
             padding: 10px 8px;
             border: 2px solid var(--secondary-color);
@@ -24,12 +25,12 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .difficulty-btn.active {
             background: var(--secondary-color);
             color: white;
         }
-        
+
         .cards-grid {
             display: grid;
             gap: 8px;
@@ -37,19 +38,19 @@
             margin: 15px auto;
             perspective: 1000px;
         }
-        
+
         .cards-grid.easy {
             grid-template-columns: repeat(3, 1fr);
         }
-        
+
         .cards-grid.medium {
             grid-template-columns: repeat(4, 1fr);
         }
-        
+
         .cards-grid.hard {
             grid-template-columns: repeat(5, 1fr);
         }
-        
+
         .card {
             aspect-ratio: 1;
             position: relative;
@@ -57,24 +58,31 @@
             transform-style: preserve-3d;
             transition: transform 0.6s;
         }
-        
+
         .card:hover:not(.flipped):not(.matched) {
             transform: scale(1.05);
         }
-        
+
         .card.flipped {
             transform: rotateY(180deg);
         }
-        
+
         .card.matched {
             animation: matchPulse 0.6s ease;
         }
-        
+
         @keyframes matchPulse {
-            0%, 100% { transform: rotateY(180deg) scale(1); }
-            50% { transform: rotateY(180deg) scale(1.2); }
+
+            0%,
+            100% {
+                transform: rotateY(180deg) scale(1);
+            }
+
+            50% {
+                transform: rotateY(180deg) scale(1.2);
+            }
         }
-        
+
         .card-face {
             position: absolute;
             width: 100%;
@@ -86,24 +94,24 @@
             border-radius: 12px;
             box-shadow: var(--shadow);
         }
-        
+
         .card-back {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-size: 40px;
         }
-        
+
         .card-front {
             background: white;
             border: 3px solid var(--primary-color);
             font-size: 45px;
             transform: rotateY(180deg);
         }
-        
+
         .card.matched .card-front {
             border-color: var(--success-color);
             background: #e8f5e9;
         }
-        
+
         .stats-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -111,7 +119,7 @@
             width: 100%;
             margin: 15px auto;
         }
-        
+
         .stat-box {
             background: white;
             padding: 12px 8px;
@@ -119,27 +127,27 @@
             text-align: center;
             box-shadow: var(--shadow);
         }
-        
+
         .stat-label {
             font-size: 11px;
             color: var(--text-light);
             margin-bottom: 3px;
         }
-        
+
         .stat-value {
             font-size: 20px;
             font-weight: bold;
             color: var(--secondary-color);
         }
-        
+
         .stat-value.timer {
             color: var(--warning-color);
         }
-        
+
         .stat-value.combo {
             color: var(--success-color);
         }
-        
+
         .combo-display {
             text-align: center;
             font-size: 20px;
@@ -149,25 +157,26 @@
             min-height: 30px;
             animation: comboAppear 0.3s ease;
         }
-        
+
         @keyframes comboAppear {
             from {
                 transform: scale(0);
                 opacity: 0;
             }
+
             to {
                 transform: scale(1);
                 opacity: 1;
             }
         }
-        
+
         .action-buttons {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 8px;
             margin: 15px 0;
         }
-        
+
         .action-btn {
             padding: 12px 16px;
             background: var(--secondary-color);
@@ -180,75 +189,216 @@
             box-shadow: var(--shadow);
             transition: all 0.2s;
         }
-        
+
         .action-btn:hover {
             transform: translateY(-2px);
         }
-        
+
         .action-btn.hint {
             background: var(--warning-color);
         }
-        
+
         .action-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
         }
-        
+
         .best-record {
             text-align: center;
             font-size: 14px;
             color: var(--text-light);
             margin: 10px 0;
         }
-        
+
         .best-record strong {
             color: var(--success-color);
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="game-header">
             <h1 class="game-title">🃏 짝 맞추기</h1>
-            <a href="../../index.html" class="home-btn">홈으로</a>
-        </div>
-        
-        <div class="game-area">
-            <div class="game-controls" id="difficultySelector">
-                <button class="difficulty-btn" data-level="easy">쉬움 (3쌍)</button>
-                <button class="difficulty-btn active" data-level="medium">보통 (8쌍)</button>
-                <button class="difficulty-btn" data-level="hard">어려움 (12쌍)</button>
+            <div class="header-right">
+                <button class="action-btn retry-btn" id="retryBtn" style="display: none;">🔄 재도전</button>
+                <a href="../../index.html" class="home-btn">홈으로</a>
             </div>
-            
+        </div>
+
+        <div class="game-area">
+            <!-- Difficulty Selector Removed -->
+            <!-- Stats Container Simplified -->
             <div class="stats-container">
                 <div class="stat-box">
-                    <div class="stat-label">시간</div>
+                    <div class="stat-label">남은 시간</div>
                     <div class="stat-value timer" id="timer">00:00</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-label">시도</div>
-                    <div class="stat-value" id="moves">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">콤보</div>
-                    <div class="stat-value combo" id="combo">0</div>
-                </div>
             </div>
-            
-            <div class="combo-display" id="comboDisplay"></div>
-            
+
             <div class="best-record" id="bestRecord"></div>
-            
-            <div class="cards-grid medium" id="cardsGrid"></div>
-            
+
+            <div class="cards-grid" id="cardsGrid"></div>
+
             <div class="action-buttons">
+                <!-- Hint button kept for functionality, but maybe less emphasized? -->
                 <button class="action-btn hint" id="hintBtn">💡 힌트 (3)</button>
-                <button class="action-btn" id="resetBtn">🔄 새 게임</button>
+                <!-- Reset button functionality merged into header Retry or similar, keeping restart here for full reset? -->
+                <button class="action-btn" id="fullResetBtn">🆕 처음부터</button>
             </div>
         </div>
     </div>
-    
+
+    <style>
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .game-title {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        /* 모바일 최적화: 여백 줄이기 */
+        .game-area {
+            padding: 5px 0;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .stat-box {
+            background: none;
+            box-shadow: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 타이머 크기 축소 */
+        .stat-value.timer {
+            font-size: 2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            display: none;
+            /* 공간 절약을 위해 라벨 숨김 (타이머만 봐도 아니까) */
+        }
+
+        .cards-grid {
+            display: grid;
+            gap: 5px;
+            width: 100%;
+            max-width: 800px;
+            margin: 10px auto;
+            perspective: 1000px;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            justify-content: center;
+        }
+
+        .card {
+            aspect-ratio: 1;
+            position: relative;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card.matched {
+            visibility: hidden;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        /* 카드 내용물 스타일 */
+        .card-face {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3.5rem;
+            /* 이모지 크기 확대 */
+            overflow: hidden;
+        }
+
+        /* 카드 뒷면: 귀여운 패턴 이미지 사용 */
+        .card-back {
+            background: url('../../assets/images/card_back_cute_pattern.png') no-repeat center center;
+            background-size: cover;
+            border: 2px solid silver;
+            color: transparent;
+            /* 기존 이모지 숨김 */
+            z-index: 2;
+        }
+
+        .card-front {
+            background: white;
+            transform: rotateY(180deg);
+            border: 2px solid var(--primary-color);
+            z-index: 1;
+        }
+
+        .game-controls,
+        .combo-display {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            .cards-grid {
+                grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
+                gap: 4px;
+            }
+
+            .card-face {
+                font-size: 2.5rem;
+                /* 모바일에서도 이모지 크기 확대 */
+            }
+
+            .stat-value.timer {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+    </div>
+
     <script src="../../assets/js/common.js"></script>
     <script src="game.js"></script>
 </body>
+
 </html>

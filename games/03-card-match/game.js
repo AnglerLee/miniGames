@@ -3,86 +3,77 @@
 const GAME_ID = 'game03';
 
 const cardsGrid = document.getElementById('cardsGrid');
-const movesEl = document.getElementById('moves');
 const timerEl = document.getElementById('timer');
-const comboEl = document.getElementById('combo');
-const comboDisplayEl = document.getElementById('comboDisplay');
 const bestRecordEl = document.getElementById('bestRecord');
 const hintBtn = document.getElementById('hintBtn');
-const resetBtn = document.getElementById('resetBtn');
-const difficultySelector = document.getElementById('difficultySelector');
+const fullResetBtn = document.getElementById('fullResetBtn');
+const retryBtn = document.getElementById('retryBtn');
 
 // 카드 아이콘
-const allIcons = ['🍎', '🍌', '🍇', '🍊', '🍓', '🍉', '🍒', '🍑', '🥝', '🥑', '🍋', '🍍'];
+const allIcons = ['🍎', '🍌', '🍇', '🍊', '🍓', '🍉', '🍒', '🍑', '🥝', '🥑', '🍋', '🍍', '🥥', '🍅', '🫐', '🍈', '🍏', '🍐', '🥭', '🌶️', '🌽', '🥕', '🥔', '🥖', '🥨', '🧀', '🥚', '🥞', '🥓', '🍔'];
 
-// 난이도 설정
-const difficulties = {
-    easy: { pairs: 3, gridClass: 'easy' },
-    medium: { pairs: 8, gridClass: 'medium' },
-    hard: { pairs: 12, gridClass: 'hard' }
-};
-
-let currentDifficulty = 'medium';
 let cards = [];
 let flippedCards = [];
 let matchedPairs = 0;
-let moves = 0;
-let combo = 0;
+let pairCount = 8;
+let initialTimeLimit = 60;
+let currentTimeLimit = 60;
+let seconds = 0;
+let gameStarted = false;
+let retryCount = 0;
+
 let hintsLeft = 3;
 let canFlip = true;
 let timerInterval = null;
-let seconds = 0;
-let gameStarted = false;
 
 // 게임 초기화
 function initGame() {
+    loadSettings();
+
     showInstructions(
         '🃏 짝 맞추기',
         [
-            '같은 그림의 카드 2장을 찾으세요',
-            '연속으로 맞추면 콤보 보너스!',
-            '최대한 빠르고 적은 시도로 완성해보세요',
-            '난이도를 선택할 수 있어요'
+            '제한 시간 내에 모든 카드의 짝을 맞추세요!',
+            '실패 시 재도전하면 시간이 1초 늘어납니다.',
+            '설정에서 난이도를 조절할 수 있습니다.',
+            '짝을 맞추면 카드는 사라집니다.'
         ],
-        setupGame
+        startGame
     );
 }
 
-// 게임 설정
-function setupGame() {
-    setupDifficultyButtons();
-    loadBestRecord();
-    startGame();
-}
-
-// 난이도 버튼 설정
-function setupDifficultyButtons() {
-    const buttons = difficultySelector.querySelectorAll('.difficulty-btn');
-    buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (gameStarted) {
-                if (!confirm('게임을 다시 시작하시겠습니까?')) {
-                    return;
-                }
-            }
-            
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentDifficulty = btn.dataset.level;
-            startGame();
-        });
-    });
+// 설정 불러오기
+function loadSettings() {
+    const settings = JSON.parse(localStorage.getItem('card_match_settings')) || { pairCount: 8, timeLimit: 60 };
+    pairCount = parseInt(settings.pairCount);
+    initialTimeLimit = parseInt(settings.timeLimit);
+    currentTimeLimit = initialTimeLimit;
+    retryCount = 0;
 }
 
 // 게임 시작
-function startGame() {
-    gameStarted = false;
+function startGame(isRetry = false) {
+    gameStarted = true;
     stopTimer();
-    
-    const { pairs, gridClass } = difficulties[currentDifficulty];
-    const selectedIcons = allIcons.slice(0, pairs);
-    
-    // 카드 배열 생성 (각 아이콘 2개씩)
+
+    if (!isRetry) {
+        // 완전 초기화 (처음부터)
+        loadSettings();
+        currentTimeLimit = initialTimeLimit;
+        retryCount = 0;
+    }
+
+    seconds = currentTimeLimit;
+    updateTimerDisplay();
+    startTimer();
+
+    // 카드 생성
+    const selectedIcons = allIcons.slice(0, pairCount);
+    // 아이콘이 부족하면 반복해서 채우기
+    while (selectedIcons.length < pairCount) {
+        selectedIcons.push(allIcons[selectedIcons.length % allIcons.length]);
+    }
+
     const cardPairs = [...selectedIcons, ...selectedIcons];
     cards = shuffleArray(cardPairs).map((icon, index) => ({
         id: index,
@@ -90,33 +81,45 @@ function startGame() {
         flipped: false,
         matched: false
     }));
-    
-    // 그리드 클래스 변경
-    cardsGrid.className = `cards-grid ${gridClass}`;
-    
+
     matchedPairs = 0;
-    moves = 0;
-    combo = 0;
-    seconds = 0;
     flippedCards = [];
     canFlip = true;
     hintsLeft = 3;
-    
-    updateStats();
-    loadBestRecord();
+
+    // 그리드 설정
+    setupGrid();
     renderCards();
-    
+    loadBestRecord();
+
     hintBtn.disabled = false;
     hintBtn.textContent = `💡 힌트 (${hintsLeft})`;
+    retryBtn.style.display = 'none';
 }
 
-// 타이머 시작
+// 그리드 계산 및 설정 (반응형 대응)
+function setupGrid() {
+    // CSS Grid Template Columns를 동적으로 조정
+    // 모바일 등 좁은 화면에서는 minmax를 줄임
+    // 화면 높이/너비에 따라 카드 크기를 계산하여 스크롤 없이 들어가도록 하는 것이 이상적이나,
+    // 간단하게 반응형 Grid로 처리.
+
+    // 카드 개수가 많을수록 minmax를 줄여서 한 줄에 많이 들어가게 함
+    const minSize = pairCount > 15 ? '40px' : (pairCount > 10 ? '50px' : '65px');
+    cardsGrid.style.gridTemplateColumns = `repeat(auto-fit, minmax(${minSize}, 1fr))`;
+}
+
+// 타이머 시작 (카운트다운)
 function startTimer() {
     if (timerInterval) return;
-    
+
     timerInterval = setInterval(() => {
-        seconds++;
+        seconds--;
         updateTimerDisplay();
+
+        if (seconds <= 0) {
+            handleTimeOver();
+        }
     }, 1000);
 }
 
@@ -133,235 +136,240 @@ function updateTimerDisplay() {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     timerEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+    if (seconds <= 10) {
+        timerEl.parentElement.style.color = 'var(--danger-color)';
+    } else {
+        timerEl.parentElement.style.color = 'var(--secondary-color)';
+    }
+}
+
+// 시간 초과 처리
+function handleTimeOver() {
+    stopTimer();
+    gameStarted = false;
+    playSound('fail');
+
+    retryBtn.style.display = 'inline-block';
+
+    showConfirmModal(
+        '시간 초과! 😓',
+        '시간이 다 되었습니다. 1초 더 긴 시간으로 재도전 하시겠습니까?',
+        '재도전 (+1초)',
+        '홈으로',
+        () => retryGame(),
+        () => location.href = '../../index.html'
+    );
+}
+
+// 재도전 (시간 1초 추가)
+function retryGame() {
+    retryCount++;
+    currentTimeLimit = initialTimeLimit + retryCount; // 1초씩 증가
+    startGame(true); // Retry 모드로 시작
 }
 
 // 카드 렌더링
 function renderCards() {
     cardsGrid.innerHTML = '';
-    
+
     cards.forEach(card => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
         cardEl.dataset.id = card.id;
-        
-        if (card.flipped || card.matched) {
+
+        // 카드 뒤집힘 상태
+        if (card.flipped) {
             cardEl.classList.add('flipped');
         }
-        
+
+        // 매칭된 상태
         if (card.matched) {
             cardEl.classList.add('matched');
+            cardEl.classList.add('flipped');
         }
-        
+
+        // 카드 내용물 (앞면/뒷면)
         cardEl.innerHTML = `
             <div class="card-face card-back">🎴</div>
             <div class="card-face card-front">${card.icon}</div>
         `;
-        
+
         cardEl.addEventListener('click', () => handleCardClick(card.id));
-        
         cardsGrid.appendChild(cardEl);
     });
 }
 
 // 카드 클릭 처리
 function handleCardClick(cardId) {
-    if (!canFlip) return;
-    
+    if (!canFlip || !gameStarted) return;
+
     const card = cards.find(c => c.id === cardId);
-    
-    // 이미 뒤집혔거나 매칭된 카드는 무시
+
     if (card.flipped || card.matched) return;
-    
-    // 첫 카드 클릭 시 타이머 시작
-    if (!gameStarted) {
-        gameStarted = true;
-        startTimer();
-    }
-    
-    // 카드 뒤집기
+
     card.flipped = true;
     flippedCards.push(card);
-    renderCards();
-    
+
+    // DOM 업데이트 (전체 렌더링 대신 해당 요소만 클래스 추가)
+    // 성능 최적화 및 깜빡임 방지
+    const cardEl = cardsGrid.querySelector(`.card[data-id="${cardId}"]`);
+    if (cardEl) cardEl.classList.add('flipped');
+
     playSound('click');
-    
-    // 두 장이 뒤집혔을 때
+
     if (flippedCards.length === 2) {
-        moves++;
-        updateStats();
         canFlip = false;
-        
-        setTimeout(() => {
-            checkMatch();
-        }, 600);
+        setTimeout(checkMatch, 600);
     }
 }
 
 // 매칭 확인
 function checkMatch() {
     const [card1, card2] = flippedCards;
-    
+
     if (card1.icon === card2.icon) {
         // 매칭 성공
         card1.matched = true;
         card2.matched = true;
         matchedPairs++;
-        combo++;
-        
+
         playSound('success');
-        
-        if (navigator.vibrate) {
-            navigator.vibrate(100);
-        }
-        
-        // 콤보 표시
-        if (combo > 1) {
-            showCombo();
-        }
-        
-        updateStats();
-        
-        // 모든 짝을 맞췄는지 확인
-        const totalPairs = difficulties[currentDifficulty].pairs;
-        if (matchedPairs === totalPairs) {
-            setTimeout(() => {
-                gameComplete();
-            }, 500);
+        if (navigator.vibrate) navigator.vibrate(50);
+
+        // DOM 업데이트 (matched 클래스 추가)
+        const el1 = cardsGrid.querySelector(`.card[data-id="${card1.id}"]`);
+        const el2 = cardsGrid.querySelector(`.card[data-id="${card2.id}"]`);
+        if (el1) el1.classList.add('matched');
+        if (el2) el2.classList.add('matched');
+
+        if (matchedPairs === pairCount) {
+            setTimeout(gameComplete, 500);
         }
     } else {
         // 매칭 실패
         card1.flipped = false;
         card2.flipped = false;
-        combo = 0; // 콤보 초기화
-        
         playSound('fail');
-        
-        updateStats();
+
+        // DOM 업데이트 (flipped 클래스 제거)
+        const el1 = cardsGrid.querySelector(`.card[data-id="${card1.id}"]`);
+        const el2 = cardsGrid.querySelector(`.card[data-id="${card2.id}"]`);
+        if (el1) el1.classList.remove('flipped');
+        if (el2) el2.classList.remove('flipped');
     }
-    
+
     flippedCards = [];
     canFlip = true;
-    renderCards();
-}
-
-// 콤보 표시
-function showCombo() {
-    comboDisplayEl.textContent = `🔥 ${combo} 콤보!`;
-    
-    setTimeout(() => {
-        comboDisplayEl.textContent = '';
-    }, 2000);
 }
 
 // 힌트 기능
 function showHint() {
     if (hintsLeft <= 0 || !gameStarted) return;
-    
+
     hintsLeft--;
     hintBtn.textContent = `💡 힌트 (${hintsLeft})`;
-    if (hintsLeft === 0) {
-        hintBtn.disabled = true;
-    }
-    
-    // 매칭되지 않은 카드 중 2개를 잠깐 보여줌
+    if (hintsLeft === 0) hintBtn.disabled = true;
+
     const unmatchedCards = cards.filter(c => !c.matched);
     if (unmatchedCards.length < 2) return;
-    
-    // 랜덤하게 2개 선택
-    const [hintCard1, hintCard2] = shuffleArray(unmatchedCards).slice(0, 2);
-    
-    hintCard1.flipped = true;
-    hintCard2.flipped = true;
-    canFlip = false;
-    renderCards();
-    
-    setTimeout(() => {
-        hintCard1.flipped = false;
-        hintCard2.flipped = false;
-        canFlip = true;
-        renderCards();
-    }, 1500);
+
+    const hintPairIcon = unmatchedCards[0].icon;
+    const pair = unmatchedCards.filter(c => c.icon === hintPairIcon);
+
+    if (pair.length === 2) {
+        // 임시 뒤집기
+        pair.forEach(c => {
+            const el = cardsGrid.querySelector(`.card[data-id="${c.id}"]`);
+            if (el) el.classList.add('flipped');
+        });
+
+        canFlip = false;
+
+        setTimeout(() => {
+            pair.forEach(c => {
+                const el = cardsGrid.querySelector(`.card[data-id="${c.id}"]`);
+                if (el && !c.matched && !c.flipped) el.classList.remove('flipped');
+            });
+            canFlip = true;
+        }, 1000);
+    }
 }
 
-// 통계 업데이트
-function updateStats() {
-    movesEl.textContent = moves;
-    comboEl.textContent = combo;
-}
-
-// 최고 기록 불러오기
+// 최고 기록 표시 (기획 변경으로 인해 설정 정보 표시 제거)
 function loadBestRecord() {
-    const recordKey = `card_match_best_${currentDifficulty}`;
-    const bestTime = localStorage.getItem(recordKey);
-    const bestMoves = localStorage.getItem(`${recordKey}_moves`);
-    
-    if (bestTime && bestMoves) {
-        const mins = Math.floor(bestTime / 60);
-        const secs = bestTime % 60;
-        const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        bestRecordEl.innerHTML = `최고 기록: <strong>${timeStr}</strong> (${bestMoves}번 시도)`;
-    } else {
-        bestRecordEl.textContent = '최고 기록이 없습니다';
-    }
-}
-
-// 최고 기록 저장
-function saveBestRecord() {
-    const recordKey = `card_match_best_${currentDifficulty}`;
-    const bestTime = localStorage.getItem(recordKey);
-    const bestMoves = localStorage.getItem(`${recordKey}_moves`);
-    
-    let isNewRecord = false;
-    
-    if (!bestTime || seconds < parseInt(bestTime)) {
-        localStorage.setItem(recordKey, seconds);
-        localStorage.setItem(`${recordKey}_moves`, moves);
-        isNewRecord = true;
-    } else if (seconds === parseInt(bestTime) && moves < parseInt(bestMoves)) {
-        localStorage.setItem(`${recordKey}_moves`, moves);
-        isNewRecord = true;
-    }
-    
-    return isNewRecord;
+    bestRecordEl.style.display = 'none';
 }
 
 // 게임 완료
 function gameComplete() {
-    gameStarted = false;
     stopTimer();
-    
-    const isNewRecord = saveBestRecord();
-    
-    const performance = moves <= difficulties[currentDifficulty].pairs + 2 ? '완벽해요!' : 
-                       moves <= difficulties[currentDifficulty].pairs * 1.5 ? '잘했어요!' : 
-                       '성공!';
-    
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    const timeStr = `${mins}분 ${secs}초`;
-    
-    if (navigator.vibrate) {
-        navigator.vibrate([100, 50, 100, 50, 200]);
-    }
-    
+    gameStarted = false;
+
     playSound('success');
-    
-    setTimeout(() => {
-        alert(`${performance}\n소요 시간: ${timeStr}\n시도 횟수: ${moves}번${isNewRecord ? '\n🎉 신기록 달성!' : ''}`);
-        showSuccessScreen(GAME_ID);
-    }, 500);
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+    showSuccessScreen(GAME_ID);
 }
 
-// 리셋 버튼
-resetBtn.addEventListener('click', () => {
-    if (gameStarted && !confirm('게임을 다시 시작하시겠습니까?')) {
-        return;
+// 커스텀 확인 모달
+function showConfirmModal(title, message, confirmText, cancelText, onConfirm, onCancel) {
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.innerHTML = `
+        <div class="modal-content fade-in">
+            <h2>${title}</h2>
+            <p>${message}</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button class="btn btn-secondary" id="modalCancelBtn">${cancelText}</button>
+                <button class="btn btn-primary" id="modalConfirmBtn">${confirmText}</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+        modal.remove();
+        if (onConfirm) onConfirm();
+    });
+
+    document.getElementById('modalCancelBtn').addEventListener('click', () => {
+        modal.remove();
+        if (onCancel) onCancel();
+    });
+}
+
+fullResetBtn.addEventListener('click', () => {
+    if (gameStarted) {
+        showConfirmModal(
+            '재시작 확인',
+            '게임을 처음부터 다시 시작하시겠습니까?',
+            '예',
+            '아니오',
+            () => startGame(false),
+            null
+        );
+    } else {
+        startGame(false);
     }
-    startGame();
 });
 
-// 힌트 버튼
+retryBtn.addEventListener('click', () => {
+    if (gameStarted) {
+        showConfirmModal(
+            '재도전 확인',
+            '현재 게임을 중단하고 재도전 하시겠습니까? (초기화)',
+            '재도전',
+            '취소',
+            () => startGame(false),
+            null
+        );
+    } else {
+        startGame(false);
+    }
+});
+
 hintBtn.addEventListener('click', showHint);
 
-// 게임 시작
 initGame();
