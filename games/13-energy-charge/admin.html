@@ -44,20 +44,11 @@
                 <h2>🎮 게임 전용 설정 (Game Config)</h2>
 
                 <div class="form-group">
-                    <label>난이도 (흔들기 강도)</label>
-                    <p class="description">에너지 충전을 위해 필요한 흔들기 강도입니다. (높음 = 더 세게 흔들어야 함)</p>
-                    <div class="range-wrap">
-                        <input type="range" id="thresholdInput" min="10" max="50" step="5" value="30">
-                        <span class="value-display" id="thresholdValue">보통 (30)</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
                     <label>충전 속도 (증가량)</label>
-                    <p class="description">한 번 흔들 때 충전되는 에너지 양입니다.</p>
+                    <p class="description">한 번 흔들 때 충전되는 에너지 양입니다. (높을수록 빠름)</p>
                     <div class="range-wrap">
-                        <input type="range" id="incrementInput" min="1" max="10" step="0.5" value="3">
-                        <span class="value-display" id="incrementValue">3%</span>
+                        <input type="range" id="incrementInput" min="0.1" max="1.0" step="0.1" value="0.5">
+                        <span class="value-display" id="incrementValue">0.5%</span>
                     </div>
                 </div>
 

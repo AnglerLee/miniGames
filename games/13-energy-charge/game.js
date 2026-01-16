@@ -1,4 +1,4 @@
-// 에너지 충전 게임 (DeviceMotion API) - 리팩토링 버전
+// 에너지 충전 게임 (DeviceMotion API) - 리팩토링 버전 (Mechanics Refined)
 
 const GAME_ID = 'game13';
 
@@ -26,12 +26,15 @@ const particleContainer = document.getElementById('particleContainer');
 
 // 기본 설정
 let settings = {
-    threshold: 20,    // 기본값 완화 (30 -> 20)
-    increment: 3,
+    // threshold 제거 (내부 고정값 사용)
+    increment: 0.5,   // 충전 속도 (기본 0.5%)
     timeLimit: 30,
-    decayRate: 0.5,   // 초당 감소율 (기본값)
+    decayRate: 0.5,   // 기본 감소율
     theme: 'default'
 };
+
+// 상수
+const MIN_MOTION_THRESHOLD = 5; // 최소 움직임 감지 임계값 (매우 낮게 설정하여 쉽게 반응)
 
 // 게임 상태
 let energy = 0;
@@ -41,7 +44,6 @@ let gameStartTime = 0;
 let elapsedTime = 0;
 let timeLeft = 0;
 let timerInterval = null;
-let decayInterval = null; // 에너지 감소용 타이머
 let lastShakeTime = 0;
 let lastMilestoneSound = 0;
 let retryCount = 0;
@@ -78,9 +80,13 @@ function initGame() {
 function loadSettings() {
     const saved = localStorage.getItem('energy_charge_settings');
     if (saved) {
-        settings = { ...settings, ...JSON.parse(saved) };
-        // decayRate가 없으면 기본값 추가
-        if (settings.decayRate === undefined) settings.decayRate = 0.5;
+        const parsed = JSON.parse(saved);
+        settings = { ...settings, ...parsed };
+
+        // 이전 설정의 threshold 등은 무시됨
+        // increment 범위 안전장치
+        if (settings.increment > 1.0) settings.increment = 0.5;
+        if (settings.increment < 0.1) settings.increment = 0.1;
     }
 }
 
@@ -111,7 +117,6 @@ function checkSensorAndStart() {
         return;
     }
 
-    // iOS 13+ 권한 확인
     if (typeof DeviceMotionEvent.requestPermission === 'function') {
         startOverlay.style.display = 'flex';
     } else {
@@ -119,7 +124,6 @@ function checkSensorAndStart() {
     }
 }
 
-// 권한 요청 후 시작
 async function requestPermissionAndStart() {
     try {
         const permission = await DeviceMotionEvent.requestPermission();
@@ -127,18 +131,16 @@ async function requestPermissionAndStart() {
             startOverlay.style.display = 'none';
             startGame();
         } else {
-            alert('센서 권한이 거부되었습니다. 탭 모드로 실행합니다.');
+            alert('센서 권한 필요. 탭 모드 실행.');
             startOverlay.style.display = 'none';
             startTapMode();
         }
     } catch (e) {
-        console.error(e);
         startOverlay.style.display = 'none';
         startTapMode();
     }
 }
 
-// 게임 시작
 function startGame() {
     stopGame();
 
@@ -149,12 +151,8 @@ function startGame() {
     elapsedTime = 0;
     lastMilestoneSound = 0;
 
-    // 난이도 설정 (재시도 시 완화)
     timeLeft = settings.timeLimit > 0 ? settings.timeLimit + (retryCount * 2) : 0;
 
-    // 재시도 시 에너지 감소 속도 완화 (선택사항, 일단은 유지)
-
-    // UI 초기화
     resetBtn.style.display = 'none';
     retryBtn.style.display = 'none';
     instructionEl.textContent = '방전되지 않게 계속 흔드세요!';
@@ -166,31 +164,26 @@ function startGame() {
 
     updateStats();
 
-    // 센서 연결
     window.addEventListener('devicemotion', handleMotion);
 
-    // 타이머 (메인 루프)
     if (settings.timeLimit > 0) {
         startTimer();
     } else {
-        // 무제한 모드
         timerInterval = setInterval(() => {
             elapsedTime = Math.floor((Date.now() - gameStartTime) / 1000);
             updateTimeDisplay();
-            processDecay(); // 감소 로직
+            processDecay();
         }, 100);
     }
 
     playSound('click');
 }
 
-// 이어하기
 function restartWithEase() {
     resetGame();
     startGame();
 }
 
-// 타이머 로직
 function startTimer() {
     updateTimeDisplay();
 
@@ -200,50 +193,42 @@ function startTimer() {
         timeLeft = currentCeiling - elapsedTime;
 
         updateTimeDisplay();
-        processDecay(); // 감소 로직
+        processDecay();
 
         if (timeLeft <= 0) {
             timeUp();
         }
-    }, 100); // 0.1초마다 실행
+    }, 100);
 }
 
-// 에너지 감소 로직 (0.1초마다 호출됨)
+// 에너지 감소 로직 (핵심 변경 사항)
 function processDecay() {
     if (!isCharging || energy <= 0) return;
 
-    // 초당 decayRate 만큼 감소 -> 0.1초당 decayRate / 10
-    // 예: decayRate가 5(%)라면 0.1초당 0.5% 감소
-    const decayPerTick = settings.decayRate / 10;
+    // 1. 기본 감소량 (초당 settings.decayRate -> 0.1초당 /10)
+    let decayPerTick = settings.decayRate / 10;
 
-    // 재시도 시 감소율 완화 (보너스)
-    const adjustedDecay = Math.max(0.1, decayPerTick - (retryCount * 0.05));
+    // 2. 동적 가중치 (Dynamic Decay)
+    // 에너지가 100%에 가까울수록 감소 속도 증가
+    // 예: 0% -> 1배, 50% -> 1.5배, 100% -> 2배
+    const weightFactor = 1 + (energy / 100);
 
-    energy = Math.max(0, energy - adjustedDecay);
-    updateStats();
-}
+    let finalDecay = decayPerTick * weightFactor;
 
-function updateTimeDisplay() {
-    if (settings.timeLimit > 0) {
-        const t = Math.max(0, timeLeft);
-        const mins = Math.floor(t / 60);
-        const secs = t % 60;
-        timeDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-
-        if (t <= 5) timeDisplay.style.color = 'var(--danger-color)';
-        else timeDisplay.style.color = 'var(--text-dark)';
-    } else {
-        const mins = Math.floor(elapsedTime / 60);
-        const secs = elapsedTime % 60;
-        timeDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    // 재시도 보너스 (감소량 완화)
+    if (retryCount > 0) {
+        finalDecay *= 0.9; // 재시도 할 때마다 10% 씩 감소량 줄임 등
     }
+
+    energy = Math.max(0, energy - finalDecay);
+    updateStats();
 }
 
 // 모션 핸들러
 function handleMotion(event) {
     if (!isCharging) return;
 
-    const acceleration = event.accelerationIncludingGravity; // 중력 포함 가속도 사용
+    const acceleration = event.accelerationIncludingGravity;
     if (!acceleration) return;
 
     const x = Math.abs(acceleration.x || 0);
@@ -251,27 +236,30 @@ function handleMotion(event) {
     const z = Math.abs(acceleration.z || 0);
     const totalAcc = x + y + z;
 
-    // threshold Check
+    // 낮은 임계값 사용 (강도 구분 없이 일단 흔들면 충전)
+    // 하지만 세게 흔들면 약간의 보너스는 유지 (Optional)
     const now = Date.now();
 
-    // 움직임 감지 (너무 자주 업데이트하지 않도록 100ms 제한)
-    if (totalAcc > settings.threshold && now - lastShakeTime > 100) {
+    if (totalAcc > MIN_MOTION_THRESHOLD && now - lastShakeTime > 80) { // 반응 속도 80ms로 상향
         lastShakeTime = now;
         shakeCount++;
 
-        // 에너지 증가
-        // 임계값 초과분을 강도로 사용
-        const intensity = Math.min(3, (totalAcc - settings.threshold) / 5);
-        let inc = settings.increment * (1 + intensity * 0.5);
+        // 충전량 계산
+        // settings.increment (0.1 ~ 1.0)
+        let inc = settings.increment;
+
+        // 강도 보너스 (미미하게 적용) - 사용자가 "강도 의미 없음"을 원했으므로 최소화
+        // 그래도 아주 세게 흔들면 1.2배 정도?
+        if (totalAcc > 30) inc *= 1.2;
 
         energy = Math.min(100, energy + inc);
 
         updateStats();
-        provideHapticFeedback();
 
-        if (Math.random() > 0.8) triggerScreenShake();
+        // 햅틱은 가끔 (배터리 절약)
+        if (shakeCount % 5 === 0) provideHapticFeedback();
 
-        // 마일스톤 사운드
+        // 마일스톤
         const milestones = [30, 50, 70, 90];
         for (let m of milestones) {
             if (energy >= m && lastMilestoneSound < m) {
@@ -287,7 +275,6 @@ function handleMotion(event) {
     }
 }
 
-// 게임 종료 (성공)
 function completeCharging() {
     const finalTime = elapsedTime;
     stopGame();
@@ -313,7 +300,6 @@ function completeCharging() {
     }, 1000);
 }
 
-// 게임 종료 (실패)
 function timeUp() {
     stopGame();
 
@@ -329,7 +315,6 @@ function timeUp() {
     alert(`시간 초과!\n에너지가 유실되었습니다.`);
 }
 
-// 게임 정지
 function stopGame() {
     isCharging = false;
     if (timerInterval) {
@@ -343,7 +328,6 @@ function stopGame() {
     shakeIndicator.classList.remove('shaking');
 }
 
-// 게임 리셋
 function resetGame() {
     stopGame();
     energy = 0;
@@ -352,7 +336,6 @@ function resetGame() {
     timeDisplay.textContent = settings.timeLimit > 0 ? `${settings.timeLimit}:00` : '00:00';
 }
 
-// 탭 모드
 function startTapMode() {
     instructionEl.textContent = '화면을 빠르게 탭하세요!';
     window.addEventListener('click', handleTap);
@@ -363,13 +346,19 @@ function startTapMode() {
 function handleTap() {
     if (!isCharging) return;
     shakeCount++;
-    energy = Math.min(100, energy + 3); // 탭 효율
+    // 탭은 조금 더 많이 줌 (힘드니까)
+    energy = Math.min(100, energy + (settings.increment * 2));
     updateStats();
     if (energy >= 100) completeCharging();
 }
 
+// ---------------------------------------------------------
 // 유틸리티
+// ---------------------------------------------------------
+
 function updateStats() {
+    // 소수점 1자리까지 표시 for debugging or precision feeling? 
+    // 아니면 정수. 사용자는 정수를 선호할 듯.
     const p = Math.floor(energy);
     energyPercent.textContent = `${p}%`;
     energyBar.style.width = `${p}%`;
@@ -388,8 +377,24 @@ function updateStats() {
     }
 }
 
+function updateTimeDisplay() {
+    if (settings.timeLimit > 0) {
+        const t = Math.max(0, timeLeft);
+        const mins = Math.floor(t / 60);
+        const secs = t % 60;
+        timeDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+        if (t <= 5) timeDisplay.style.color = 'var(--danger-color)';
+        else timeDisplay.style.color = 'var(--text-dark)';
+    } else {
+        const mins = Math.floor(elapsedTime / 60);
+        const secs = elapsedTime % 60;
+        timeDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+}
+
 function provideHapticFeedback() {
-    if (navigator.vibrate) navigator.vibrate(30);
+    if (navigator.vibrate) navigator.vibrate(10); // 짧게
 }
 
 function loadBestRecord() {
@@ -445,7 +450,6 @@ function createParticle(color) {
     let y = -20;
     let x = parseFloat(particle.style.left);
     let opacity = 1;
-
     const speed = 2 + Math.random() * 3;
 
     const anim = () => {

@@ -1,22 +1,21 @@
 const SETTINGS_KEY = 'energy_charge_settings';
 const GAME_ID = 'game13';
 
-// 기본 설정 값
+// 기본 설정 값 (업데이트됨)
 const DEFAULT_SETTINGS = {
-    threshold: 20,    // 흔들기 임계값 (기본값 수정됨)
-    increment: 3,     // 충전 증가량
+    // threshold 제거됨 (코드상으론 호환성을 위해 무시하거나 low value로 고정 가능, 여기선 제거)
+    increment: 0.5,   // 충전 속도 (기본 0.5%)
     timeLimit: 30,    // 시간 제한
     decayRate: 0.5,   // 감소 속도
     theme: 'default'  // 테마
 };
 
 // 요소 참조
-const thresholdInput = document.getElementById('thresholdInput');
-const thresholdValue = document.getElementById('thresholdValue');
+// thresholdInput 제거됨
 const incrementInput = document.getElementById('incrementInput');
 const incrementValue = document.getElementById('incrementValue');
-const decayRateInput = document.getElementById('decayRateInput');     // New
-const decayRateValue = document.getElementById('decayRateValue');     // New
+const decayRateInput = document.getElementById('decayRateInput');
+const decayRateValue = document.getElementById('decayRateValue');
 const timeInput = document.getElementById('timeInput');
 const timeValue = document.getElementById('timeValue');
 const themeSelector = document.getElementById('themeSelector');
@@ -40,14 +39,18 @@ function loadSettings() {
     const saved = localStorage.getItem(SETTINGS_KEY);
     const settings = saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
 
-    updateRangeUI(thresholdInput, thresholdValue, settings.threshold, formatThreshold);
-    updateRangeUI(incrementInput, incrementValue, settings.increment, v => `${v}%`);
-    updateRangeUI(decayRateInput, decayRateValue, settings.decayRate || 0.5, v => `${v}%/s`); // New
+    // increment range: 0.1 ~ 1.0
+    // 만약 이전 설정(1~10)이 저장되어 있다면 0.5로 리셋하는 안전장치
+    let safeIncrement = settings.increment;
+    if (safeIncrement > 1.0) safeIncrement = 0.5;
+
+    updateRangeUI(incrementInput, incrementValue, safeIncrement, v => `${v}%`);
+    updateRangeUI(decayRateInput, decayRateValue, settings.decayRate || 0.5, v => `${v}%/s`);
     updateRangeUI(timeInput, timeValue, settings.timeLimit, v => v === 0 ? '무제한' : `${v}초`);
 
-    themeSelector.value = settings.theme;
+    themeSelector.value = settings.theme || 'default';
 
-    // 미니게임 공통 설정 로드
+    // 미니게임 공통 설정
     let gameConfig = {};
     if (typeof getGameConfig === 'function') {
         gameConfig = getGameConfig(GAME_ID);
@@ -62,29 +65,21 @@ function loadSettings() {
     successMessageInput.value = gameConfig.successMessage || '축하합니다! 게임을 클리어했어요!';
 }
 
-// 헬퍼 함수들
-function formatThreshold(val) {
-    if (val < 20) return `쉬움 (${val})`;
-    if (val < 35) return `보통 (${val})`;
-    return `어려움 (${val})`;
-}
-
+// 헬퍼 함수
 function updateRangeUI(input, valueDisplay, value, formatter) {
-    input.value = value;
-    valueDisplay.textContent = formatter(parseFloat(value));
+    if (input) {
+        input.value = value;
+        if (valueDisplay) valueDisplay.textContent = formatter(parseFloat(value));
+    }
 }
 
 // 이벤트 리스너 설정
 function setupEventListeners() {
-    thresholdInput.addEventListener('input', (e) => {
-        updateRangeUI(thresholdInput, thresholdValue, e.target.value, formatThreshold);
-    });
-
     incrementInput.addEventListener('input', (e) => {
         updateRangeUI(incrementInput, incrementValue, e.target.value, v => `${v}%`);
     });
 
-    decayRateInput.addEventListener('input', (e) => { // New
+    decayRateInput.addEventListener('input', (e) => {
         updateRangeUI(decayRateInput, decayRateValue, e.target.value, v => `${v}%/s`);
     });
 
@@ -98,18 +93,16 @@ function setupEventListeners() {
 
 // 설정 저장
 function saveSettings() {
-    // 1. 게임 내부 설정 저장
     const settings = {
-        threshold: parseFloat(thresholdInput.value),
         increment: parseFloat(incrementInput.value),
         timeLimit: parseFloat(timeInput.value),
-        decayRate: parseFloat(decayRateInput.value), // New
+        decayRate: parseFloat(decayRateInput.value),
         theme: themeSelector.value
     };
 
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
 
-    // 2. 미니게임 공통 설정 저장
+    // 미니게임 공통 설정 저장
     const configStr = localStorage.getItem('treasureHunt_gameConfigs');
     const configs = configStr ? JSON.parse(configStr) : {};
 
