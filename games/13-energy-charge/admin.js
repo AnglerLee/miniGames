@@ -3,9 +3,10 @@ const GAME_ID = 'game13';
 
 // 기본 설정 값
 const DEFAULT_SETTINGS = {
-    threshold: 30,    // 흔들기 임계값
+    threshold: 20,    // 흔들기 임계값 (기본값 수정됨)
     increment: 3,     // 충전 증가량
     timeLimit: 30,    // 시간 제한
+    decayRate: 0.5,   // 감소 속도
     theme: 'default'  // 테마
 };
 
@@ -14,6 +15,8 @@ const thresholdInput = document.getElementById('thresholdInput');
 const thresholdValue = document.getElementById('thresholdValue');
 const incrementInput = document.getElementById('incrementInput');
 const incrementValue = document.getElementById('incrementValue');
+const decayRateInput = document.getElementById('decayRateInput');     // New
+const decayRateValue = document.getElementById('decayRateValue');     // New
 const timeInput = document.getElementById('timeInput');
 const timeValue = document.getElementById('timeValue');
 const themeSelector = document.getElementById('themeSelector');
@@ -34,17 +37,17 @@ function init() {
 
 // 설정 불러오기
 function loadSettings() {
-    // 1. 게임 내부 설정 로드
     const saved = localStorage.getItem(SETTINGS_KEY);
     const settings = saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
 
     updateRangeUI(thresholdInput, thresholdValue, settings.threshold, formatThreshold);
     updateRangeUI(incrementInput, incrementValue, settings.increment, v => `${v}%`);
+    updateRangeUI(decayRateInput, decayRateValue, settings.decayRate || 0.5, v => `${v}%/s`); // New
     updateRangeUI(timeInput, timeValue, settings.timeLimit, v => v === 0 ? '무제한' : `${v}초`);
 
     themeSelector.value = settings.theme;
 
-    // 2. 미니게임 공통 설정 로드
+    // 미니게임 공통 설정 로드
     let gameConfig = {};
     if (typeof getGameConfig === 'function') {
         gameConfig = getGameConfig(GAME_ID);
@@ -81,6 +84,10 @@ function setupEventListeners() {
         updateRangeUI(incrementInput, incrementValue, e.target.value, v => `${v}%`);
     });
 
+    decayRateInput.addEventListener('input', (e) => { // New
+        updateRangeUI(decayRateInput, decayRateValue, e.target.value, v => `${v}%/s`);
+    });
+
     timeInput.addEventListener('input', (e) => {
         updateRangeUI(timeInput, timeValue, parseFloat(e.target.value), v => v === 0 ? '무제한' : `${v}초`);
     });
@@ -96,6 +103,7 @@ function saveSettings() {
         threshold: parseFloat(thresholdInput.value),
         increment: parseFloat(incrementInput.value),
         timeLimit: parseFloat(timeInput.value),
+        decayRate: parseFloat(decayRateInput.value), // New
         theme: themeSelector.value
     };
 
@@ -115,14 +123,13 @@ function saveSettings() {
     localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(configs));
 
     alert('설정이 저장되었습니다.');
-    // 저장 후 페이지 이동하지 않음 (14-secret-knock flow)
 }
 
 // 기본값으로 초기화
 function resetToDefaults() {
     if (confirm('모든 설정을 기본값으로 초기화하시겠습니까?')) {
         localStorage.removeItem(SETTINGS_KEY);
-        loadSettings(); // Reload UI
+        loadSettings();
         alert('설정이 초기화되었습니다.');
     }
 }

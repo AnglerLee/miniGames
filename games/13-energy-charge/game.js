@@ -24,11 +24,12 @@ const startOverlay = document.getElementById('startOverlay');
 // 파티클 컨테이너
 const particleContainer = document.getElementById('particleContainer');
 
-// 기본 설정 (Admin에서 불러오지 못했을 때 대비)
+// 기본 설정
 let settings = {
-    threshold: 30, // 높을수록 어려움
-    increment: 3,  // 낮을수록 어려움
+    threshold: 20,    // 기본값 완화 (30 -> 20)
+    increment: 3,
     timeLimit: 30,
+    decayRate: 0.5,   // 초당 감소율 (기본값)
     theme: 'default'
 };
 
@@ -40,9 +41,10 @@ let gameStartTime = 0;
 let elapsedTime = 0;
 let timeLeft = 0;
 let timerInterval = null;
+let decayInterval = null; // 에너지 감소용 타이머
 let lastShakeTime = 0;
 let lastMilestoneSound = 0;
-let retryCount = 0; // 재시도 횟수 (난이도 완화용)
+let retryCount = 0;
 
 // 초기화
 function initGame() {
@@ -66,8 +68,7 @@ function initGame() {
         requestPermissionAndStart();
     });
 
-    // 자동 시작 시도 (페이지 로드 직후)
-    // 약간의 지연을 주어 UI가 렌더링된 후 시작
+    // 자동 시작 시도
     setTimeout(() => {
         checkSensorAndStart();
     }, 500);
@@ -78,25 +79,24 @@ function loadSettings() {
     const saved = localStorage.getItem('energy_charge_settings');
     if (saved) {
         settings = { ...settings, ...JSON.parse(saved) };
+        // decayRate가 없으면 기본값 추가
+        if (settings.decayRate === undefined) settings.decayRate = 0.5;
     }
 }
 
 // 테마 적용
 function applyTheme() {
     document.body.className = `theme-${settings.theme}`;
-
-    // 테마별 CSS 변수 설정 (필요 시)
     const root = document.documentElement;
     if (settings.theme === 'candy') {
         root.style.setProperty('--primary-color', '#ff6b6b');
         root.style.setProperty('--secondary-color', '#ff9ff3');
-        root.style.setProperty('--bg-color', '#feca57'); // 예시
+        root.style.setProperty('--bg-color', '#feca57');
     } else if (settings.theme === 'sky') {
         root.style.setProperty('--primary-color', '#48dbfb');
         root.style.setProperty('--secondary-color', '#54a0ff');
-        root.style.setProperty('--bg-color', '#c7ecee'); // 예시
+        root.style.setProperty('--bg-color', '#c7ecee');
     } else {
-        // 기본값 복구 (common.css 의존)
         root.style.removeProperty('--primary-color');
         root.style.removeProperty('--secondary-color');
         root.style.removeProperty('--bg-color');
@@ -106,7 +106,6 @@ function applyTheme() {
 // 센서 확인 및 게임 시작 로직
 function checkSensorAndStart() {
     if (typeof DeviceMotionEvent === 'undefined') {
-        // 센서 미지원 (데스크탑 등) -> 탭 모드로 전환
         statusMessageEl.textContent = '모션 센서가 감지되지 않아 탭 모드로 실행됩니다.';
         startTapMode();
         return;
@@ -114,10 +113,8 @@ function checkSensorAndStart() {
 
     // iOS 13+ 권한 확인
     if (typeof DeviceMotionEvent.requestPermission === 'function') {
-        // 권한 상태를 알 수 없으므로, 일단 오버레이 표시하여 클릭 유도
         startOverlay.style.display = 'flex';
     } else {
-        // 안드로이드 또는 구형 iOS (권한 필요 없음)
         startGame();
     }
 }
@@ -130,13 +127,14 @@ async function requestPermissionAndStart() {
             startOverlay.style.display = 'none';
             startGame();
         } else {
-            alert('센서 권한이 거부되었습니다. 게임을 플레이할 수 없습니다.');
+            alert('센서 권한이 거부되었습니다. 탭 모드로 실행합니다.');
+            startOverlay.style.display = 'none';
+            startTapMode();
         }
     } catch (e) {
         console.error(e);
-        // 에러 발생 시 (e.g. not https) 탭 모드 폴백 가능하면 좋음
         startOverlay.style.display = 'none';
-        startGame();
+        startTapMode();
     }
 }
 
@@ -152,13 +150,14 @@ function startGame() {
     lastMilestoneSound = 0;
 
     // 난이도 설정 (재시도 시 완화)
-    // 시간 제한: 기본값 + (재시도 횟수 * 2초)
     timeLeft = settings.timeLimit > 0 ? settings.timeLimit + (retryCount * 2) : 0;
+
+    // 재시도 시 에너지 감소 속도 완화 (선택사항, 일단은 유지)
 
     // UI 초기화
     resetBtn.style.display = 'none';
     retryBtn.style.display = 'none';
-    instructionEl.textContent = '폰을 신나게 흔드세요!';
+    instructionEl.textContent = '방전되지 않게 계속 흔드세요!';
     instructionEl.style.color = 'var(--primary-color)';
     statusMessageEl.textContent = retryCount > 0 ? `난이도 조정됨 (+${retryCount * 2}초)` : '';
 
@@ -170,21 +169,22 @@ function startGame() {
     // 센서 연결
     window.addEventListener('devicemotion', handleMotion);
 
-    // 타이머 시작
+    // 타이머 (메인 루프)
     if (settings.timeLimit > 0) {
         startTimer();
     } else {
-        // 무제한 모드도 시간은 측정
+        // 무제한 모드
         timerInterval = setInterval(() => {
             elapsedTime = Math.floor((Date.now() - gameStartTime) / 1000);
             updateTimeDisplay();
+            processDecay(); // 감소 로직
         }, 100);
     }
 
     playSound('click');
 }
 
-// 이어하기 (난이도 완화)
+// 이어하기
 function restartWithEase() {
     resetGame();
     startGame();
@@ -200,11 +200,27 @@ function startTimer() {
         timeLeft = currentCeiling - elapsedTime;
 
         updateTimeDisplay();
+        processDecay(); // 감소 로직
 
         if (timeLeft <= 0) {
             timeUp();
         }
-    }, 100);
+    }, 100); // 0.1초마다 실행
+}
+
+// 에너지 감소 로직 (0.1초마다 호출됨)
+function processDecay() {
+    if (!isCharging || energy <= 0) return;
+
+    // 초당 decayRate 만큼 감소 -> 0.1초당 decayRate / 10
+    // 예: decayRate가 5(%)라면 0.1초당 0.5% 감소
+    const decayPerTick = settings.decayRate / 10;
+
+    // 재시도 시 감소율 완화 (보너스)
+    const adjustedDecay = Math.max(0.1, decayPerTick - (retryCount * 0.05));
+
+    energy = Math.max(0, energy - adjustedDecay);
+    updateStats();
 }
 
 function updateTimeDisplay() {
@@ -227,7 +243,7 @@ function updateTimeDisplay() {
 function handleMotion(event) {
     if (!isCharging) return;
 
-    const acceleration = event.accelerationIncludingGravity;
+    const acceleration = event.accelerationIncludingGravity; // 중력 포함 가속도 사용
     if (!acceleration) return;
 
     const x = Math.abs(acceleration.x || 0);
@@ -235,28 +251,25 @@ function handleMotion(event) {
     const z = Math.abs(acceleration.z || 0);
     const totalAcc = x + y + z;
 
-    // 설정된 임계값 사용
-    // threshold: 10(쉬움) ~ 50(어려움)
-    // increment: 1(어려움) ~ 10(쉬움)
-
+    // threshold Check
     const now = Date.now();
 
+    // 움직임 감지 (너무 자주 업데이트하지 않도록 100ms 제한)
     if (totalAcc > settings.threshold && now - lastShakeTime > 100) {
         lastShakeTime = now;
         shakeCount++;
 
-        // 에너지 증가량 계산
-        // 세게 흔들수록 보너스
-        const intensity = Math.min(2, (totalAcc - settings.threshold) / 10);
-        let inc = settings.increment * (1 + intensity);
+        // 에너지 증가
+        // 임계값 초과분을 강도로 사용
+        const intensity = Math.min(3, (totalAcc - settings.threshold) / 5);
+        let inc = settings.increment * (1 + intensity * 0.5);
 
         energy = Math.min(100, energy + inc);
 
         updateStats();
         provideHapticFeedback();
 
-        // 화면 효과 (강도에 따라)
-        if (Math.random() > 0.7) triggerScreenShake();
+        if (Math.random() > 0.8) triggerScreenShake();
 
         // 마일스톤 사운드
         const milestones = [30, 50, 70, 90];
@@ -287,41 +300,36 @@ function completeCharging() {
     createCelebrationParticles();
     playSound('success');
 
-    // 기록 저장
     const isNewRecord = saveBestRecord(finalTime, shakeCount);
 
     setTimeout(() => {
-        showSuccessScreen(GAME_ID); // common.js 함수 호출 (모달)
-
-        // 성공 시 재시도 버튼 대신 리셋 버튼 표시
+        showSuccessScreen(GAME_ID);
         resetBtn.style.display = 'block';
         retryBtn.style.display = 'none';
 
-        // 문구 변경
         if (isNewRecord) {
-            alert(`🎉 신기록 달성!\n${finalTime}초, ${shakeCount}회 흔들기`);
+            alert(`🎉 신기록 달성!`);
         }
     }, 1000);
 }
 
-// 게임 종료 (실패/시간초과)
+// 게임 종료 (실패)
 function timeUp() {
     stopGame();
 
-    instructionEl.textContent = '방전...';
+    instructionEl.textContent = '방전됨...';
     instructionEl.style.color = 'var(--danger-color)';
 
     playSound('fail');
     if (navigator.vibrate) navigator.vibrate(500);
 
-    // 재시도 버튼 표시
     resetBtn.style.display = 'block';
     retryBtn.style.display = 'block';
 
-    alert(`시간 초과!\n에너지가 ${Math.floor(energy)}% 까지만 찼습니다.\n\n[이어하기]를 누르면 시간을 조금 더 드려요!`);
+    alert(`시간 초과!\n에너지가 유실되었습니다.`);
 }
 
-// 게임 정지 및 정리
+// 게임 정지
 function stopGame() {
     isCharging = false;
     if (timerInterval) {
@@ -329,13 +337,13 @@ function stopGame() {
         timerInterval = null;
     }
     window.removeEventListener('devicemotion', handleMotion);
-    window.removeEventListener('click', handleTap); // 탭 모드 제거용
+    window.removeEventListener('click', handleTap);
 
     batteryIcon.classList.remove('charging');
     shakeIndicator.classList.remove('shaking');
 }
 
-// 게임 리셋 (UI만)
+// 게임 리셋
 function resetGame() {
     stopGame();
     energy = 0;
@@ -344,29 +352,23 @@ function resetGame() {
     timeDisplay.textContent = settings.timeLimit > 0 ? `${settings.timeLimit}:00` : '00:00';
 }
 
-// 탭 모드 (센서 없을 때 대타)
+// 탭 모드
 function startTapMode() {
     instructionEl.textContent = '화면을 빠르게 탭하세요!';
-    // 탭 리스너 추가
     window.addEventListener('click', handleTap);
-    startGame(); // 게임 로직 시작 (시간 등)
-    // 탭 모드용 오버라이드
+    startGame();
     window.removeEventListener('devicemotion', handleMotion);
 }
 
 function handleTap() {
     if (!isCharging) return;
     shakeCount++;
-    energy = Math.min(100, energy + 2); // 탭은 일정량 증가
+    energy = Math.min(100, energy + 3); // 탭 효율
     updateStats();
-
     if (energy >= 100) completeCharging();
 }
 
-// ==========================================
-// 유틸리티 함수들 (기존 유지/수정)
-// ==========================================
-
+// 유틸리티
 function updateStats() {
     const p = Math.floor(energy);
     energyPercent.textContent = `${p}%`;
@@ -374,7 +376,6 @@ function updateStats() {
     energyBar.textContent = `${p}%`;
     shakeCountEl.textContent = shakeCount;
 
-    // 색상 변경
     if (p < 30) {
         batteryIcon.textContent = '🪫';
         energyBar.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
@@ -414,10 +415,6 @@ function saveBestRecord(time, shakes) {
     return isNew;
 }
 
-// 사운드 및 효과 함수들은 기존 로직 재활용 또는 common.js 활용
-// (playMilestoneSound, playShakeSound, triggerScreenShake, createCelebrationParticles 등)
-// 여기서는 간략화를 위해 주요 로직 포함.
-
 function triggerScreenShake() {
     energyContainer.classList.add('screen-shake');
     setTimeout(() => energyContainer.classList.remove('screen-shake'), 300);
@@ -445,13 +442,11 @@ function createParticle(color) {
     particle.style.zIndex = '9999';
     particleContainer.appendChild(particle);
 
-    // 간단한 애니메이션
     let y = -20;
     let x = parseFloat(particle.style.left);
     let opacity = 1;
 
     const speed = 2 + Math.random() * 3;
-    const wobble = Math.random() * 2;
 
     const anim = () => {
         y += speed;
@@ -466,8 +461,6 @@ function createParticle(color) {
     requestAnimationFrame(anim);
 }
 
-// AudioContext 등 사운드 관련은 common.js의 playSound 사용 가정
-// 마일스톤 사운드는 직접 구현 (game.js 기존 코드 참조)
 let toneContext = null;
 function playMilestoneSound(milestone) {
     if (!toneContext) toneContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -488,5 +481,4 @@ function playMilestoneSound(milestone) {
     } catch (e) { }
 }
 
-// 게임 시작 진입점
 initGame();
