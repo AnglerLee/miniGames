@@ -26,15 +26,12 @@ const particleContainer = document.getElementById('particleContainer');
 
 // 기본 설정
 let settings = {
-    // threshold 제거 (내부 고정값 사용)
+    threshold: 30,    // 기본 임계값 (설정 가능)
     increment: 0.5,   // 충전 속도 (기본 0.5%)
     timeLimit: 30,
     decayRate: 0.5,   // 기본 감소율
     theme: 'default'
 };
-
-// 상수
-const MIN_MOTION_THRESHOLD = 15; // 기본 임계값 (중력 가속도 ~9.8 제외 및 노이즈 방지)
 
 // 게임 상태
 let energy = 0;
@@ -83,10 +80,10 @@ function loadSettings() {
         const parsed = JSON.parse(saved);
         settings = { ...settings, ...parsed };
 
-        // 이전 설정의 threshold 등은 무시됨
-        // increment 범위 안전장치
+        // 안전장치
         if (settings.increment > 1.0) settings.increment = 0.5;
         if (settings.increment < 0.1) settings.increment = 0.1;
+        if (!settings.threshold) settings.threshold = 30; // Fallback
     }
 }
 
@@ -155,7 +152,7 @@ function startGame() {
 
     resetBtn.style.display = 'none';
     retryBtn.style.display = 'none';
-    instructionEl.textContent = '방전되지 않게 계속 흔드세요!';
+    instructionEl.textContent = `강도 ${settings.threshold} 이상으로 흔드세요!`;
     instructionEl.style.color = 'var(--primary-color)';
     statusMessageEl.textContent = retryCount > 0 ? `난이도 조정됨 (+${retryCount * 2}초)` : '';
 
@@ -201,23 +198,17 @@ function startTimer() {
     }, 100);
 }
 
-// 에너지 감소 로직 (핵심 변경 사항)
+// 에너지 감소 로직
 function processDecay() {
     if (!isCharging || energy <= 0) return;
 
-    // 1. 기본 감소량 (초당 settings.decayRate -> 0.1초당 /10)
     let decayPerTick = settings.decayRate / 10;
-
-    // 2. 동적 가중치 (Dynamic Decay)
-    // 에너지가 100%에 가까울수록 감소 속도 증가
-    // 예: 0% -> 1배, 50% -> 1.5배, 100% -> 2배
     const weightFactor = 1 + (energy / 100);
 
     let finalDecay = decayPerTick * weightFactor;
 
-    // 재시도 보너스 (감소량 완화)
     if (retryCount > 0) {
-        finalDecay *= 0.9; // 재시도 할 때마다 10% 씩 감소량 줄임 등
+        finalDecay *= 0.9;
     }
 
     energy = Math.max(0, energy - finalDecay);
@@ -236,30 +227,24 @@ function handleMotion(event) {
     const z = Math.abs(acceleration.z || 0);
     const totalAcc = x + y + z;
 
-    // 낮은 임계값 사용 (강도 구분 없이 일단 흔들면 충전)
-    // 하지만 세게 흔들면 약간의 보너스는 유지 (Optional)
     const now = Date.now();
 
-    if (totalAcc > MIN_MOTION_THRESHOLD && now - lastShakeTime > 80) { // 반응 속도 80ms로 상향
+    // Configurable Threshold 사용
+    if (totalAcc > settings.threshold && now - lastShakeTime > 80) {
         lastShakeTime = now;
         shakeCount++;
 
-        // 충전량 계산
-        // settings.increment (0.1 ~ 1.0)
         let inc = settings.increment;
 
-        // 강도 보너스 (미미하게 적용) - 사용자가 "강도 의미 없음"을 원했으므로 최소화
-        // 그래도 아주 세게 흔들면 1.2배 정도?
-        if (totalAcc > 30) inc *= 1.2;
+        // 강도 보너스 (Threshold + 10 이상이면 약간 보너스)
+        if (totalAcc > settings.threshold + 10) inc *= 1.2;
 
         energy = Math.min(100, energy + inc);
 
         updateStats();
 
-        // 햅틱은 가끔 (배터리 절약)
         if (shakeCount % 5 === 0) provideHapticFeedback();
 
-        // 마일스톤
         const milestones = [30, 50, 70, 90];
         for (let m of milestones) {
             if (energy >= m && lastMilestoneSound < m) {
@@ -346,7 +331,6 @@ function startTapMode() {
 function handleTap() {
     if (!isCharging) return;
     shakeCount++;
-    // 탭은 조금 더 많이 줌 (힘드니까)
     energy = Math.min(100, energy + (settings.increment * 2));
     updateStats();
     if (energy >= 100) completeCharging();
@@ -357,8 +341,6 @@ function handleTap() {
 // ---------------------------------------------------------
 
 function updateStats() {
-    // 소수점 1자리까지 표시 for debugging or precision feeling? 
-    // 아니면 정수. 사용자는 정수를 선호할 듯.
     const p = Math.floor(energy);
     energyPercent.textContent = `${p}%`;
     energyBar.style.width = `${p}%`;
@@ -394,7 +376,7 @@ function updateTimeDisplay() {
 }
 
 function provideHapticFeedback() {
-    if (navigator.vibrate) navigator.vibrate(10); // 짧게
+    if (navigator.vibrate) navigator.vibrate(10);
 }
 
 function loadBestRecord() {

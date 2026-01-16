@@ -1,17 +1,18 @@
 const SETTINGS_KEY = 'energy_charge_settings';
 const GAME_ID = 'game13';
 
-// 기본 설정 값 (업데이트됨)
+// 기본 설정 값
 const DEFAULT_SETTINGS = {
-    // threshold 제거됨 (코드상으론 호환성을 위해 무시하거나 low value로 고정 가능, 여기선 제거)
-    increment: 0.5,   // 충전 속도 (기본 0.5%)
+    threshold: 30,    // 흔들기 임계값 (재추가됨)
+    increment: 0.5,   // 충전 속도
     timeLimit: 30,    // 시간 제한
     decayRate: 0.5,   // 감소 속도
     theme: 'default'  // 테마
 };
 
 // 요소 참조
-// thresholdInput 제거됨
+const thresholdInput = document.getElementById('thresholdInput');
+const thresholdValue = document.getElementById('thresholdValue');
 const incrementInput = document.getElementById('incrementInput');
 const incrementValue = document.getElementById('incrementValue');
 const decayRateInput = document.getElementById('decayRateInput');
@@ -39,12 +40,10 @@ function loadSettings() {
     const saved = localStorage.getItem(SETTINGS_KEY);
     const settings = saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
 
-    // increment range: 0.1 ~ 1.0
-    // 만약 이전 설정(1~10)이 저장되어 있다면 0.5로 리셋하는 안전장치
-    let safeIncrement = settings.increment;
-    if (safeIncrement > 1.0) safeIncrement = 0.5;
+    if (settings.increment > 1.0) settings.increment = 0.5;
 
-    updateRangeUI(incrementInput, incrementValue, safeIncrement, v => `${v}%`);
+    updateRangeUI(thresholdInput, thresholdValue, settings.threshold || 30, v => `${v}`);
+    updateRangeUI(incrementInput, incrementValue, settings.increment, v => `${v}%`);
     updateRangeUI(decayRateInput, decayRateValue, settings.decayRate || 0.5, v => `${v}%/s`);
     updateRangeUI(timeInput, timeValue, settings.timeLimit, v => v === 0 ? '무제한' : `${v}초`);
 
@@ -75,6 +74,10 @@ function updateRangeUI(input, valueDisplay, value, formatter) {
 
 // 이벤트 리스너 설정
 function setupEventListeners() {
+    thresholdInput.addEventListener('input', (e) => {
+        updateRangeUI(thresholdInput, thresholdValue, e.target.value, v => `${v}`);
+    });
+
     incrementInput.addEventListener('input', (e) => {
         updateRangeUI(incrementInput, incrementValue, e.target.value, v => `${v}%`);
     });
@@ -94,6 +97,7 @@ function setupEventListeners() {
 // 설정 저장
 function saveSettings() {
     const settings = {
+        threshold: parseFloat(thresholdInput.value),
         increment: parseFloat(incrementInput.value),
         timeLimit: parseFloat(timeInput.value),
         decayRate: parseFloat(decayRateInput.value),

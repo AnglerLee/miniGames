@@ -14,7 +14,7 @@ function loadSettings() {
     document.getElementById('successMessage').value = myConfig.successMessage || '';
 
     // 게임별 추가 설정 로드
-    document.getElementById('timeLimit').value = myConfig.timeLimit || 60;
+    document.getElementById('timeLimit').value = myConfig.timeLimit || 20;
     document.getElementById('totalQuestions').value = myConfig.totalQuestions || 15;
     document.getElementById('passScore').value = myConfig.passScore || 12;
 }
@@ -26,7 +26,7 @@ function saveSettings(e) {
     // 1. 글로벌 설정 저장
     const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
 
-    const timeLimit = parseInt(document.getElementById('timeLimit').value) || 60;
+    const timeLimit = parseInt(document.getElementById('timeLimit').value) || 20;
     const totalQuestions = parseInt(document.getElementById('totalQuestions').value) || 15;
     const passScore = parseInt(document.getElementById('passScore').value) || 12;
 

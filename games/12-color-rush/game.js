@@ -32,7 +32,7 @@ let correctCount = 0;
 let isMatch = false;
 let isProcessing = false;
 let timer = null;
-let timeLimit = 60;
+let timeLimit = 20;
 
 let passScore = 12;
 
@@ -40,8 +40,7 @@ let passScore = 12;
 function initGame() {
     // 설정 로드
     config = getGameConfig(GAME_ID);
-    timeLimit = config.timeLimit || 60;
-
+    timeLimit = config.timeLimit || 20;
     passScore = config.passScore || 12;
 
     // 최고 기록 표시 (옵션)
