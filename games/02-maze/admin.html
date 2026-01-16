@@ -1,85 +1,25 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>미로 탈출 - 관리자 설정</title>
-    <link rel="stylesheet" href="../../assets/css/common.css">
-    <style>
-        .admin-container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-save {
-            background-color: var(--success-color);
-            color: white;
-        }
-
-        .btn-reset {
-            background-color: var(--danger-color);
-            color: white;
-        }
-
-        .btn-home {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        h2 {
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/admin-theme.css">
 </head>
-
 <body>
-    <div class="admin-container">
-        <h1>🔧 게임 설정 (관리자)</h1>
+    <div class="container">
+        <a href="../../admin.html" class="main-link">
+            ← 전체 게임 목록
+        </a>
 
-        <form id="settingsForm">
+        <header class="admin-header">
+            <h1>🔧 게임 설정 (관리자)</h1>
+            <div class="subtitle">게임 설정 관리</div>
+        </header>
+
+        <div class="admin-form-card">
+            <form id="settingsForm">
+                
             <div class="form-group"
                 style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
                 <label for="activeDifficulty">🎮 적용할 난이도</label>
@@ -139,11 +79,12 @@
                 <button type="button" class="btn btn-reset" id="resetBtn">초기화</button>
                 <button type="submit" class="btn btn-save">저장하기</button>
             </div>
-        </form>
+        
+            </form>
+        </div>
     </div>
 
     <script src="../../assets/js/common.js"></script>
     <script src="admin.js"></script>
 </body>
-
 </html>
