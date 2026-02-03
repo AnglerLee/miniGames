@@ -14,7 +14,7 @@ const games = [
     { id: 'game11', name: '순서대로 터치하기', icon: '🔢', path: 'games/11-sequence-tap' },
     { id: 'game12', name: '색깔 스피드', icon: '🌈', path: 'games/12-color-rush' },
     { id: 'game13', name: '에너지 충전', icon: '⚡', path: 'games/13-energy-charge' },
-    { id: 'game14', name: '비밀 노크', icon: '🚪', path: 'games/14-secret-knock' },
+
     { id: 'game15', name: '데시벨 측정기', icon: '🔊', path: 'games/15-decibel-meter' },
     { id: 'game16', name: '매직 컴퍼스', icon: '🧭', path: 'games/16-magic-compass' },
     { id: 'game17', name: '바코드 스캐너', icon: '📱', path: 'games/17-barcode-scanner' },
