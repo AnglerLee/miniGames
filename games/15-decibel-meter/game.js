@@ -5,7 +5,6 @@ const GAME_ID = 'game15';
 // DOM 요소
 const volumeBar = document.getElementById('volumeBar');
 const volumeLevel = document.getElementById('volumeLevel');
-const waveformCanvas = document.getElementById('waveformCanvas');
 const targetLine = document.getElementById('targetLine');
 const dangerLine = document.getElementById('dangerLine');
 const sustainGauge = document.getElementById('sustainGauge');
@@ -13,31 +12,23 @@ const sustainFill = document.getElementById('sustainFill');
 const alarmOverlay = document.getElementById('alarmOverlay');
 
 // 통계 요소
-const currentLevel = document.getElementById('currentLevel');
-const peakLevel = document.getElementById('peakLevel');
 const timeDisplay = document.getElementById('timeDisplay');
 const bestRecordEl = document.getElementById('bestRecord');
 
 // 미션 요소
-const missionIcon = document.getElementById('missionIcon');
 const missionText = document.getElementById('missionText');
-const missionHint = document.getElementById('missionHint');
 
 // 버튼
-const difficultySelector = document.getElementById('difficultySelector');
-const modeSelector = document.getElementById('modeSelector');
 const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
 const statusMessage = document.getElementById('statusMessage');
 
 // 오디오 변수
-let audioContext, analyser, microphone, dataArray;
+let gameAudioContext, analyser, microphone, dataArray;
 let isListening = false;
 let animationId = null;
 
-// Canvas 설정
-const canvasCtx = waveformCanvas.getContext('2d');
-let canvasWidth, canvasHeight;
+
 
 // 난이도 설정
 const difficulties = {
@@ -75,7 +66,7 @@ const missions = [
 
 // 게임 상태
 let currentDifficulty = 'easy';
-let currentMode = 'instant'; // 'instant' or 'sustain'
+// 지속 모드로 고정 (instant 모드 제거)
 let currentMission = 0;
 let currentVolume = 0;
 let peakVolume = 0;
@@ -92,9 +83,9 @@ function initGame() {
         '🔊 데시벨 측정기',
         [
             '마이크에 대고 큰 소리를 내세요',
-            '목표선까지 소리를 채우면 성공!',
-            '난이도와 게임 모드를 선택할 수 있어요',
-            '지속 모드에서는 일정 시간 유지해야 합니다'
+            '목표 음량을 일정 시간 유지하면 성공!',
+            '소리가 너무 크면 실패하니 주의하세요',
+            'Admin 페이지에서 난이도를 조정할 수 있어요'
         ],
         setupGame
     );
@@ -102,60 +93,46 @@ function initGame() {
 
 // 게임 설정
 function setupGame() {
-    setupCanvas();
-    setupDifficultyButtons();
-    setupModeButtons();
+    loadGameConfig(); // Admin 설정 로드
     setupActionButtons();
     updateMission();
     updateTargetLine();
     loadBestRecord();
 }
 
-// Canvas 설정
-function setupCanvas() {
-    canvasWidth = waveformCanvas.offsetWidth;
-    canvasHeight = waveformCanvas.offsetHeight;
-    waveformCanvas.width = canvasWidth;
-    waveformCanvas.height = canvasHeight;
-}
 
-// 난이도 버튼 설정
-function setupDifficultyButtons() {
-    const buttons = difficultySelector.querySelectorAll('.difficulty-btn');
-    buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (isListening) return;
-            
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentDifficulty = btn.dataset.level;
-            updateTargetLine();
-            loadBestRecord();
-        });
-    });
-}
 
-// 모드 버튼 설정
-function setupModeButtons() {
-    const buttons = modeSelector.querySelectorAll('.mode-btn');
-    buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (isListening) return;
-            
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentMode = btn.dataset.mode;
-            
-            // 지속 게이지 표시/숨김
-            if (currentMode === 'sustain') {
-                sustainGauge.style.display = 'block';
-                sustainFill.style.width = '0%';
-                sustainFill.textContent = '0.0초';
-            } else {
-                sustainGauge.style.display = 'none';
+// Admin 설정 로드
+function loadGameConfig() {
+    const savedConfig = localStorage.getItem('game15_config');
+    if (savedConfig) {
+        try {
+            const config = JSON.parse(savedConfig);
+            // Admin에서 설정한 난이도 값으로 difficulties 객체 업데이트
+            if (config.difficulties) {
+                Object.assign(difficulties, config.difficulties);
             }
-        });
-    });
+            // Admin에서 선택한 난이도를 현재 난이도로 설정
+            if (config.currentDifficulty) {
+                currentDifficulty = config.currentDifficulty;
+            } else {
+                currentDifficulty = 'easy'; // 기본값
+            }
+        } catch (error) {
+            console.error('설정 로드 실패:', error);
+            currentDifficulty = 'easy';
+        }
+    } else {
+        // 저장된 설정이 없으면 기본값
+        currentDifficulty = 'easy';
+    }
+
+    // 지속 모드로 고정 - 게이지 항상 표시
+    sustainGauge.style.display = 'block';
+    sustainFill.style.width = '0%';
+    sustainFill.textContent = '0.0초';
+
+    console.log(`난이도 로드됨: ${currentDifficulty}`, difficulties[currentDifficulty]);
 }
 
 // 액션 버튼 설정
@@ -167,9 +144,10 @@ function setupActionButtons() {
 // 미션 업데이트
 function updateMission() {
     const mission = missions[currentMission];
-    missionIcon.textContent = mission.icon;
-    missionText.textContent = mission.text;
-    missionHint.textContent = mission.hint;
+    const missionText = document.getElementById('missionText');
+    if (missionText) {
+        missionText.textContent = `${mission.icon} ${mission.text}`;
+    }
 }
 
 // 목표선 업데이트
@@ -177,7 +155,7 @@ function updateTargetLine() {
     const config = difficulties[currentDifficulty];
     const targetPosition = 100 - config.target;
     targetLine.style.top = `${targetPosition}%`;
-    
+
     // 위험선 설정
     if (config.maxLimit < 100) {
         dangerLine.style.display = 'block';
@@ -191,47 +169,45 @@ function updateTargetLine() {
 // 마이크 시작
 async function startMicrophone() {
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ 
+        const stream = await navigator.mediaDevices.getUserMedia({
             audio: {
                 echoCancellation: true,
                 noiseSuppression: true,
                 autoGainControl: false
             }
         });
-        
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioContext.createAnalyser();
-        microphone = audioContext.createMediaStreamSource(stream);
-        
+
+        gameAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = gameAudioContext.createAnalyser();
+        microphone = gameAudioContext.createMediaStreamSource(stream);
+
         analyser.fftSize = 2048;
         analyser.smoothingTimeConstant = 0.8;
         microphone.connect(analyser);
-        
+
         dataArray = new Uint8Array(analyser.frequencyBinCount);
-        
+
         isListening = true;
         startTime = Date.now();
         peakVolume = 0;
         sustainStartTime = 0;
         sustainDuration = 0;
-        
+
         startBtn.style.display = 'none';
         stopBtn.style.display = 'block';
-        difficultySelector.style.display = 'none';
-        modeSelector.style.display = 'none';
-        
+
         statusMessage.textContent = '소리를 내보세요!';
         statusMessage.className = 'status-message';
-        
+
         // 타이머 시작
         const config = difficulties[currentDifficulty];
         if (config.timeLimit > 0) {
             startTimer();
         }
-        
+
         // 측정 시작
         measureVolume();
-        
+
     } catch (error) {
         console.error('Microphone error:', error);
         statusMessage.textContent = '마이크 권한이 필요합니다';
@@ -245,11 +221,11 @@ function startTimer() {
         elapsedTime = Math.floor((Date.now() - startTime) / 1000);
         const config = difficulties[currentDifficulty];
         const timeLeft = config.timeLimit - elapsedTime;
-        
+
         const mins = Math.floor(timeLeft / 60);
         const secs = timeLeft % 60;
         timeDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        
+
         if (timeLeft <= 0) {
             timeUp();
         }
@@ -261,164 +237,130 @@ function timeUp() {
     stopMicrophone();
     statusMessage.textContent = '시간 초과!';
     statusMessage.className = 'status-message danger';
-    
+
     playSound('fail');
-    
+
     setTimeout(() => {
-        showFailScreen('시간 내에 목표를 달성하지 못했습니다!');
+        // 재시도 콜백과 함께 실패 화면 표시
+        showFailScreen(
+            '시간 내에 목표를 달성하지 못했습니다!',
+            GAME_ID,
+            retryWithEasierDifficulty
+        );
     }, 1000);
+}
+
+// 재시도 시 난이도 완화
+function retryWithEasierDifficulty() {
+    const config = difficulties[currentDifficulty];
+    if (config.timeLimit > 0) {
+        config.timeLimit += 1;
+        console.log(`난이도 완화: 시간 제한 +1초 (${config.timeLimit}초)`);
+    }
+    // 지속 시간도 0.5초 감소 (최소 1초)
+    if (config.sustainTime > 1) {
+        config.sustainTime = Math.max(1, config.sustainTime - 0.5);
+        console.log(`난이도 완화: 지속 시간 -0.5초 (${config.sustainTime}초)`);
+    }
+    // 지속 게이지 리셋
+    sustainFill.style.width = '0%';
+    sustainFill.textContent = '0.0초';
+    // 게임 재시작
+    startMicrophone();
 }
 
 // 볼륨 측정
 function measureVolume() {
     if (!isListening) return;
-    
+
     analyser.getByteFrequencyData(dataArray);
-    
+
     // RMS 계산 (Root Mean Square)
     let sum = 0;
     for (let i = 0; i < dataArray.length; i++) {
         sum += dataArray[i] * dataArray[i];
     }
     const rms = Math.sqrt(sum / dataArray.length);
-    
+
     // 0-100% 범위로 변환
     currentVolume = Math.min(100, (rms / 128) * 100);
     peakVolume = Math.max(peakVolume, currentVolume);
-    
+
     // UI 업데이트
     updateUI();
-    
-    // 파형 그리기
-    drawWaveform();
-    
+
     // 게임 로직 체크
     checkGameLogic();
-    
+
     animationId = requestAnimationFrame(measureVolume);
 }
 
 // UI 업데이트
 function updateUI() {
     const percentage = Math.floor(currentVolume);
-    
+
     volumeBar.style.height = `${currentVolume}%`;
     volumeLevel.textContent = `${percentage}%`;
-    currentLevel.textContent = `${percentage}%`;
-    peakLevel.textContent = `${Math.floor(peakVolume)}%`;
-    
-    // 색상 변경
-    const config = difficulties[currentDifficulty];
-    
-    if (currentVolume >= config.target && currentVolume <= config.maxLimit) {
-        volumeLevel.className = 'volume-level success';
-    } else if (currentVolume > config.maxLimit) {
-        volumeLevel.className = 'volume-level danger';
-    } else {
-        volumeLevel.className = 'volume-level';
-    }
-}
-
-// 파형 그리기
-function drawWaveform() {
-    analyser.getByteTimeDomainData(dataArray);
-    
-    canvasCtx.fillStyle = '#1a1a1a';
-    canvasCtx.fillRect(0, 0, canvasWidth, canvasHeight);
-    
-    canvasCtx.lineWidth = 2;
-    
-    // 볼륨에 따라 색상 변경
-    if (currentVolume < 30) {
-        canvasCtx.strokeStyle = '#3498db';
-    } else if (currentVolume < 70) {
-        canvasCtx.strokeStyle = '#f39c12';
-    } else {
-        canvasCtx.strokeStyle = '#e74c3c';
-    }
-    
-    canvasCtx.beginPath();
-    
-    const sliceWidth = canvasWidth / dataArray.length;
-    let x = 0;
-    
-    for (let i = 0; i < dataArray.length; i++) {
-        const v = dataArray[i] / 128.0;
-        const y = v * canvasHeight / 2;
-        
-        if (i === 0) {
-            canvasCtx.moveTo(x, y);
-        } else {
-            canvasCtx.lineTo(x, y);
-        }
-        
-        x += sliceWidth;
-    }
-    
-    canvasCtx.lineTo(canvasWidth, canvasHeight / 2);
-    canvasCtx.stroke();
 }
 
 // 게임 로직 체크
 function checkGameLogic() {
     const config = difficulties[currentDifficulty];
-    
+
     // 상한선 체크 (경보)
     if (currentVolume > config.maxLimit) {
         triggerAlarm();
     } else {
         clearAlarm();
     }
-    
-    if (currentMode === 'instant') {
-        // 순간 소리 모드
-        if (currentVolume >= config.target && currentVolume <= config.maxLimit) {
+
+    // 지속 모드로 고정
+    if (currentVolume >= config.target && currentVolume <= config.maxLimit) {
+        if (sustainStartTime === 0) {
+            sustainStartTime = Date.now();
+        }
+        sustainDuration = (Date.now() - sustainStartTime) / 1000;
+
+        const progress = (sustainDuration / config.sustainTime) * 100;
+        sustainFill.style.width = `${Math.min(100, progress)}%`;
+        sustainFill.textContent = `${sustainDuration.toFixed(1)}초`;
+
+        if (sustainDuration >= config.sustainTime) {
             gameSuccess();
         }
-    } else if (currentMode === 'sustain') {
-        // 지속 모드
-        if (currentVolume >= config.target && currentVolume <= config.maxLimit) {
-            if (sustainStartTime === 0) {
-                sustainStartTime = Date.now();
-            }
-            sustainDuration = (Date.now() - sustainStartTime) / 1000;
-            
-            const progress = (sustainDuration / config.sustainTime) * 100;
-            sustainFill.style.width = `${Math.min(100, progress)}%`;
-            sustainFill.textContent = `${sustainDuration.toFixed(1)}초`;
-            
-            if (sustainDuration >= config.sustainTime) {
-                gameSuccess();
-            }
-        } else {
-            // 목표 벗어남 - 리셋
-            sustainStartTime = 0;
-            sustainDuration = 0;
-            sustainFill.style.width = '0%';
-            sustainFill.textContent = '0.0초';
-        }
+    } else {
+        // 목표 벗어남 - 리셋
+        sustainStartTime = 0;
+        sustainDuration = 0;
+        sustainFill.style.width = '0%';
+        sustainFill.textContent = '0.0초';
     }
 }
 
 // 경보 발동
 function triggerAlarm() {
     alarmOverlay.classList.add('active');
-    
+
     if (!alarmTimeout) {
         playSound('fail');
-        
+
         if (navigator.vibrate) {
             navigator.vibrate([200, 100, 200]);
         }
-        
+
         // 3초 후 실패
         alarmTimeout = setTimeout(() => {
             stopMicrophone();
             statusMessage.textContent = '너무 시끄러워서 실패!';
             statusMessage.className = 'status-message danger';
-            
+
             setTimeout(() => {
-                showFailScreen('소리가 너무 컸습니다! 적당한 크기로 외쳐주세요.');
+                // 재시도 콜백과 함께 실패 화면 표시
+                showFailScreen(
+                    '소리가 너무 컸습니다! 적당한 크기로 외쳐주세요.',
+                    GAME_ID,
+                    retryWithEasierDifficulty
+                );
             }, 1000);
         }, 3000);
     }
@@ -427,7 +369,7 @@ function triggerAlarm() {
 // 경보 해제
 function clearAlarm() {
     alarmOverlay.classList.remove('active');
-    
+
     if (alarmTimeout) {
         clearTimeout(alarmTimeout);
         alarmTimeout = null;
@@ -437,33 +379,33 @@ function clearAlarm() {
 // 게임 성공
 function gameSuccess() {
     isListening = false;
-    
+
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
     }
-    
+
     if (animationId) {
         cancelAnimationFrame(animationId);
         animationId = null;
     }
-    
+
     statusMessage.textContent = '✅ 성공!';
     statusMessage.className = 'status-message success';
-    
+
     // 기록 저장
     saveBestRecord();
-    
+
     // 성공 사운드
     playSound('success');
-    
+
     if (navigator.vibrate) {
         navigator.vibrate([100, 50, 100, 50, 200]);
     }
-    
+
     // 다음 미션으로
     currentMission = (currentMission + 1) % missions.length;
-    
+
     setTimeout(() => {
         showSuccessScreen(GAME_ID);
     }, 1500);
@@ -472,45 +414,43 @@ function gameSuccess() {
 // 마이크 정지
 function stopMicrophone() {
     isListening = false;
-    
+
     if (animationId) {
         cancelAnimationFrame(animationId);
         animationId = null;
     }
-    
+
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
     }
-    
+
     if (alarmTimeout) {
         clearTimeout(alarmTimeout);
         alarmTimeout = null;
     }
-    
+
     clearAlarm();
-    
+
     if (microphone) {
         microphone.disconnect();
         microphone.mediaStream.getTracks().forEach(track => track.stop());
     }
-    
-    if (audioContext) {
-        audioContext.close();
+
+    if (gameAudioContext) {
+        gameAudioContext.close();
     }
-    
+
     startBtn.style.display = 'block';
     stopBtn.style.display = 'none';
-    difficultySelector.style.display = 'grid';
-    modeSelector.style.display = 'grid';
-    
+
     // UI 리셋
     volumeBar.style.height = '0%';
     volumeLevel.textContent = '0%';
     volumeLevel.className = 'volume-level';
     currentLevel.textContent = '0%';
     sustainFill.style.width = '0%';
-    
+
     // Canvas 클리어
     canvasCtx.fillStyle = '#1a1a1a';
     canvasCtx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -520,7 +460,7 @@ function stopMicrophone() {
 function loadBestRecord() {
     const recordKey = `decibel_meter_best_${currentDifficulty}`;
     const best = localStorage.getItem(recordKey);
-    
+
     if (best) {
         bestRecordEl.textContent = `${best}%`;
     } else {
@@ -532,9 +472,9 @@ function loadBestRecord() {
 function saveBestRecord() {
     const recordKey = `decibel_meter_best_${currentDifficulty}`;
     const best = localStorage.getItem(recordKey);
-    
+
     const currentPeak = Math.floor(peakVolume);
-    
+
     if (!best || currentPeak > parseInt(best)) {
         localStorage.setItem(recordKey, currentPeak);
         bestRecordEl.textContent = `${currentPeak}%`;

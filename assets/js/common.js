@@ -66,16 +66,31 @@ function showSuccessScreen(gameId) {
 }
 
 // 실패 화면 표시
-function showFailScreen(message = '아쉽지만 실패했어요. 다시 도전해보세요!') {
+function showFailScreen(message = '아쉽지만 실패했어요. 다시 도전해보세요!', gameId = null, onRetry = null) {
     const modal = document.createElement('div');
     modal.className = 'modal active';
+
+    // gameId와 treasureHunt 설정 통합 (필요시)
+    let additionalContent = '';
+    if (gameId) {
+        const config = getGameConfig(gameId);
+        if (config.secretCode) {
+            // 여기서는 실패 화면이므로 추가 정보는 표시하지 않음
+        }
+    }
+
     modal.innerHTML = `
         <div class="modal-content fade-in">
             <div class="icon" style="font-size: 80px;">😢</div>
             <h2>다시 도전!</h2>
             <p>${message}</p>
-            <button class="btn btn-primary btn-large" onclick="location.reload()">
-                다시 시작
+            ${onRetry ? `
+                <button class="btn btn-primary btn-large" id="retryBtn">
+                    재시도 (+약간 쉬워짐)
+                </button>
+            ` : ''}
+            <button class="btn ${onRetry ? 'btn-secondary' : 'btn-primary btn-large'}" onclick="location.reload()">
+                ${onRetry ? '처음부터 다시' : '다시 시작'}
             </button>
             <button class="btn btn-secondary" onclick="location.href='../../index.html'">
                 홈으로
@@ -84,6 +99,17 @@ function showFailScreen(message = '아쉽지만 실패했어요. 다시 도전�
     `;
 
     document.body.appendChild(modal);
+
+    // 재시도 버튼 이벤트 리스너 추가
+    if (onRetry) {
+        const retryBtn = document.getElementById('retryBtn');
+        if (retryBtn) {
+            retryBtn.addEventListener('click', () => {
+                modal.remove();
+                onRetry();
+            });
+        }
+    }
 
     if (navigator.vibrate) {
         navigator.vibrate(200);

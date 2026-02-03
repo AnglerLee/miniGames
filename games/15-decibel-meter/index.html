@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,154 +12,89 @@
             margin: 0 auto;
             text-align: center;
         }
-        
-        /* 난이도 선택 */
-        .difficulty-selector {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            margin: 15px 0;
-        }
-        
-        .difficulty-btn {
-            padding: 10px 8px;
-            border: 2px solid var(--secondary-color);
-            background: white;
-            color: var(--secondary-color);
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .difficulty-btn.active {
-            background: var(--secondary-color);
-            color: white;
-        }
-        
-        /* 게임 모드 */
-        .mode-selector {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-            margin: 15px 0;
-        }
-        
-        .mode-btn {
+
+        /* 간소화된 상단 정보 */
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
             padding: 10px;
-            border: 2px solid var(--primary-color);
             background: white;
-            color: var(--primary-color);
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .mode-btn.active {
-            background: var(--primary-color);
-            color: white;
-        }
-        
-        /* 통계 */
-        .stats-dashboard {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin: 15px 0;
-        }
-        
-        .stat-box {
-            background: white;
-            padding: 12px 8px;
             border-radius: 10px;
-            text-align: center;
             box-shadow: var(--shadow);
         }
-        
-        .stat-label {
+
+        .info-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .info-label {
             font-size: 11px;
             color: var(--text-light);
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
-        
-        .stat-value {
-            font-size: 20px;
+
+        .info-value {
+            font-size: 18px;
             font-weight: bold;
             color: var(--secondary-color);
         }
-        
-        .stat-value.timer {
+
+        .info-value.timer {
             color: var(--warning-color);
         }
-        
-        /* 미션 표시 */
+
+        /* 간소화된 미션 표시 */
         .mission-display {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 15px 0;
-            box-shadow: var(--shadow-lg);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: var(--shadow);
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
         }
-        
-        .mission-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
-        
-        .mission-text {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .mission-hint {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        /* 파형 캔버스 */
-        .waveform-container {
-            margin: 15px 0;
-            background: #1a1a1a;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-        }
-        
-        #waveformCanvas {
-            display: block;
-            width: 100%;
-            height: 150px;
-        }
-        
-        /* 볼륨 미터 */
+
+        /* 볼륨 미터 (메인 시각 요소) */
         .volume-meter-container {
-            margin: 15px 0;
+            margin: 10px 0;
             position: relative;
         }
-        
+
         .volume-meter {
             width: 100%;
-            height: 200px;
+            height: 250px;
             background: #ecf0f1;
             border-radius: 15px;
             position: relative;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
         }
-        
+
         .volume-bar {
             position: absolute;
             bottom: 0;
             width: 100%;
             background: linear-gradient(to top, #27ae60 0%, #2ecc71 30%, #f39c12 70%, #e74c3c 90%);
             transition: height 0.1s ease;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 10px;
         }
-        
+
+        /* 볼륨 미터 내부에 현재 값 표시 */
+        .volume-value {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
         /* 목표선 */
         .target-line {
             position: absolute;
@@ -169,7 +105,7 @@
             z-index: 10;
             pointer-events: none;
         }
-        
+
         .target-line::before {
             content: '목표';
             position: absolute;
@@ -182,7 +118,7 @@
             padding: 2px 6px;
             border-radius: 4px;
         }
-        
+
         /* 위험선 */
         .danger-line {
             position: absolute;
@@ -193,7 +129,7 @@
             z-index: 10;
             pointer-events: none;
         }
-        
+
         .danger-line::before {
             content: '위험';
             position: absolute;
@@ -206,52 +142,60 @@
             padding: 2px 6px;
             border-radius: 4px;
         }
-        
+
         /* 볼륨 레벨 표시 */
-        .volume-level {
+        /* .volume-level {
             font-size: 48px;
             font-weight: bold;
             margin: 15px 0;
             color: var(--secondary-color);
         }
-        
+
         .volume-level.success {
             color: var(--success-color);
             animation: pulse 0.5s infinite;
         }
-        
+
         .volume-level.danger {
             color: var(--danger-color);
             animation: pulse 0.5s infinite;
-        }
-        
+        } */
+
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
         }
-        
-        /* 지속 모드 게이지 */
+
+        /* 지속 모드 게이지 (간소화) */
         .sustain-gauge {
             width: 100%;
-            height: 30px;
+            height: 35px;
             background: #ecf0f1;
-            border-radius: 15px;
+            border-radius: 10px;
             overflow: hidden;
-            margin: 15px 0;
+            margin: 10px 0;
+            box-shadow: var(--shadow);
         }
-        
+
         .sustain-fill {
             height: 100%;
-            background: var(--success-color);
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
             transition: width 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 15px;
         }
-        
+
         /* 액션 버튼 */
         .action-buttons {
             display: grid;
@@ -259,7 +203,7 @@
             gap: 8px;
             margin: 15px 0;
         }
-        
+
         .action-btn {
             padding: 12px 16px;
             font-size: 14px;
@@ -270,47 +214,48 @@
             box-shadow: var(--shadow);
             transition: all 0.2s;
         }
-        
+
         .action-btn.primary {
             background: var(--primary-color);
             color: white;
         }
-        
+
         .action-btn.secondary {
             background: var(--secondary-color);
             color: white;
         }
-        
+
         .action-btn:hover {
             transform: translateY(-2px);
         }
-        
+
         .action-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
         }
-        
-        /* 상태 메시지 */
+
+        /* 간소화된 상태 메시지 */
         .status-message {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
-            margin: 10px 0;
-            min-height: 20px;
+            margin: 8px 0;
+            min-height: 18px;
+            text-align: center;
         }
-        
+
         .status-message.success {
             color: var(--success-color);
         }
-        
+
         .status-message.danger {
             color: var(--danger-color);
         }
-        
+
         .status-message.warning {
             color: var(--warning-color);
         }
-        
+
         /* 경보 오버레이 */
         .alarm-overlay {
             position: fixed;
@@ -325,16 +270,23 @@
             justify-content: center;
             animation: alarmFlash 0.5s infinite;
         }
-        
+
         .alarm-overlay.active {
             display: flex;
         }
-        
+
         @keyframes alarmFlash {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 0.9; }
+
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 0.9;
+            }
         }
-        
+
         .alarm-text {
             font-size: 36px;
             font-weight: bold;
@@ -343,80 +295,55 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="game-header">
             <h1 class="game-title">🔊 데시벨 측정기</h1>
             <a href="../../index.html" class="home-btn">홈으로</a>
         </div>
-        
+
         <div class="game-area">
             <div class="decibel-container">
-                <!-- 난이도 선택 -->
-                <div class="difficulty-selector" id="difficultySelector">
-                    <button class="difficulty-btn active" data-level="easy">쉬움</button>
-                    <button class="difficulty-btn" data-level="medium">보통</button>
-                    <button class="difficulty-btn" data-level="hard">어려움</button>
-                </div>
-                
-                <!-- 게임 모드 -->
-                <div class="mode-selector" id="modeSelector">
-                    <button class="mode-btn active" data-mode="instant">순간 소리</button>
-                    <button class="mode-btn" data-mode="sustain">지속 모드</button>
-                </div>
-                
-                <!-- 통계 -->
-                <div class="stats-dashboard">
-                    <div class="stat-box">
-                        <div class="stat-label">현재</div>
-                        <div class="stat-value" id="currentLevel">0%</div>
+                <!-- 난이도 선택기와 모드 선택기는 Admin 페이지로 이동됨 -->
+
+                <!-- 간소화된 상단 정보 (시간과 최고 기록만 표시) -->
+                <div class="game-info">
+                    <div class="info-item">
+                        <div class="info-label">⏱️ 시간</div>
+                        <div class="info-value timer" id="timeDisplay">--:--</div>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-label">최고</div>
-                        <div class="stat-value" style="color: var(--success-color);" id="peakLevel">0%</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">시간</div>
-                        <div class="stat-value timer" id="timeDisplay">--:--</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">기록</div>
-                        <div class="stat-value" style="color: var(--primary-color);" id="bestRecord">-</div>
+                    <div class="info-item">
+                        <div class="info-label">🏆 최고 기록</div>
+                        <div class="info-value" id="bestRecord">-</div>
                     </div>
                 </div>
-                
-                <!-- 미션 표시 -->
-                <div class="mission-display">
-                    <div class="mission-icon" id="missionIcon">🗣️</div>
-                    <div class="mission-text" id="missionText">"사랑해요!" 라고 외치세요!</div>
-                    <div class="mission-hint" id="missionHint">크게 소리를 내보세요</div>
+
+                <!-- 간소화된 미션 표시 -->
+                <div class="mission-display" id="missionText">
+                    🗣️ "사랑해요!" 라고 외치세요!
                 </div>
-                
-                <!-- 파형 캔버스 -->
-                <div class="waveform-container">
-                    <canvas id="waveformCanvas"></canvas>
-                </div>
-                
-                <!-- 볼륨 미터 -->
+
+
+                <!-- 볼륨 미터 (메인 시각 요소, 현재 값 포함) -->
                 <div class="volume-meter-container">
                     <div class="volume-meter">
                         <div class="target-line" id="targetLine"></div>
                         <div class="danger-line" id="dangerLine" style="display: none;"></div>
-                        <div class="volume-bar" id="volumeBar"></div>
+                        <div class="volume-bar" id="volumeBar">
+                            <span class="volume-value" id="volumeLevel">0%</span>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- 볼륨 레벨 -->
-                <div class="volume-level" id="volumeLevel">0%</div>
-                
+
                 <!-- 지속 모드 게이지 -->
                 <div class="sustain-gauge" id="sustainGauge" style="display: none;">
                     <div class="sustain-fill" id="sustainFill">0.0초</div>
                 </div>
-                
+
                 <!-- 상태 메시지 -->
                 <div class="status-message" id="statusMessage">마이크를 시작하세요</div>
-                
+
                 <!-- 액션 버튼 -->
                 <div class="action-buttons">
                     <button class="action-btn primary" id="startBtn">🎤 마이크 시작</button>
@@ -425,13 +352,14 @@
             </div>
         </div>
     </div>
-    
+
     <!-- 경보 오버레이 -->
     <div class="alarm-overlay" id="alarmOverlay">
         <div class="alarm-text">🚨 너무 시끄러워요! 🚨</div>
     </div>
-    
+
     <script src="../../assets/js/common.js"></script>
     <script src="game.js"></script>
 </body>
+
 </html>
