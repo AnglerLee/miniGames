@@ -1,11 +1,78 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>16 Magic Compass - 관리자 설정</title>
     <link rel="stylesheet" href="../../assets/css/admin-theme.css">
+    <style>
+        .difficulty-slider-container {
+            margin: 20px 0;
+        }
+
+        .difficulty-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #4caf50, #ff9800, #f44336);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .difficulty-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--primary-color);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .difficulty-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--primary-color);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .difficulty-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .current-difficulty {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
     <div class="container">
         <a href="../../admin.html" class="main-link">
@@ -19,34 +86,78 @@
 
         <div class="admin-form-card">
             <form id="settingsForm">
-                
-            <!-- Game Specific Settings Placeholder -->
-            <!-- 
-            <div class="form-group">
-                <label>게임별 전용 설정이 있다면 이곳에 추가하세요</label>
-            </div> 
-            -->
 
-            <h2>📝 게임 클리어 설정 (Global Config)</h2>
-            <div class="form-group">
-                <label for="secretCode">🔑 비밀번호/숫자 코드 (Clear Code)</label>
-                <input type="text" id="secretCode" class="form-input" placeholder="예: 1234, 소파뒤">
-            </div>
-            <div class="form-group">
-                <label for="hintMessage">💡 힌트 메시지 (Next Step Hint)</label>
-                <input type="text" id="hintMessage" class="form-input" placeholder="예: 거실 소파 뒤를 찾아봐!">
-            </div>
-            <div class="form-group">
-                <label for="successMessage">🎉 성공 메시지 (Success Message)</label>
-                <input type="text" id="successMessage" class="form-input" placeholder="예: 축하합니다!">
-            </div>
+                <h2>🎮 난이도 프리셋</h2>
+                <div class="difficulty-slider-container">
+                    <input type="range" id="difficultySlider" class="difficulty-slider" min="0" max="2" step="1"
+                        value="0">
+                    <div class="difficulty-labels">
+                        <span>🟢 쉬움</span>
+                        <span>🟡 보통</span>
+                        <span>🔴 어려움</span>
+                    </div>
+                    <div class="current-difficulty" id="currentDifficulty">🟢 쉬움</div>
+                </div>
 
-            <div class="btn-group">
-                <button type="button" class="btn btn-home" onclick="location.href='index.html'">게임으로</button>
-                <button type="button" class="btn btn-reset" id="resetBtn">초기화</button>
-                <button type="submit" class="btn btn-save">저장하기</button>
-            </div>
-        
+                <h2>⚙️ 세부 설정</h2>
+                <div class="settings-grid">
+                    <div class="form-group">
+                        <label for="tolerance">허용 오차 (±도)</label>
+                        <input type="number" id="tolerance" class="form-input" min="5" max="30" step="1" value="20">
+                        <small>목표 각도 허용 범위</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="holdTime">유지 시간 (초)</label>
+                        <input type="number" id="holdTime" class="form-input" min="0.5" max="5" step="0.5" value="1">
+                        <small>방향 유지 시간</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="missionCount">미션 수</label>
+                        <input type="number" id="missionCount" class="form-input" min="1" max="8" value="1">
+                        <small>찾을 방향 개수</small>
+                    </div>
+                </div>
+
+                <h2>🌀 나침반 흔들림 설정</h2>
+                <div class="settings-grid">
+                    <div class="form-group">
+                        <label for="noiseAmplitude">흔들림 크기 (±도)</label>
+                        <input type="number" id="noiseAmplitude" class="form-input" min="0" max="20" step="1" value="5">
+                        <small>0 = 흔들림 없음</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="noiseFrequency">흔들림 속도 (Hz)</label>
+                        <input type="number" id="noiseFrequency" class="form-input" min="0.1" max="2" step="0.1"
+                            value="0.5">
+                        <small>빠르기 조절</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="noiseComplexity">흔들림 복잡도</label>
+                        <input type="number" id="noiseComplexity" class="form-input" min="1" max="5" value="3">
+                        <small>패턴 불규칙성</small>
+                    </div>
+                </div>
+
+                <h2>📝 게임 클리어 설정</h2>
+                <div class="form-group">
+                    <label for="secretCode">🔑 비밀번호/숫자 코드</label>
+                    <input type="text" id="secretCode" class="form-input" placeholder="예: 1234, 소파뒤">
+                </div>
+                <div class="form-group">
+                    <label for="hintMessage">💡 힌트 메시지</label>
+                    <input type="text" id="hintMessage" class="form-input" placeholder="예: 거실 소파 뒤를 찾아봐!">
+                </div>
+                <div class="form-group">
+                    <label for="successMessage">🎉 성공 메시지</label>
+                    <input type="text" id="successMessage" class="form-input" placeholder="예: 축하합니다!">
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-home" onclick="location.href='index.html'">게임으로</button>
+                    <button type="button" class="btn btn-reset" id="resetBtn">초기화</button>
+                    <button type="submit" class="btn btn-save">저장하기</button>
+                </div>
+
             </form>
         </div>
     </div>
@@ -54,4 +165,5 @@
     <script src="../../assets/js/common.js"></script>
     <script src="admin.js"></script>
 </body>
+
 </html>

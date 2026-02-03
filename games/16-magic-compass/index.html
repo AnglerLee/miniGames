@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,124 +9,100 @@
     <style>
         .compass-container {
             width: 100%;
+            max-width: 400px;
             margin: 0 auto;
             text-align: center;
+            padding: 10px;
         }
-        
+
         /* 난이도 선택 */
         .difficulty-selector {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            margin: 15px 0;
+            gap: 5px;
+            margin: 10px 0;
         }
-        
+
         .difficulty-btn {
-            padding: 10px 8px;
+            padding: 8px 6px;
             border: 2px solid var(--secondary-color);
             background: white;
             color: var(--secondary-color);
-            border-radius: 8px;
-            font-size: 12px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .difficulty-btn.active {
             background: var(--secondary-color);
             color: white;
         }
-        
-        /* 통계 대시보드 */
-        .stats-dashboard {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin: 15px 0;
-        }
-        
-        .stat-box {
-            background: white;
-            padding: 12px 8px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-        
-        .stat-label {
-            font-size: 11px;
-            color: var(--text-light);
-            margin-bottom: 3px;
-        }
-        
-        .stat-value {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--secondary-color);
-        }
-        
-        .stat-value.direction {
-            color: var(--primary-color);
-        }
-        
-        .stat-value.error {
-            color: var(--warning-color);
-        }
-        
-        /* 미션 표시 */
+
+        /* 미션 표시 - 간소화 */
         .mission-display {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 15px 0;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 10px 0;
             box-shadow: var(--shadow-lg);
         }
-        
+
+        .mission-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
         .mission-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
+            font-size: 32px;
         }
-        
+
+        .mission-info {
+            text-align: left;
+        }
+
         .mission-text {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
-        
+
         .mission-progress {
-            font-size: 14px;
+            font-size: 13px;
             opacity: 0.9;
         }
-        
+
         /* 나침반 */
         .compass-wrapper {
             position: relative;
             width: 100%;
-            max-width: 350px;
-            margin: 20px auto;
+            max-width: 280px;
+            margin: 15px auto;
         }
-        
+
         .compass {
             width: 100%;
             aspect-ratio: 1;
-            border: 8px solid var(--secondary-color);
+            border: 6px solid var(--secondary-color);
             border-radius: 50%;
             position: relative;
             background: radial-gradient(circle, #ffffff 0%, #f0f0f0 100%);
-            box-shadow: var(--shadow-lg), inset 0 0 20px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-lg), inset 0 0 20px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
-        
+
         /* 나침반 판 */
         .compass-face {
             position: absolute;
             width: 100%;
             height: 100%;
-            transition: transform 0.3s ease;
+            transition: transform 0.2s ease;
         }
-        
+
         /* 8방향 표시 */
         .direction-marker {
             position: absolute;
@@ -134,73 +111,96 @@
             font-weight: bold;
             text-align: center;
         }
-        
+
         .direction-marker.n {
             top: 5%;
-            font-size: 28px;
+            font-size: 24px;
             color: #e74c3c;
         }
-        
+
         .direction-marker.e {
             top: 50%;
             right: 5%;
             left: auto;
             transform: translateY(-50%);
-            font-size: 24px;
+            font-size: 20px;
             color: var(--secondary-color);
         }
-        
+
         .direction-marker.s {
             bottom: 5%;
             top: auto;
-            font-size: 24px;
+            font-size: 20px;
             color: var(--secondary-color);
         }
-        
+
         .direction-marker.w {
             top: 50%;
             left: 5%;
             transform: translateY(-50%);
-            font-size: 24px;
+            font-size: 20px;
             color: var(--secondary-color);
         }
-        
+
         .direction-marker.ne,
         .direction-marker.se,
         .direction-marker.sw,
         .direction-marker.nw {
-            font-size: 18px;
+            font-size: 14px;
             color: var(--text-light);
         }
-        
-        .direction-marker.ne { top: 15%; right: 15%; left: auto; transform: none; }
-        .direction-marker.se { bottom: 15%; right: 15%; left: auto; top: auto; transform: none; }
-        .direction-marker.sw { bottom: 15%; left: 15%; top: auto; transform: none; }
-        .direction-marker.nw { top: 15%; left: 15%; transform: none; }
-        
+
+        .direction-marker.ne {
+            top: 15%;
+            right: 15%;
+            left: auto;
+            transform: none;
+        }
+
+        .direction-marker.se {
+            bottom: 15%;
+            right: 15%;
+            left: auto;
+            top: auto;
+            transform: none;
+        }
+
+        .direction-marker.sw {
+            bottom: 15%;
+            left: 15%;
+            top: auto;
+            transform: none;
+        }
+
+        .direction-marker.nw {
+            top: 15%;
+            left: 15%;
+            transform: none;
+        }
+
         /* 각도 눈금 */
         .degree-marks {
             position: absolute;
             width: 100%;
             height: 100%;
         }
-        
+
         .degree-mark {
             position: absolute;
             width: 2px;
-            height: 10px;
+            height: 8px;
             background: #bbb;
             left: 50%;
             top: 2%;
-            transform-origin: 50% 180px;
+            transform-origin: 50% 140px;
         }
-        
+
         .degree-mark.major {
-            height: 15px;
+            height: 12px;
             background: #888;
             width: 3px;
         }
-        
+
         /* 바늘 */
         .needle-container {
             position: absolute;
@@ -209,7 +209,7 @@
             top: 0;
             left: 0;
         }
-        
+
         .needle {
             position: absolute;
             width: 0;
@@ -218,45 +218,45 @@
             top: 50%;
             transform: translate(-50%, -50%);
         }
-        
+
         .needle::before {
             content: '';
             position: absolute;
-            width: 8px;
+            width: 6px;
             height: 45%;
             background: linear-gradient(to bottom, #e74c3c 0%, #c0392b 100%);
-            left: -4px;
+            left: -3px;
             bottom: 0;
             clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
-        
+
         .needle::after {
             content: '';
             position: absolute;
-            width: 8px;
+            width: 6px;
             height: 30%;
             background: linear-gradient(to top, #ecf0f1 0%, #bdc3c7 100%);
-            left: -4px;
+            left: -3px;
             top: 0;
             clip-path: polygon(50% 100%, 100% 0%, 0% 0%);
         }
-        
+
         /* 중심점 */
         .compass-center {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             background: radial-gradient(circle, #34495e 0%, #2c3e50 100%);
-            border: 3px solid white;
+            border: 2px solid white;
             border-radius: 50%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             z-index: 10;
         }
-        
+
         /* 정확도 링 */
         .accuracy-ring {
             position: absolute;
@@ -265,59 +265,76 @@
             top: 10%;
             left: 10%;
             border-radius: 50%;
-            border: 4px solid transparent;
+            border: 3px solid transparent;
             transition: border-color 0.3s;
         }
-        
+
         .accuracy-ring.far {
             border-color: #e74c3c;
             animation: pulse-ring 1s infinite;
         }
-        
+
         .accuracy-ring.near {
             border-color: #f39c12;
             animation: pulse-ring 0.5s infinite;
         }
-        
+
         .accuracy-ring.perfect {
             border-color: #2ecc71;
             animation: pulse-ring 0.3s infinite;
         }
-        
+
         @keyframes pulse-ring {
-            0%, 100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.02); }
+
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
         }
-        
-        /* 방향 인디케이터 */
-        .direction-indicator {
-            font-size: 18px;
+
+        /* 간소화된 정보 표시 */
+        .info-compact {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 10px 0;
+            padding: 8px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 10px;
+            color: var(--text-light);
+        }
+
+        .info-value {
+            font-size: 16px;
             font-weight: bold;
-            margin: 15px 0;
-            min-height: 30px;
             color: var(--primary-color);
         }
-        
-        .direction-indicator.success {
-            color: var(--success-color);
-            animation: bounce 0.5s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        /* 유지 시간 게이지 */
+
+        /* 유지 시간 게이지 - 간소화 */
         .hold-gauge {
             width: 100%;
-            height: 30px;
+            height: 24px;
             background: #ecf0f1;
-            border-radius: 15px;
+            border-radius: 12px;
             overflow: hidden;
-            margin: 15px 0;
+            margin: 10px 0;
         }
-        
+
         .hold-fill {
             height: 100%;
             background: var(--success-color);
@@ -327,136 +344,50 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 12px;
         }
-        
-        /* 캘리브레이션 화면 */
-        .calibration-screen {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .calibration-screen.active {
-            display: block;
-        }
-        
-        .calibration-icon {
-            font-size: 80px;
-            animation: rotate8 2s infinite;
-        }
-        
-        @keyframes rotate8 {
-            0%, 100% { transform: rotate(0deg) translateX(0); }
-            25% { transform: rotate(45deg) translateX(10px); }
-            50% { transform: rotate(90deg) translateX(0); }
-            75% { transform: rotate(135deg) translateX(-10px); }
-        }
-        
-        .calibration-text {
-            font-size: 20px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-        
-        .calibration-steps {
-            text-align: left;
-            max-width: 300px;
-            margin: 0 auto;
-            font-size: 14px;
-            line-height: 1.8;
-        }
-        
-        .calibration-progress {
-            width: 100%;
-            height: 10px;
-            background: #ecf0f1;
-            border-radius: 5px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-        
-        .calibration-progress-bar {
-            height: 100%;
-            background: var(--primary-color);
-            transition: width 0.5s;
-        }
-        
+
         /* 게임 화면 */
         .game-screen {
             display: none;
         }
-        
+
         .game-screen.active {
             display: block;
         }
-        
-        /* 액션 버튼 */
+
+        /* 액션 버튼 - 간소화 */
         .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
-            margin: 15px 0;
+            margin: 10px 0;
         }
-        
+
         .action-btn {
-            padding: 14px 20px;
-            font-size: 16px;
+            width: 100%;
+            padding: 12px;
+            font-size: 14px;
             font-weight: bold;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             box-shadow: var(--shadow);
             transition: all 0.2s;
-        }
-        
-        .action-btn.primary {
-            background: var(--primary-color);
-            color: white;
-        }
-        
-        .action-btn.secondary {
             background: var(--secondary-color);
             color: white;
         }
-        
+
         .action-btn:hover {
             transform: translateY(-2px);
         }
-        
-        .action-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        /* 상태 메시지 */
-        .status-message {
-            font-size: 14px;
-            font-weight: 500;
-            margin: 10px 0;
-            min-height: 20px;
-        }
-        
-        /* 성공 파티클 */
-        .success-particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="game-header">
             <h1 class="game-title">🧭 매직 컴퍼스</h1>
             <a href="../../index.html" class="home-btn">홈으로</a>
         </div>
-        
+
         <div class="game-area">
             <div class="compass-container">
                 <!-- 난이도 선택 -->
@@ -465,56 +396,25 @@
                     <button class="difficulty-btn" data-level="medium">보통</button>
                     <button class="difficulty-btn" data-level="hard">어려움</button>
                 </div>
-                
-                <!-- 캘리브레이션 화면 -->
-                <div class="calibration-screen" id="calibrationScreen">
-                    <div class="calibration-icon">📱</div>
-                    <div class="calibration-text">센서 보정이 필요합니다</div>
-                    <div class="calibration-steps">
-                        1️⃣ 폰을 들어올리세요<br>
-                        2️⃣ 공중에서 8자를 그려주세요<br>
-                        3️⃣ 천천히 2-3번 반복하세요
-                    </div>
-                    <div class="calibration-progress">
-                        <div class="calibration-progress-bar" id="calibrationProgress"></div>
-                    </div>
-                    <button class="action-btn primary" id="startCalibrationBtn">🔄 보정 시작</button>
-                </div>
-                
+
                 <!-- 게임 화면 -->
                 <div class="game-screen" id="gameScreen">
-                    <!-- 통계 -->
-                    <div class="stats-dashboard">
-                        <div class="stat-box">
-                            <div class="stat-label">현재 방향</div>
-                            <div class="stat-value direction" id="currentDegree">0°</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-label">목표</div>
-                            <div class="stat-value" id="targetDirection">N</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-label">오차</div>
-                            <div class="stat-value error" id="errorDegree">--°</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-label">진행</div>
-                            <div class="stat-value" style="color: var(--primary-color);" id="missionProgress">0/1</div>
-                        </div>
-                    </div>
-                    
                     <!-- 미션 표시 -->
                     <div class="mission-display">
-                        <div class="mission-icon" id="missionIcon">🧭</div>
-                        <div class="mission-text" id="missionText">북쪽(N)을 찾아라!</div>
-                        <div class="mission-progress" id="missionHint">폰을 돌려보세요</div>
+                        <div class="mission-content">
+                            <div class="mission-icon" id="missionIcon">🧭</div>
+                            <div class="mission-info">
+                                <div class="mission-text" id="missionText">북쪽(N)을 찾아라!</div>
+                                <div class="mission-progress" id="missionHint">폰을 돌려보세요</div>
+                            </div>
+                        </div>
                     </div>
-                    
+
                     <!-- 나침반 -->
                     <div class="compass-wrapper">
                         <div class="compass">
                             <div class="accuracy-ring" id="accuracyRing"></div>
-                            
+
                             <div class="compass-face" id="compassFace">
                                 <!-- 8방향 표시 -->
                                 <div class="direction-marker n">N</div>
@@ -525,47 +425,57 @@
                                 <div class="direction-marker sw">SW</div>
                                 <div class="direction-marker w">W</div>
                                 <div class="direction-marker nw">NW</div>
-                                
+
                                 <!-- 각도 눈금 -->
                                 <div class="degree-marks" id="degreeMarks"></div>
                             </div>
-                            
+
                             <!-- 바늘 -->
                             <div class="needle-container">
                                 <div class="needle" id="needle"></div>
                             </div>
-                            
+
                             <!-- 중심점 -->
                             <div class="compass-center"></div>
                         </div>
                     </div>
-                    
-                    <!-- 방향 인디케이터 -->
-                    <div class="direction-indicator" id="directionIndicator">
-                        폰을 돌려보세요
+
+                    <!-- 간소화된 정보 -->
+                    <div class="info-compact">
+                        <div class="info-item">
+                            <div class="info-label">현재</div>
+                            <div class="info-value" id="currentDegree">0°</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">목표</div>
+                            <div class="info-value" id="targetDirection">N</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">오차</div>
+                            <div class="info-value" style="color: var(--warning-color);" id="errorDegree">--°</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">진행</div>
+                            <div class="info-value" id="missionProgress">0/1</div>
+                        </div>
                     </div>
-                    
+
                     <!-- 유지 시간 게이지 -->
                     <div class="hold-gauge">
                         <div class="hold-fill" id="holdFill">0.0초</div>
                     </div>
-                    
-                    <!-- 상태 메시지 -->
-                    <div class="status-message" id="statusMessage"></div>
-                    
+
                     <!-- 액션 버튼 -->
                     <div class="action-buttons">
-                        <button class="action-btn secondary" id="resetBtn">🔄 재시작</button>
+                        <button class="action-btn" id="resetBtn">🔄 재시작</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- 성공 파티클 -->
-    <div class="success-particles" id="successParticles"></div>
-    
+
     <script src="../../assets/js/common.js"></script>
     <script src="game.js"></script>
 </body>
+
 </html>

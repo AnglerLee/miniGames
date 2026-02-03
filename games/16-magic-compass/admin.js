@@ -2,28 +2,121 @@
 const GAME_ID = 'game16';
 const form = document.getElementById('settingsForm');
 const resetBtn = document.getElementById('resetBtn');
+const difficultySlider = document.getElementById('difficultySlider');
+const currentDifficultyLabel = document.getElementById('currentDifficulty');
+
+// 난이도 프리셋
+const difficultyPresets = {
+    0: { // 쉬움
+        name: '🟢 쉬움',
+        tolerance: 20,
+        holdTime: 1,
+        missionCount: 1
+    },
+    1: { // 보통
+        name: '🟡 보통',
+        tolerance: 15,
+        holdTime: 2,
+        missionCount: 3
+    },
+    2: { // 어려움
+        name: '🔴 어려움',
+        tolerance: 10,
+        holdTime: 3,
+        missionCount: 5
+    }
+};
+
+// 기본 설정
+const defaultSettings = {
+    difficultyLevel: 0,
+    tolerance: 20,
+    holdTime: 1,
+    missionCount: 1,
+    compassNoise: {
+        amplitude: 5,
+        frequency: 0.5,
+        complexity: 3
+    }
+};
+
+// 난이도 슬라이더 변경 이벤트
+difficultySlider.addEventListener('input', (e) => {
+    const level = parseInt(e.target.value);
+    applyPreset(level);
+});
+
+// 프리셋 적용
+function applyPreset(level) {
+    const preset = difficultyPresets[level];
+
+    // 라벨 업데이트
+    currentDifficultyLabel.textContent = preset.name;
+
+    // 입력 필드 업데이트
+    document.getElementById('tolerance').value = preset.tolerance;
+    document.getElementById('holdTime').value = preset.holdTime;
+    document.getElementById('missionCount').value = preset.missionCount;
+}
 
 // 설정 로드
 function loadSettings() {
-    // 1. 글로벌 설정 로드
+    // 1. 게임별 설정 로드
+    const gameSettings = JSON.parse(localStorage.getItem('game16_settings')) || defaultSettings;
+
+    // 난이도 레벨 로드
+    const difficultyLevel = gameSettings.difficultyLevel !== undefined ? gameSettings.difficultyLevel : 0;
+    difficultySlider.value = difficultyLevel;
+
+    // 세부 설정 로드
+    document.getElementById('tolerance').value = gameSettings.tolerance || 20;
+    document.getElementById('holdTime').value = gameSettings.holdTime || 1;
+    document.getElementById('missionCount').value = gameSettings.missionCount || 1;
+
+    // 현재 난이도 라벨 업데이트
+    currentDifficultyLabel.textContent = difficultyPresets[difficultyLevel].name;
+
+    // 나침반 흔들림 설정
+    if (gameSettings.compassNoise) {
+        document.getElementById('noiseAmplitude').value = gameSettings.compassNoise.amplitude || 5;
+        document.getElementById('noiseFrequency').value = gameSettings.compassNoise.frequency || 0.5;
+        document.getElementById('noiseComplexity').value = gameSettings.compassNoise.complexity || 3;
+    }
+
+    // 2. 글로벌 설정 로드
     const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
     const myConfig = globalConfigs[GAME_ID] || {};
 
     document.getElementById('secretCode').value = myConfig.secretCode || '';
     document.getElementById('hintMessage').value = myConfig.hintMessage || '';
     document.getElementById('successMessage').value = myConfig.successMessage || '';
-    
-    // 게임별 추가 설정 로드 로직이 필요하면 여기에 추가
 }
 
 // 설정 저장
 function saveSettings(e) {
     e.preventDefault();
 
-    // 1. 글로벌 설정 저장
+    const difficultyLevel = parseInt(difficultySlider.value);
+
+    // 1. 게임별 설정 저장
+    const gameSettings = {
+        difficultyLevel: difficultyLevel,
+        tolerance: parseInt(document.getElementById('tolerance').value),
+        holdTime: parseFloat(document.getElementById('holdTime').value),
+        missionCount: parseInt(document.getElementById('missionCount').value),
+        compassNoise: {
+            amplitude: parseInt(document.getElementById('noiseAmplitude').value),
+            frequency: parseFloat(document.getElementById('noiseFrequency').value),
+            complexity: parseInt(document.getElementById('noiseComplexity').value)
+        },
+        lastUpdated: new Date().toISOString()
+    };
+
+    localStorage.setItem('game16_settings', JSON.stringify(gameSettings));
+
+    // 2. 글로벌 설정 저장
     const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-    
-    // 기존 설정을 유지하면서 업데이트
+
     globalConfigs[GAME_ID] = {
         ...globalConfigs[GAME_ID],
         secretCode: document.getElementById('secretCode').value.trim(),
@@ -32,7 +125,7 @@ function saveSettings(e) {
         isActive: true,
         lastUpdated: new Date().toISOString()
     };
-    
+
     localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(globalConfigs));
 
     alert('설정이 저장되었습니다!');
@@ -41,15 +134,16 @@ function saveSettings(e) {
 // 설정 초기화
 function resetSettings() {
     if (confirm('모든 설정을 초기화하시겠습니까?')) {
-        // 글로벌 설정에서 해당 게임 데이터만 초기화하려면 신중해야 함.
-        // 여기서는 입력 필드만 비우거나, 저장된 데이터를 삭제할 수 있음.
-        
+        // 게임별 설정 삭제
+        localStorage.removeItem('game16_settings');
+
+        // 글로벌 설정에서 해당 게임 데이터 삭제
         const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-        if(globalConfigs[GAME_ID]) {
+        if (globalConfigs[GAME_ID]) {
             delete globalConfigs[GAME_ID];
             localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(globalConfigs));
         }
-        
+
         loadSettings();
         alert('초기화되었습니다.');
     }
