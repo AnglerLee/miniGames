@@ -24,6 +24,15 @@ function getGameConfig(gameId) {
 
 // 성공 화면 표시
 function showSuccessScreen(gameId) {
+    // 보물찾기 모드 확인
+    const isTreasureHunt = window.TreasureHunt && TreasureHunt.isTreasureHuntMode();
+    
+    if (isTreasureHunt) {
+        showTreasureHuntSuccess(gameId);
+        return;
+    }
+
+    // 일반 모드
     const config = getGameConfig(gameId);
 
     const modal = document.createElement('div');
@@ -63,6 +72,138 @@ function showSuccessScreen(gameId) {
     if (navigator.vibrate) {
         navigator.vibrate([200, 100, 200]);
     }
+}
+
+// 보물찾기 모드 성공 화면
+function showTreasureHuntSuccess(gameId) {
+    const huntInfo = TreasureHunt.getCurrentGameHuntInfo(gameId);
+    
+    if (!huntInfo) {
+        // 보물찾기 정보를 찾을 수 없으면 일반 성공 화면
+        showSuccessScreen(gameId);
+        return;
+    }
+
+    const { gameData, isLastGame, nextGame, gameIndex, preset } = huntInfo;
+    
+    // 진행 상황 업데이트
+    TreasureHunt.markGameComplete(gameIndex);
+
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+
+    if (isLastGame) {
+        // 마지막 게임 - 최종 보상
+        const finalReward = preset.finalReward || {};
+        modal.innerHTML = `
+            <div class="modal-content success-screen fade-in" style="text-align: center;">
+                <div class="icon" style="font-size: 100px;">🎉</div>
+                <h2 style="font-size: 2rem; margin-bottom: 10px;">모든 미션 완료!</h2>
+                <p style="font-size: 1.2rem; color: var(--text-light); margin-bottom: 20px;">
+                    ${gameData.successMessage || '마지막 게임을 클리어했어요!'}
+                </p>
+                
+                ${gameData.secretCode ? `
+                    <div class="secret-code">
+                        <h3>🔑 비밀번호</h3>
+                        <div class="code">${gameData.secretCode}</div>
+                    </div>
+                ` : ''}
+                
+                ${gameData.hintMessage ? `
+                    <div class="hint-message">
+                        <h3>💡 힌트</h3>
+                        <p>${gameData.hintMessage}</p>
+                    </div>
+                ` : ''}
+
+                <div style="margin: 30px 0; padding: 30px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px;">
+                    <h2 style="margin-bottom: 15px;">🏆 최종 보상</h2>
+                    <p style="font-size: 1.1rem; margin-bottom: 15px;">${finalReward.message || '축하합니다!'}</p>
+                    ${finalReward.secretCode ? `
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary-color); letter-spacing: 3px;">
+                            ${finalReward.secretCode}
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-primary btn-large" onclick="location.href='../../treasure-hunt.html'">
+                        📊 보물찾기 완료 화면으로
+                    </button>
+                    <button class="btn btn-secondary" onclick="location.href='../../index.html'">
+                        🏠 홈으로
+                    </button>
+                </div>
+            </div>
+        `;
+    } else {
+        // 중간 게임 - 다음 게임으로 안내
+        const nextGameInfo = TreasureHunt.getGameInfo(nextGame.gameId);
+        const nextGameUrl = TreasureHunt.getNextGameUrl(gameId);
+        
+        modal.innerHTML = `
+            <div class="modal-content success-screen fade-in" style="text-align: center;">
+                <div class="icon" style="font-size: 80px;">🎉</div>
+                <h2>미션 완료!</h2>
+                <p style="font-size: 1.1rem; margin: 15px 0;">
+                    ${gameData.successMessage || '잘했어! 다음 미션으로 가자!'}
+                </p>
+                
+                ${gameData.secretCode ? `
+                    <div class="secret-code">
+                        <h3>🔑 비밀번호</h3>
+                        <div class="code">${gameData.secretCode}</div>
+                    </div>
+                ` : ''}
+                
+                ${gameData.hintMessage ? `
+                    <div class="hint-message" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 20px; border-radius: 12px; margin: 20px 0;">
+                        <h3>💡 다음 보물 위치 힌트</h3>
+                        <p style="font-size: 1.1rem; font-weight: bold;">${gameData.hintMessage}</p>
+                    </div>
+                ` : ''}
+
+                ${nextGame.storyText ? `
+                    <div style="background: var(--bg-light); padding: 20px; border-radius: 12px; margin: 20px 0;">
+                        <h3>📖 다음 이야기</h3>
+                        <p style="font-size: 1rem; line-height: 1.6;">${nextGame.storyText}</p>
+                    </div>
+                ` : ''}
+
+                <div style="margin-top: 20px; padding: 15px; background: #e0f2fe; border-radius: 8px;">
+                    <p style="margin-bottom: 10px; font-weight: bold;">다음 게임:</p>
+                    <p style="font-size: 1.3rem;">${nextGameInfo.icon} ${nextGameInfo.name}</p>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 25px; flex-wrap: wrap;">
+                    <button class="btn btn-primary btn-large" onclick="location.href='${nextGameUrl}'">
+                        ▶️ 다음 게임 시작!
+                    </button>
+                    <button class="btn btn-secondary" onclick="location.href='../../treasure-hunt.html'">
+                        📊 진행 상황 보기
+                    </button>
+                    <button class="btn btn-secondary" onclick="location.href='../../index.html'">
+                        🏠 나중에 계속하기
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    document.body.appendChild(modal);
+
+    // 진동 피드백
+    if (navigator.vibrate) {
+        if (isLastGame) {
+            navigator.vibrate([200, 100, 200, 100, 200]);
+        } else {
+            navigator.vibrate([200, 100, 200]);
+        }
+    }
+
+    // 효과음
+    playSound('success');
 }
 
 // 실패 화면 표시

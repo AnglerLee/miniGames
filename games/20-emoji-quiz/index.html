@@ -17,7 +17,11 @@
         </div>
 
         <div class="game-area">
-            <div class="score-board" id="score">Score: 0</div>
+            <div class="game-header-info">
+                <div class="info-item" id="score">Score: 0</div>
+                <div class="info-item timer" id="timer">⏱️ 00:30</div>
+                <div class="info-item" id="passes">🎫 패스: 3</div>
+            </div>
 
             <div id="quiz-container">
                 <div id="quiz" class="emoji-display"></div>
@@ -27,7 +31,10 @@
                 <input type="text" id="answerInput" placeholder="정답을 입력하세요" autocomplete="off">
             </div>
 
-            <button class="btn-check" onclick="checkAnswer()">확인</button>
+            <div class="button-group">
+                <button class="btn-pass" id="passBtn">⏭️ 패스</button>
+                <button class="btn-check" id="checkBtn">✅ 확인</button>
+            </div>
 
             <p id="result"></p>
         </div>

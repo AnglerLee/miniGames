@@ -3,25 +3,54 @@ let currentQuestionIndex = 0;
 let score = 0;
 let currentQuestions = [];
 let gameActive = false;
+let questionTimer = null;
+let currentTimeLimit = 30;
+let passesRemaining = 3;
+let gameSettings = {};
 
 // DOM Elements
 const quizElement = document.getElementById('quiz');
 const inputElement = document.getElementById('answerInput');
 const resultElement = document.getElementById('result');
-const hintElement = document.getElementById('hint');
+const timerElement = document.getElementById('timer');
+const passesElement = document.getElementById('passes');
+const checkBtn = document.getElementById('checkBtn');
+const passBtn = document.getElementById('passBtn');
+
+// 게임 설정 로드
+function loadGameSettings() {
+    const config = getGameConfig(GAME_ID);
+    gameSettings = config.gameSettings || {
+        timePerQuestion: 30,
+        totalQuestions: 20
+    };
+
+    currentTimeLimit = gameSettings.timePerQuestion;
+    return gameSettings;
+}
 
 // Initialize Game
 function initGame() {
+    // 설정 로드
+    loadGameSettings();
+
     // Shuffle and select questions
-    currentQuestions = shuffleArray([...EMOJI_QUIZ_DATA]);
+    const allQuestions = shuffleArray([...EMOJI_QUIZ_DATA]);
+    currentQuestions = allQuestions.slice(0, gameSettings.totalQuestions);
+
     currentQuestionIndex = 0;
     score = 0;
+    passesRemaining = 3;
     gameActive = true;
 
     updateScore();
+    updatePassDisplay();
     showQuestion();
 
-    // Add event listener for Enter key
+    // Add event listeners
+    checkBtn.addEventListener('click', checkAnswer);
+    passBtn.addEventListener('click', handlePass);
+
     inputElement.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             checkAnswer();
@@ -40,9 +69,65 @@ function showQuestion() {
     quizElement.classList.add('bounceIn');
 
     inputElement.value = '';
+    inputElement.disabled = false;
     resultElement.textContent = '';
     resultElement.className = '';
     inputElement.focus();
+
+    // 타이머 시작
+    startQuestionTimer();
+    updateScore();
+}
+
+function startQuestionTimer() {
+    // 기존 타이머 정리
+    if (questionTimer) {
+        questionTimer.stop();
+    }
+
+    questionTimer = createTimer(currentTimeLimit,
+        (timeLeft) => {
+            timerElement.textContent = `⏱️ ${formatTime(timeLeft)}`;
+
+            // 10초 이하 경고
+            if (timeLeft <= 10) {
+                timerElement.classList.add('warning');
+            } else {
+                timerElement.classList.remove('warning');
+            }
+        },
+        () => handleTimeOut()
+    );
+}
+
+function handleTimeOut() {
+    gameActive = false;
+    if (questionTimer) {
+        questionTimer.stop();
+    }
+
+    inputElement.disabled = true;
+
+    showFailScreen(
+        `⏰ 시간이 초과되었습니다! (제한: ${currentTimeLimit}초)`,
+        GAME_ID,
+        () => {
+            // 재시도 시 시간 +1초
+            currentTimeLimit += 1;
+            retryCurrentQuestion();
+        }
+    );
+}
+
+function retryCurrentQuestion() {
+    gameActive = true;
+    inputElement.disabled = false;
+    inputElement.value = '';
+    inputElement.focus();
+    resultElement.textContent = '';
+
+    // 타이머 재시작 (시간 증가됨)
+    startQuestionTimer();
 }
 
 function checkAnswer() {
@@ -68,7 +153,11 @@ function handleCorrect() {
     resultElement.style.color = 'var(--success-color)';
 
     score += 10;
-    updateScore();
+
+    // 타이머 정지
+    if (questionTimer) {
+        questionTimer.stop();
+    }
 
     // Disable input temporarily
     inputElement.disabled = true;
@@ -90,9 +179,27 @@ function handleIncorrect() {
     inputElement.focus();
 }
 
+function handlePass() {
+    if (!gameActive || passesRemaining <= 0) return;
+
+    playSound('click');
+    passesRemaining--;
+    updatePassDisplay();
+
+    // 타이머 정지
+    if (questionTimer) {
+        questionTimer.stop();
+    }
+
+    nextQuestion();
+}
+
 function nextQuestion() {
     currentQuestionIndex++;
     inputElement.disabled = false;
+
+    // 시간 제한 리셋 (기본값으로)
+    currentTimeLimit = gameSettings.timePerQuestion;
 
     if (currentQuestionIndex < currentQuestions.length) {
         showQuestion();
@@ -103,13 +210,27 @@ function nextQuestion() {
 
 function finishGame() {
     gameActive = false;
+    if (questionTimer) {
+        questionTimer.stop();
+    }
     showSuccessScreen(GAME_ID);
 }
 
 function updateScore() {
     const scoreElement = document.getElementById('score');
     if (scoreElement) {
-        scoreElement.textContent = `Score: ${score} | ${currentQuestionIndex + 1}/${currentQuestions.length}`;
+        scoreElement.textContent = `💯 ${score}점`;
+    }
+}
+
+function updatePassDisplay() {
+    if (passesElement) {
+        passesElement.textContent = `🎫 패스: ${passesRemaining}`;
+    }
+
+    // 패스 버튼 비활성화/활성화
+    if (passBtn) {
+        passBtn.disabled = (passesRemaining <= 0);
     }
 }
 
@@ -118,8 +239,9 @@ showInstructions('🤔 이모지 넌센스 Quiz',
     [
         '이모지를 보고 연상되는 단어를 맞춰보세요!',
         '정답은 여러 가지일 수 있습니다.',
-        '총 20문제가 준비되어 있어요.',
-        '틀리면 힌트가 나옵니다.'
+        `총 ${gameSettings.totalQuestions || 20}문제가 준비되어 있어요.`,
+        '틀리면 힌트가 나옵니다.',
+        '패스는 3번까지 가능합니다!'
     ],
     initGame
 );

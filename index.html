@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>보물찾기 미니게임 🎮</title>
     <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/treasure-hunt.css">
     <style>
         .games-grid {
             display: grid;
@@ -108,6 +109,9 @@
 
 <body>
     <div class="container">
+        <!-- 보물찾기 배너 (활성화된 경우만 표시) -->
+        <div id="treasureHuntBanner"></div>
+        
         <h1>🎮 보물찾기 미니게임</h1>
         <p class="intro-text">게임을 선택하고 클리어해서 비밀번호를 찾아보세요!</p>
 
@@ -239,8 +243,62 @@
 
         <div class="admin-link">
             <a href="admin.html">🔧 관리자 설정</a>
+            <span style="margin: 0 10px;">|</span>
+            <a href="treasure-hunt-admin.html">🎯 보물찾기 관리</a>
         </div>
     </div>
+
+    <script src="assets/js/treasure-hunt.js"></script>
+    <script src="assets/js/default-presets.js"></script>
+    <script>
+        // 페이지 로드 시 보물찾기 배너 표시
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTreasureHuntBanner();
+        });
+
+        function renderTreasureHuntBanner() {
+            const banner = document.getElementById('treasureHuntBanner');
+            const activePreset = TreasureHunt.getActivePreset();
+
+            if (!activePreset) {
+                banner.innerHTML = '';
+                return;
+            }
+
+            const progress = TreasureHunt.getCurrentProgress();
+            const theme = TreasureHunt.getThemeInfo(activePreset.theme);
+            
+            let statusText = '';
+            let progressText = '';
+
+            if (progress && progress.presetId === activePreset.id) {
+                const completed = progress.completedGames.length;
+                const total = activePreset.games.length;
+                const percentage = Math.round((completed / total) * 100);
+                
+                if (completed >= total) {
+                    statusText = '완료!';
+                    progressText = '🎉 모든 미션을 완료했어요!';
+                } else {
+                    statusText = '진행 중';
+                    progressText = `${completed}/${total} 완료 (${percentage}%)`;
+                }
+            } else {
+                statusText = '시작 전';
+                progressText = `${activePreset.games.length}개의 미션이 기다리고 있어요!`;
+            }
+
+            banner.innerHTML = `
+                <div class="treasure-hunt-banner" onclick="location.href='treasure-hunt.html'">
+                    <h2>${theme.icon} ${activePreset.name}</h2>
+                    <p>${activePreset.description || '보물을 찾아 떠나는 모험!'}</p>
+                    <div class="banner-progress">
+                        ${statusText}: ${progressText}
+                    </div>
+                </div>
+            `;
+        }
+    </script>
 </body>
 
 </html>

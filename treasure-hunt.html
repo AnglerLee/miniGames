@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>보물찾기 시작!</title>
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/treasure-hunt.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .hero-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+
+        .hero-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .progress-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-container {
+            background: var(--bg-light);
+            border-radius: 20px;
+            height: 40px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--success-color) 0%, #4ade80 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .games-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .game-step {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s;
+        }
+
+        .game-step.completed {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        }
+
+        .game-step.current {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 3px solid var(--warning-color);
+            transform: scale(1.02);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .game-step.completed .step-number {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .game-step.current .step-number {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .step-info {
+            flex: 1;
+        }
+
+        .step-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+        }
+
+        .step-info p {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .step-action {
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-disabled {
+            background: var(--border-color);
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .completion-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .completion-icon {
+            font-size: 6rem;
+            margin-bottom: 20px;
+            animation: celebrate 1s infinite;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        .final-code {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border: 3px solid var(--warning-color);
+        }
+
+        .final-code h3 {
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        .code-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            letter-spacing: 5px;
+            font-family: monospace;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .no-hunt {
+            background: white;
+            border-radius: 16px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .no-hunt h2 {
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 25px;
+            }
+
+            .hero-title {
+                font-size: 1.8rem;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+            }
+
+            .game-step {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="huntContainer"></div>
+    </div>
+
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/treasure-hunt.js"></script>
+    <script>
+        // 페이지 로드
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHunt();
+        });
+
+        function renderHunt() {
+            const preset = TreasureHunt.getActivePreset();
+            const container = document.getElementById('huntContainer');
+
+            if (!preset) {
+                renderNoHunt(container);
+                return;
+            }
+
+            let progress = TreasureHunt.getCurrentProgress();
+
+            // 진행 상황이 없거나 다른 프리셋이면 초기화
+            if (!progress || progress.presetId !== preset.id) {
+                progress = TreasureHunt.initProgress(preset.id);
+            }
+
+            const completed = progress.completedGames.length;
+            const total = preset.games.length;
+            const isComplete = completed >= total;
+
+            if (isComplete) {
+                renderCompletion(container, preset);
+            } else {
+                renderInProgress(container, preset, progress, completed, total);
+            }
+        }
+
+        function renderNoHunt(container) {
+            const theme = TreasureHunt.getThemeInfo('custom');
+            container.innerHTML = `
+                <div class="no-hunt">
+                    <h2>활성화된 보물찾기가 없습니다</h2>
+                    <p style="margin-bottom: 30px; color: var(--text-light);">
+                        관리자 페이지에서 보물찾기를 만들고 활성화하세요!
+                    </p>
+                    <div class="actions">
+                        <a href="treasure-hunt-admin.html" class="btn btn-primary">
+                            🎯 관리자 페이지로
+                        </a>
+                        <a href="index.html" class="btn btn-secondary">
+                            🏠 홈으로
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderInProgress(container, preset, progress, completed, total) {
+            const theme = TreasureHunt.getThemeInfo(preset.theme);
+            const percentage = Math.round((completed / total) * 100);
+
+            container.innerHTML = `
+                <div class="hero-section">
+                    <div class="hero-icon">${theme.icon}</div>
+                    <h1 class="hero-title">${preset.name}</h1>
+                    <p class="hero-description">${preset.description}</p>
+                    <div class="actions">
+                        <a href="index.html" class="btn btn-secondary">🏠 홈으로</a>
+                        <button class="btn btn-secondary" onclick="resetHunt()">🔄 처음부터</button>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <h2>진행 상황</h2>
+                        <span style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color);">
+                            ${completed}/${total}
+                        </span>
+                    </div>
+                    
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${percentage}%">
+                            ${percentage}%
+                        </div>
+                    </div>
+
+                    <div class="games-list">
+                        ${preset.games.map((game, index) => {
+                            const gameInfo = TreasureHunt.getGameInfo(game.gameId);
+                            const isCompleted = progress.completedGames.includes(index);
+                            const isCurrent = index === progress.currentGameIndex;
+                            const isLocked = index > progress.currentGameIndex;
+                            
+                            let statusClass = '';
+                            let statusIcon = '⏸️';
+                            let buttonHtml = '';
+
+                            if (isCompleted) {
+                                statusClass = 'completed';
+                                statusIcon = '✅';
+                                buttonHtml = '<button class="btn btn-disabled" disabled>완료!</button>';
+                            } else if (isCurrent) {
+                                statusClass = 'current';
+                                statusIcon = '▶️';
+                                buttonHtml = `<a href="${gameInfo.path}/index.html" class="btn btn-success">시작하기!</a>`;
+                            } else if (isLocked) {
+                                statusClass = '';
+                                statusIcon = '🔒';
+                                buttonHtml = '<button class="btn btn-disabled" disabled>잠김</button>';
+                            }
+
+                            return `
+                                <div class="game-step ${statusClass}">
+                                    <div class="step-number">${statusIcon}</div>
+                                    <div class="step-info">
+                                        <h3>${index + 1}. ${gameInfo.icon} ${gameInfo.name}</h3>
+                                        ${game.storyText ? `<p>${game.storyText}</p>` : ''}
+                                    </div>
+                                    <div class="step-action">
+                                        ${buttonHtml}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCompletion(container, preset) {
+            const theme = TreasureHunt.getThemeInfo(preset.theme);
+            const finalReward = preset.finalReward || {};
+
+            container.innerHTML = `
+                <div class="completion-section">
+                    <div class="completion-icon">🎉</div>
+                    <h1>축하합니다!</h1>
+                    <h2>${preset.name} 완료!</h2>
+                    
+                    <p style="font-size: 1.2rem; margin: 20px 0; line-height: 1.6;">
+                        ${finalReward.message || '모든 미션을 완료했습니다!'}
+                    </p>
+
+                    ${finalReward.secretCode ? `
+                        <div class="final-code">
+                            <h3>🔑 최종 비밀번호</h3>
+                            <div class="code-display">${finalReward.secretCode}</div>
+                        </div>
+                    ` : ''}
+
+                    <div class="actions">
+                        <button class="btn btn-primary" onclick="resetHunt()">
+                            🔄 다시 도전하기
+                        </button>
+                        <a href="treasure-hunt-admin.html" class="btn btn-secondary">
+                            🎯 다른 보물찾기 선택
+                        </a>
+                        <a href="index.html" class="btn btn-secondary">
+                            🏠 홈으로
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            // 진동 및 효과음
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+            playSound('success');
+        }
+
+        function resetHunt() {
+            if (confirm('처음부터 다시 시작하시겠습니까? 현재 진행 상황이 초기화됩니다.')) {
+                TreasureHunt.resetProgress();
+                renderHunt();
+                showNotification('초기화되었습니다!');
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success-color);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: var(--shadow-lg);
+                z-index: 2000;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
+</body>
+
+</html>
