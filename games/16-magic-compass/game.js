@@ -82,6 +82,7 @@ let lastVibrationTime = 0;
 let gameStartTime = 0;
 let noiseStartTime = Date.now();  // 흔들림 타이밍용
 let noisePhases = [0, 0, 0, 0];  // 여러 주파수의 위상
+let animationFrameId = null;  // 애니메이션 프레임 ID
 
 // Admin 설정 로드
 function loadAdminSettings() {
@@ -223,6 +224,9 @@ function startGame() {
 
     // 첫 미션 표시
     updateMissionDisplay();
+
+    // 60fps 애니메이션 루프 시작
+    animationFrameId = requestAnimationFrame(animationLoop);
 }
 
 // 미션 생성
@@ -255,7 +259,7 @@ function updateMissionDisplay() {
     missionProgress.textContent = `${currentMissionIndex + 1}/${missions.length}`;
 }
 
-// 방향 센서 핸들러
+// 방향 센서 핸들러 (데이터 수집만 담당)
 function orientationHandler(event) {
     if (!isSensorActive) return;
 
@@ -277,35 +281,29 @@ function orientationHandler(event) {
     }
 
     // 실제 센서 값 저장
-    rawHeading = Math.round(alpha);
+    rawHeading = alpha;  // 정수 변환 제거 (부드러운 보간을 위해)
 
     // 기기 기울기 계산 (수평에서 얼마나 벗어났는지)
-    // beta와 gamma의 절대값을 조합하여 총 기울기 계산
     deviceTilt = Math.min(90, Math.sqrt(beta * beta + gamma * gamma));
+}
+
+// 60fps 애니메이션 루프
+function animationLoop() {
+    if (!isSensorActive) return;
 
     // 나침반 흔들림 추가 (기울기 기반 동적 흔들림)
     const noiseOffset = calculateCompassNoise();
-    currentHeading = Math.round((rawHeading + noiseOffset + 360) % 360);
+    currentHeading = (rawHeading + noiseOffset + 360) % 360;
 
-    // UI 업데이트
-    updateCompassUI();
-
-    // 게임 로직 체크
-    checkMissionProgress();
-}
-
-// 나침반 UI 업데이트
-function updateCompassUI() {
     // 최단 경로 회전 계산 (0도/359도 경계 처리)
-    let targetHeading = currentHeading;
-    let diff = targetHeading - displayHeading;
+    let diff = currentHeading - displayHeading;
 
     // -180 ~ 180 범위로 정규화 (최단 경로)
     while (diff > 180) diff -= 360;
     while (diff < -180) diff += 360;
 
-    // 부드러운 회전 (보간)
-    displayHeading += diff * 0.3;
+    // 부드러운 회전 (보간 - 더 빠른 반응)
+    displayHeading += diff * 0.15;  // 0.3에서 0.15로 조정 (더 부드럽게)
 
     // 360도 순환 처리
     if (displayHeading < 0) displayHeading += 360;
@@ -315,12 +313,12 @@ function updateCompassUI() {
     compassFace.style.transform = `rotate(${-displayHeading}deg)`;
 
     // 현재 각도 표시
-    currentDegree.textContent = `${currentHeading}°`;
+    currentDegree.textContent = `${Math.round(currentHeading)}°`;
 
     // 목표와의 오차 계산
     const mission = missions[currentMissionIndex];
     const error = calculateAngleError(currentHeading, mission.degree);
-    errorDegree.textContent = `${Math.abs(error)}°`;
+    errorDegree.textContent = `${Math.abs(Math.round(error))}°`;
 
     // 정확도 링 색상
     const config = difficulties[currentDifficulty];
@@ -333,6 +331,17 @@ function updateCompassUI() {
     } else {
         accuracyRing.classList.add('far');
     }
+
+    // 게임 로직 체크
+    checkMissionProgress();
+
+    // 다음 프레임 예약
+    animationFrameId = requestAnimationFrame(animationLoop);
+}
+
+// 나침반 UI 업데이트 (사용 안 함 - animationLoop에서 처리)
+function updateCompassUI() {
+    // 이 함수는 이제 사용하지 않지만 호환성을 위해 유지
 
 }
 
@@ -420,6 +429,12 @@ function completeGame() {
     isSensorActive = false;
     window.removeEventListener('deviceorientation', orientationHandler);
 
+    // 애니메이션 루프 중지
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+
     const totalTime = Math.floor((Date.now() - gameStartTime) / 1000);
 
     // 기록 저장
@@ -458,6 +473,12 @@ function resetGame() {
     if (confirm('게임을 다시 시작하시겠습니까?')) {
         isSensorActive = false;
         window.removeEventListener('deviceorientation', orientationHandler);
+
+        // 애니메이션 루프 중지
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
 
         holdStartTime = 0;
         holdDuration = 0;
