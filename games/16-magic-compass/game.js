@@ -73,6 +73,7 @@ let isSensorActive = false;
 let currentHeading = 0;
 let rawHeading = 0;  // 실제 센서 값
 let displayHeading = 0;  // 화면에 표시되는 각도 (애니메이션용)
+let deviceTilt = 0;  // 기기 기울기 (0~90도)
 let missions = [];
 let currentMissionIndex = 0;
 let holdStartTime = 0;
@@ -80,6 +81,7 @@ let holdDuration = 0;
 let lastVibrationTime = 0;
 let gameStartTime = 0;
 let noiseStartTime = Date.now();  // 흔들림 타이밍용
+let noisePhases = [0, 0, 0, 0];  // 여러 주파수의 위상
 
 // Admin 설정 로드
 function loadAdminSettings() {
@@ -101,14 +103,31 @@ function loadAdminSettings() {
     }
 }
 
-// 나침반 흔들림 계산 (Sin/Cos 조합)
-function calculateCompassNoise(timestamp) {
+// 나침반 흔들림 계산 (기울기 기반 동적 흔들림)
+function calculateCompassNoise() {
+    // 기울기에 따른 흔들림 배율 (0도 = 1배, 90도 = 5배)
+    const tiltFactor = 1 + (deviceTilt / 90) * 4;
+
     let noise = 0;
+    const now = Date.now();
+
+    // 여러 주파수 조합으로 불규칙한 흔들림 생성
     for (let i = 1; i <= compassNoise.complexity; i++) {
-        const freq = compassNoise.frequency * i;
-        const amp = compassNoise.amplitude / i;
-        noise += Math.sin(timestamp * freq * Math.PI * 2 / 1000) * amp;
+        // 각 주파수마다 다른 속도와 위상
+        const freq = compassNoise.frequency * i * (1 + Math.random() * 0.2);
+        const amp = compassNoise.amplitude / Math.sqrt(i);
+
+        // 위상 업데이트 (시간에 따라 증가)
+        noisePhases[i - 1] += freq * Math.PI * 2 / 60;  // 60fps 기준
+
+        // Sin과 Cos 조합으로 더 복잡한 패턴
+        noise += Math.sin(noisePhases[i - 1]) * amp * tiltFactor;
+        noise += Math.cos(noisePhases[i - 1] * 1.3) * amp * 0.5 * tiltFactor;
     }
+
+    // 추가 랜덤 흔들림 (기울기가 클수록 강함)
+    noise += (Math.random() - 0.5) * compassNoise.amplitude * 0.3 * tiltFactor;
+
     return noise;
 }
 
@@ -243,6 +262,11 @@ function orientationHandler(event) {
     // alpha: 0-360도 (북쪽이 0도)
     let alpha = event.alpha || 0;
 
+    // beta: 전후 기울기 (-180 ~ 180)
+    let beta = event.beta || 0;
+    // gamma: 좌우 기울기 (-90 ~ 90)
+    let gamma = event.gamma || 0;
+
     // 안드로이드/iOS 호환성 처리
     if (event.webkitCompassHeading) {
         // iOS의 경우
@@ -255,8 +279,12 @@ function orientationHandler(event) {
     // 실제 센서 값 저장
     rawHeading = Math.round(alpha);
 
-    // 나침반 흔들림 추가
-    const noiseOffset = calculateCompassNoise(Date.now() - noiseStartTime);
+    // 기기 기울기 계산 (수평에서 얼마나 벗어났는지)
+    // beta와 gamma의 절대값을 조합하여 총 기울기 계산
+    deviceTilt = Math.min(90, Math.sqrt(beta * beta + gamma * gamma));
+
+    // 나침반 흔들림 추가 (기울기 기반 동적 흔들림)
+    const noiseOffset = calculateCompassNoise();
     currentHeading = Math.round((rawHeading + noiseOffset + 360) % 360);
 
     // UI 업데이트
