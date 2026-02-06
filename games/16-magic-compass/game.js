@@ -3,7 +3,6 @@
 const GAME_ID = 'game16';
 
 // DOM 요소
-const difficultySelector = document.getElementById('difficultySelector');
 const gameScreen = document.getElementById('gameScreen');
 
 // 게임 화면 요소
@@ -73,6 +72,7 @@ let currentDifficulty = 'easy';
 let isSensorActive = false;
 let currentHeading = 0;
 let rawHeading = 0;  // 실제 센서 값
+let displayHeading = 0;  // 화면에 표시되는 각도 (애니메이션용)
 let missions = [];
 let currentMissionIndex = 0;
 let holdStartTime = 0;
@@ -85,31 +85,18 @@ let noiseStartTime = Date.now();  // 흔들림 타이밍용
 function loadAdminSettings() {
     const settings = JSON.parse(localStorage.getItem('game16_settings'));
     if (settings) {
-        // 단일 난이도 설정 로드 (새로운 구조)
+        // 난이도 설정 직접 적용 (Admin에서 설정한 값을 그대로 사용)
         if (settings.tolerance !== undefined) {
-            // 현재 선택된 난이도에 설정 적용
             difficulties[currentDifficulty].tolerance = settings.tolerance;
             difficulties[currentDifficulty].holdTime = settings.holdTime;
             difficulties[currentDifficulty].missionCount = settings.missionCount;
-
-            // 모든 난이도에도 동일하게 적용 (비율 유지)
-            const baseLevel = currentDifficulty === 'easy' ? 1 : currentDifficulty === 'medium' ? 1.33 : 1.67;
-            difficulties.easy.tolerance = Math.round(settings.tolerance * (currentDifficulty === 'easy' ? 1 : 1.33));
-            difficulties.easy.holdTime = settings.holdTime * (currentDifficulty === 'easy' ? 1 : 0.75);
-            difficulties.easy.missionCount = Math.max(1, Math.round(settings.missionCount * (currentDifficulty === 'easy' ? 1 : 0.33)));
-
-            difficulties.medium.tolerance = Math.round(settings.tolerance * (currentDifficulty === 'medium' ? 1 : 1));
-            difficulties.medium.holdTime = settings.holdTime * (currentDifficulty === 'medium' ? 1 : 1);
-            difficulties.medium.missionCount = Math.round(settings.missionCount * (currentDifficulty === 'medium' ? 1 : 1));
-
-            difficulties.hard.tolerance = Math.round(settings.tolerance * (currentDifficulty === 'hard' ? 1 : 0.67));
-            difficulties.hard.holdTime = settings.holdTime * (currentDifficulty === 'hard' ? 1 : 1.5);
-            difficulties.hard.missionCount = Math.round(settings.missionCount * (currentDifficulty === 'hard' ? 1 : 1.67));
         }
 
         // 나침반 흔들림 설정 로드
         if (settings.compassNoise) {
-            Object.assign(compassNoise, settings.compassNoise);
+            compassNoise.amplitude = settings.compassNoise.amplitude;
+            compassNoise.frequency = settings.compassNoise.frequency;
+            compassNoise.complexity = settings.compassNoise.complexity;
         }
     }
 }
@@ -143,25 +130,12 @@ function initGame() {
 
 // 게임 설정
 function setupGame() {
-    setupDifficultyButtons();
     setupDegreeMarks();
     setupActionButtons();
     requestSensorPermissionAndStart();
 }
 
-// 난이도 버튼 설정
-function setupDifficultyButtons() {
-    const buttons = difficultySelector.querySelectorAll('.difficulty-btn');
-    buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (isSensorActive) return;
 
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentDifficulty = btn.dataset.level;
-        });
-    });
-}
 
 // 각도 눈금 생성
 function setupDegreeMarks() {
@@ -218,7 +192,6 @@ async function requestSensorPermissionAndStart() {
 // 게임 시작
 function startGame() {
     gameScreen.classList.add('active');
-    difficultySelector.style.display = 'none';
 
     // 미션 생성
     generateMissions();
@@ -295,8 +268,23 @@ function orientationHandler(event) {
 
 // 나침반 UI 업데이트
 function updateCompassUI() {
+    // 최단 경로 회전 계산 (0도/359도 경계 처리)
+    let targetHeading = currentHeading;
+    let diff = targetHeading - displayHeading;
+
+    // -180 ~ 180 범위로 정규화 (최단 경로)
+    while (diff > 180) diff -= 360;
+    while (diff < -180) diff += 360;
+
+    // 부드러운 회전 (보간)
+    displayHeading += diff * 0.3;
+
+    // 360도 순환 처리
+    if (displayHeading < 0) displayHeading += 360;
+    if (displayHeading >= 360) displayHeading -= 360;
+
     // 나침반 판 회전 (반대 방향)
-    compassFace.style.transform = `rotate(${-currentHeading}deg)`;
+    compassFace.style.transform = `rotate(${-displayHeading}deg)`;
 
     // 현재 각도 표시
     currentDegree.textContent = `${currentHeading}°`;

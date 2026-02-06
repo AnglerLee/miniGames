@@ -15,31 +15,6 @@
             padding: 10px;
         }
 
-        /* 난이도 선택 */
-        .difficulty-selector {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
-            margin: 10px 0;
-        }
-
-        .difficulty-btn {
-            padding: 8px 6px;
-            border: 2px solid var(--secondary-color);
-            background: white;
-            color: var(--secondary-color);
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .difficulty-btn.active {
-            background: var(--secondary-color);
-            color: white;
-        }
-
         /* 미션 표시 - 간소화 */
         .mission-display {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -390,13 +365,6 @@
 
         <div class="game-area">
             <div class="compass-container">
-                <!-- 난이도 선택 -->
-                <div class="difficulty-selector" id="difficultySelector">
-                    <button class="difficulty-btn active" data-level="easy">쉬움</button>
-                    <button class="difficulty-btn" data-level="medium">보통</button>
-                    <button class="difficulty-btn" data-level="hard">어려움</button>
-                </div>
-
                 <!-- 게임 화면 -->
                 <div class="game-screen" id="gameScreen">
                     <!-- 미션 표시 -->

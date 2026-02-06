@@ -11,19 +11,34 @@ const difficultyPresets = {
         name: '🟢 쉬움',
         tolerance: 20,
         holdTime: 1,
-        missionCount: 1
+        missionCount: 1,
+        compassNoise: {
+            amplitude: 3,     // 흔들림 작게
+            frequency: 0.3,
+            complexity: 2
+        }
     },
     1: { // 보통
         name: '🟡 보통',
         tolerance: 15,
         holdTime: 2,
-        missionCount: 3
+        missionCount: 3,
+        compassNoise: {
+            amplitude: 5,     // 흔들림 중간
+            frequency: 0.5,
+            complexity: 3
+        }
     },
     2: { // 어려움
         name: '🔴 어려움',
         tolerance: 10,
         holdTime: 3,
-        missionCount: 5
+        missionCount: 5,
+        compassNoise: {
+            amplitude: 8,     // 흔들림 크게
+            frequency: 0.8,
+            complexity: 4
+        }
     }
 };
 
@@ -57,6 +72,11 @@ function applyPreset(level) {
     document.getElementById('tolerance').value = preset.tolerance;
     document.getElementById('holdTime').value = preset.holdTime;
     document.getElementById('missionCount').value = preset.missionCount;
+
+    // 나침반 흔들림 설정 업데이트
+    document.getElementById('noiseAmplitude').value = preset.compassNoise.amplitude;
+    document.getElementById('noiseFrequency').value = preset.compassNoise.frequency;
+    document.getElementById('noiseComplexity').value = preset.compassNoise.complexity;
 }
 
 // 설정 로드
