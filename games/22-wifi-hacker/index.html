@@ -11,14 +11,12 @@
 <body>
     <canvas id="matrix-bg"></canvas>
 
-    <!-- Admin Button (Hidden Trigger) -->
-    <div id="admin-btn" class="settings-icon">⚙️</div>
+
 
     <div class="hacker-container">
         <div class="monitor-screen">
             <div class="status-bar">
-                <span>SYS.OP.MODE: HACKING</span>
-                <span id="target-display">TARGET: SCANNING...</span>
+                <span id="mission-goal">🎯 목표: Wi-Fi 비밀번호를 찾아라!</span>
             </div>
 
             <!-- PHASES -->
@@ -64,26 +62,15 @@
             <div id="success-screen" class="screen-section hidden">
                 <div class="access-granted">ACCESS GRANTED</div>
                 <p style="margin-top: 20px;">System Protection Disabled.</p>
-                <button class="btn-hack" style="margin-top: 30px;" onclick="location.href='../../index.html'">EXIT
-                    SYSTEM</button>
+                <button class="btn-hack" style="margin-top: 30px;" onclick="onHackSuccess()">EXIT SYSTEM</button>
             </div>
 
         </div>
     </div>
 
-    <!-- Admin Modal -->
-    <div id="admin-modal" class="settings-modal hidden">
-        <h2 style="color: var(--hacker-green); margin-top:0;">SYS ADMIN CONFIG</h2>
-        <label>TARGET NAME:</label>
-        <input type="text" id="conf-target">
-        <label>PASSWORD (4 digits):</label>
-        <input type="number" id="conf-pass" maxlength="4">
-        <div style="margin-top: 20px; text-align: right;">
-            <button class="btn-hack" style="padding: 0.5rem 1rem;" onclick="closeAdmin()">CANCEL</button>
-            <button class="btn-hack" style="padding: 0.5rem 1rem;" onclick="saveConfig()">SAVE</button>
-        </div>
-    </div>
 
+
+    <script src="../../assets/js/common.js"></script>
     <script src="script.js"></script>
 </body>
 

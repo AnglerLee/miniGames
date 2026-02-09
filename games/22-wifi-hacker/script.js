@@ -14,8 +14,9 @@ const ctx = canvas.getContext('2d');
 
 // Default Config
 const defaultConfig = {
+    missionGoal: '🎯 목표: Wi-Fi 비밀번호를 찾아라!',
     targetName: 'SECRET_BASE_WIFI',
-    password: '1234' // Default password, can be changed in settings
+    password: '1234'
 };
 
 // Load Config
@@ -78,13 +79,14 @@ window.addEventListener('resize', () => {
 document.addEventListener('DOMContentLoaded', () => {
     startMatrix();
     initGame();
-    setupAdmin();
 });
 
 function initGame() {
     // Phase 1: Scanning
     showScreen('scanning-screen');
-    document.getElementById('target-display').innerText = `TARGET: ${config.targetName}`;
+
+    // 목표 문구 표시
+    document.getElementById('mission-goal').innerText = config.missionGoal;
 
     // Auto transition to input after 3s
     setTimeout(() => {
@@ -139,32 +141,9 @@ function hack() {
     }
 }
 
-// Admin Settings
-function setupAdmin() {
-    const adminBtn = document.getElementById('admin-btn');
-    const modal = document.getElementById('admin-modal');
-
-    adminBtn.addEventListener('click', () => {
-        modal.classList.remove('hidden');
-        document.getElementById('conf-target').value = config.targetName;
-        document.getElementById('conf-pass').value = config.password;
-    });
+function onHackSuccess() {
+    // 공통 성공 화면 표시 (힌트/비밀번호 포함)
+    showSuccessScreen(GAME_ID);
 }
 
-function saveConfig() {
-    const newTarget = document.getElementById('conf-target').value;
-    const newPass = document.getElementById('conf-pass').value;
 
-    if (newTarget && newPass) {
-        config.targetName = newTarget;
-        config.password = newPass;
-        localStorage.setItem(GAME_ID + '_config', JSON.stringify(config));
-        document.getElementById('admin-modal').classList.add('hidden');
-        alert('Config Saved! Reloading...');
-        location.reload();
-    }
-}
-
-function closeAdmin() {
-    document.getElementById('admin-modal').classList.add('hidden');
-}
