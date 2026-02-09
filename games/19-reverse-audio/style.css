@@ -1,4 +1,4 @@
-/* 리버스 오디오 스타일 - 풀 버전 */
+﻿/* 리버???�디???��???- ?� 버전 */
 
 .game-area {
     width: 100%;
@@ -33,7 +33,7 @@
     }
 }
 
-/* 난이도 선택 */
+/* ?�이???�택 */
 .difficulty-selector {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -61,7 +61,7 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* 모드 선택 */
+/* 모드 ?�택 */
 .mode-selector {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -89,7 +89,7 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* 통계 대시보드 */
+/* ?�계 ?�?�보??*/
 .stats-dashboard {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -127,7 +127,7 @@
     text-align: center;
 }
 
-/* 비주얼라이저 */
+/* 비주?�라?��? */
 .visualizer-container {
     width: 100%;
     height: 150px;
@@ -285,7 +285,7 @@ input[type=range]::-webkit-slider-thumb:active {
     margin-bottom: 10px;
 }
 
-/* 힌트 표시 */
+/* ?�트 ?�시 */
 .hint-display {
     width: 100%;
     min-height: 40px;
@@ -395,7 +395,7 @@ input[type="text"]:focus {
     display: none !important;
 }
 
-/* 모바일 최적화 */
+/* 모바??최적??*/
 @media (max-width: 768px) {
     .game-area {
         max-width: 100%;
@@ -473,5 +473,111 @@ input[type="text"]:focus {
     
     .stat-label {
         font-size: 11px;
+    }
+}
+
+/* ����Ʈ ��� (����� ����ȭ) */
+.stats-compact {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 15px 0;
+    width: 100%;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 10px 5px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-icon {
+    font-size: 1.2rem;
+}
+
+.stat-item span:last-child {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+/* ���� ���� �� */
+.game-info-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;`n    width: 100%;`n    box-sizing: border-box;
+    width: 100%;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    color: white;
+    font-weight: bold;
+}
+
+.info-left {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.info-item {
+    font-size: 0.95rem;
+}
+
+.info-right {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-compact {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.btn-hint {
+    background: rgba(255, 255, 255, 0.9);
+    color: #764ba2;
+}
+
+.btn-skip {
+    background: rgba(255, 255, 255, 0.7);
+    color: #667eea;
+}
+
+.btn-compact:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.btn-compact:active {
+    transform: translateY(0);
+}
+
+/* ����� ����ȭ */
+@media (max-width: 480px) {
+    .game-info-bar {
+        padding: 8px 12px;
+    }
+    
+    .info-item {
+        font-size: 0.85rem;
+    }
+    
+    .btn-compact {
+        padding: 5px 10px;
+        font-size: 0.8rem;
     }
 }

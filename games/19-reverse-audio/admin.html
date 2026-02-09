@@ -1,11 +1,150 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>19 Reverse Audio - 관리자 설정</title>
     <link rel="stylesheet" href="../../assets/css/admin-theme.css">
+    <style>
+        .difficulty-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .question-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .question-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .question-number {
+            min-width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .question-answer {
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        .btn-play-small,
+        .btn-delete-small {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-play-small {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-play-small:hover {
+            opacity: 0.8;
+        }
+
+        .btn-delete-small {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-delete-small:hover {
+            opacity: 0.8;
+        }
+
+        .recording-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn-record,
+        .btn-stop,
+        .btn-play {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-record {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-stop {
+            background: #555;
+            color: white;
+        }
+
+        .btn-play {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .recording-time {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            font-weight: bold;
+            color: var(--danger-color);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
+
 <body>
     <div class="container">
         <a href="../../admin.html" class="main-link">
@@ -14,20 +153,67 @@
 
         <header class="admin-header">
             <h1>🔧 19 Reverse Audio 설정</h1>
-            <div class="subtitle">게임 설정 관리</div>
+            <div class="subtitle">난이도별 문제 녹음 및 관리</div>
         </header>
 
         <div class="admin-form-card">
-            <form id="settingsForm">
-                
-            <!-- Game Specific Settings Placeholder -->
-            <!-- 
+            <!-- 난이도 선택 -->
+            <h2>🎮 난이도 선택</h2>
             <div class="form-group">
-                <label>게임별 전용 설정이 있다면 이곳에 추가하세요</label>
-            </div> 
-            -->
+                <input type="range" id="difficultySlider" min="0" max="2" step="1" value="0" class="form-input">
+                <div class="difficulty-labels">
+                    <span>🟢 쉬움</span>
+                    <span>🟡 보통</span>
+                    <span>🔴 어려움</span>
+                </div>
+            </div>
 
-            <h2>📝 게임 클리어 설정 (Global Config)</h2>
+            <!-- 난이도별 설정 -->
+            <h3 id="currentDifficultyName">🟢 쉬움 난이도 설정</h3>
+            <div class="settings-grid">
+                <div class="form-group">
+                    <label for="questions">문제 수</label>
+                    <input type="number" id="questions" min="1" max="10" value="3" class="form-input">
+                    <small>게임당 출제될 문제 수</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="maxHints">최대 힌트 수</label>
+                    <input type="number" id="maxHints" min="0" max="5" value="3" class="form-input">
+                    <small>문제당 사용 가능한 힌트 수</small>
+                </div>
+            </div>
+
+            <button type="button" id="saveSettingsBtn" class="btn btn-save">설정 저장</button>
+
+            <!-- 등록된 문제 목록 -->
+            <h3>📝 등록된 문제 (<span id="questionCount">0</span>개)</h3>
+            <div id="questionList" class="question-list">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🎙️</div>
+                    <div>등록된 문제가 없습니다.</div>
+                    <div>아래에서 새 문제를 추가해주세요.</div>
+                </div>
+            </div>
+
+            <!-- 새 문제 추가 -->
+            <h3>➕ 새 문제 추가</h3>
+            <div class="form-group">
+                <label for="newAnswer">정답 단어</label>
+                <input type="text" id="newAnswer" placeholder="예: 사과, 냉장고, 문을 열어라" class="form-input">
+            </div>
+
+            <div class="recording-controls">
+                <button type="button" id="recordBtn" class="btn-record">🎙️ 녹음 시작</button>
+                <button type="button" id="stopRecordBtn" class="btn-stop hidden">⏹️ 녹음 중지</button>
+                <button type="button" id="playBtn" class="btn-play hidden">▶️ 재생</button>
+                <div id="recordingTime" class="recording-time hidden">0.0초</div>
+            </div>
+
+            <button type="button" id="addQuestionBtn" class="btn btn-primary" disabled>문제 추가</button>
+
+            <!-- 글로벌 설정 -->
+            <h2 style="margin-top: 40px;">📝 게임 클리어 설정 (Global Config)</h2>
             <div class="form-group">
                 <label for="secretCode">🔑 비밀번호/숫자 코드 (Clear Code)</label>
                 <input type="text" id="secretCode" class="form-input" placeholder="예: 1234, 소파뒤">
@@ -43,15 +229,12 @@
 
             <div class="btn-group">
                 <button type="button" class="btn btn-home" onclick="location.href='index.html'">게임으로</button>
-                <button type="button" class="btn btn-reset" id="resetBtn">초기화</button>
-                <button type="submit" class="btn btn-save">저장하기</button>
             </div>
-        
-            </form>
         </div>
     </div>
 
     <script src="../../assets/js/common.js"></script>
     <script src="admin.js"></script>
 </body>
+
 </html>
