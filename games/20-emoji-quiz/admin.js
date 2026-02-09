@@ -5,9 +5,9 @@ const resetBtn = document.getElementById('resetBtn');
 
 // 난이도 프리셋 정의
 const difficultyPresets = {
-    0: { name: '😊 쉬움', timePerQuestion: 40, totalQuestions: 15 },
-    1: { name: '😐 보통', timePerQuestion: 30, totalQuestions: 20 },
-    2: { name: '😰 어려움', timePerQuestion: 20, totalQuestions: 30 }
+    0: { name: '😊 쉬움', timePerQuestion: 25, totalQuestions: 15 },
+    1: { name: '😐 보통', timePerQuestion: 20, totalQuestions: 20 },
+    2: { name: '😰 어려움', timePerQuestion: 15, totalQuestions: 30 }
 };
 
 // 난이도 슬라이더 요소

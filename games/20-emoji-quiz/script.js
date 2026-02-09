@@ -87,7 +87,10 @@ function startQuestionTimer() {
 
     questionTimer = createTimer(currentTimeLimit,
         (timeLeft) => {
-            timerElement.textContent = `⏱️ ${formatTime(timeLeft)}`;
+            const valueSpan = timerElement.querySelector('.value');
+            if (valueSpan) {
+                valueSpan.textContent = formatTime(timeLeft);
+            }
 
             // 10초 이하 경고
             if (timeLeft <= 10) {
@@ -219,13 +222,21 @@ function finishGame() {
 function updateScore() {
     const scoreElement = document.getElementById('score');
     if (scoreElement) {
-        scoreElement.textContent = `💯 ${score}점`;
+        const valueSpan = scoreElement.querySelector('.value');
+        if (valueSpan) {
+            const current = currentQuestionIndex + 1;
+            const total = currentQuestions.length;
+            valueSpan.textContent = `${current}/${total}`;
+        }
     }
 }
 
 function updatePassDisplay() {
     if (passesElement) {
-        passesElement.textContent = `🎫 패스: ${passesRemaining}`;
+        const valueSpan = passesElement.querySelector('.value');
+        if (valueSpan) {
+            valueSpan.textContent = `${passesRemaining}`;
+        }
     }
 
     // 패스 버튼 비활성화/활성화

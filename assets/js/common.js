@@ -26,7 +26,7 @@ function getGameConfig(gameId) {
 function showSuccessScreen(gameId) {
     // 보물찾기 모드 확인
     const isTreasureHunt = window.TreasureHunt && TreasureHunt.isTreasureHuntMode();
-    
+
     if (isTreasureHunt) {
         showTreasureHuntSuccess(gameId);
         return;
@@ -57,12 +57,14 @@ function showSuccessScreen(gameId) {
                 </div>
             ` : ''}
             
-            <button class="btn btn-primary btn-large" onclick="location.href='../../index.html'">
-                홈으로 돌아가기
-            </button>
-            <button class="btn btn-secondary" onclick="location.reload()">
-                다시 하기
-            </button>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="location.reload()">
+                    다시 하기
+                </button>
+                <button class="btn btn-secondary" onclick="location.href='../../index.html'">
+                    홈으로
+                </button>
+            </div>
         </div>
     `;
 
@@ -77,7 +79,7 @@ function showSuccessScreen(gameId) {
 // 보물찾기 모드 성공 화면
 function showTreasureHuntSuccess(gameId) {
     const huntInfo = TreasureHunt.getCurrentGameHuntInfo(gameId);
-    
+
     if (!huntInfo) {
         // 보물찾기 정보를 찾을 수 없으면 일반 성공 화면
         showSuccessScreen(gameId);
@@ -85,7 +87,7 @@ function showTreasureHuntSuccess(gameId) {
     }
 
     const { gameData, isLastGame, nextGame, gameIndex, preset } = huntInfo;
-    
+
     // 진행 상황 업데이트
     TreasureHunt.markGameComplete(gameIndex);
 
@@ -141,7 +143,7 @@ function showTreasureHuntSuccess(gameId) {
         // 중간 게임 - 다음 게임으로 안내
         const nextGameInfo = TreasureHunt.getGameInfo(nextGame.gameId);
         const nextGameUrl = TreasureHunt.getNextGameUrl(gameId);
-        
+
         modal.innerHTML = `
             <div class="modal-content success-screen fade-in" style="text-align: center;">
                 <div class="icon" style="font-size: 80px;">🎉</div>
@@ -225,17 +227,19 @@ function showFailScreen(message = '아쉽지만 실패했어요. 다시 도전�
             <div class="icon" style="font-size: 80px;">😢</div>
             <h2>다시 도전!</h2>
             <p>${message}</p>
-            ${onRetry ? `
-                <button class="btn btn-primary btn-large" id="retryBtn">
-                    재시도 (+약간 쉬워짐)
+            <div class="modal-buttons">
+                ${onRetry ? `
+                    <button class="btn btn-primary" id="retryBtn">
+                        재시도
+                    </button>
+                ` : ''}
+                <button class="btn ${onRetry ? 'btn-secondary' : 'btn-primary'}" onclick="location.reload()">
+                    ${onRetry ? '처음부터' : '다시 시작'}
                 </button>
-            ` : ''}
-            <button class="btn ${onRetry ? 'btn-secondary' : 'btn-primary btn-large'}" onclick="location.reload()">
-                ${onRetry ? '처음부터 다시' : '다시 시작'}
-            </button>
-            <button class="btn btn-secondary" onclick="location.href='../../index.html'">
-                홈으로
-            </button>
+                <button class="btn btn-secondary" onclick="location.href='../../index.html'">
+                    홈으로
+                </button>
+            </div>
         </div>
     `;
 

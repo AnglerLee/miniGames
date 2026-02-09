@@ -21,59 +21,91 @@
 .info-item {
     flex: 1;
     background: rgba(255, 255, 255, 0.95);
-    padding: 8px 12px;
-    border-radius: 12px;
+    padding: 6px 8px;
+    border-radius: 10px;
     font-weight: bold;
-    font-size: 13px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
 }
 
-.info-item.timer {
+.info-item .label {
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1;
+    opacity: 0.95;
+}
+
+.info-item .value {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.timer-item {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
 }
 
-.info-item.timer.warning {
+.timer-item.warning {
     background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
     animation: pulse 1s infinite;
 }
 
+.score-item {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.pass-item {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
 @keyframes pulse {
-    0%, 100% { 
+
+    0%,
+    100% {
         opacity: 1;
         transform: scale(1);
     }
-    50% { 
+
+    50% {
         opacity: 0.8;
         transform: scale(1.05);
     }
 }
 
 #quiz-container {
-    margin-bottom: 20px;
-    animation: bounceIn 0.8s ease;
+    margin-bottom: 16px;
 }
 
 .emoji-display {
-    font-size: 64px;
-    margin-bottom: 16px;
-    line-height: 1.2;
+    font-size: 52px;
+    margin-bottom: 12px;
+    line-height: 1;
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.emoji-display.bounceIn {
+    animation: bounceIn 0.6s ease;
 }
 
 .input-container {
     position: relative;
     width: 100%;
-    max-width: 300px;
-    margin-bottom: 10px;
+    max-width: 320px;
+    margin-bottom: 8px;
 }
 
 #answerInput {
     width: 100%;
-    padding: 15px 20px;
-    font-size: 18px;
+    padding: 12px 18px;
+    font-size: 16px;
     text-align: center;
     border: 3px solid var(--secondary-color);
     border-radius: 50px;
@@ -91,17 +123,17 @@
 /* 버튼 그룹 */
 .button-group {
     display: flex;
-    gap: 10px;
-    margin-top: 10px;
+    gap: 8px;
+    margin-top: 8px;
     width: 100%;
-    max-width: 300px;
+    max-width: 320px;
 }
 
 .btn-check,
 .btn-pass {
     flex: 1;
-    padding: 12px 20px;
-    font-size: 16px;
+    padding: 11px 16px;
+    font-size: 15px;
     border-radius: 30px;
     border: none;
     cursor: pointer;
@@ -138,41 +170,52 @@
 }
 
 #result {
-    margin-top: 20px;
-    font-size: 16px;
+    margin-top: 12px;
+    font-size: 14px;
     font-weight: bold;
-    min-height: 24px;
+    min-height: 20px;
     transition: opacity 0.3s;
+    max-width: 320px;
 }
 
 /* 모바일 최적화 */
 @media (max-width: 480px) {
-    .emoji-display {
-        font-size: 56px;
+    .game-header-info {
+        gap: 6px;
+        margin-bottom: 16px;
     }
-    
-    .input-container {
-        max-width: 280px;
-    }
-    
-    .button-group {
-        max-width: 280px;
-    }
-    
+
     .info-item {
+        padding: 5px 4px;
+        gap: 2px;
+    }
+
+    .info-item .label {
+        font-size: 9px;
+    }
+
+    .info-item .value {
         font-size: 12px;
-        padding: 6px 8px;
     }
-    
+
+    .emoji-display {
+        font-size: 48px;
+    }
+
     #answerInput {
-        font-size: 16px;
-        padding: 12px 16px;
+        font-size: 15px;
+        padding: 10px 14px;
     }
-    
+
     .btn-check,
     .btn-pass {
-        font-size: 14px;
-        padding: 10px 16px;
+        font-size: 13px;
+        padding: 9px 12px;
+    }
+
+    #result {
+        font-size: 13px;
+        max-width: 300px;
     }
 }
 
