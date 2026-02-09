@@ -17,6 +17,8 @@ const TARGET_COLORS = [
 let currentTarget = null;
 let stream = null;
 let isCameraActive = false;
+let remainingPasses = 0;
+let colorThreshold = 130; // 기본값, Admin에서 로드됨
 
 // DOM Elements
 const videoEl = document.getElementById('cameraFeed');
@@ -24,34 +26,93 @@ const canvasEl = document.getElementById('cameraCanvas');
 const targetNameEl = document.getElementById('targetColorName');
 const missionBoxEl = document.querySelector('.mission-box');
 const captureBtn = document.getElementById('captureBtn');
+const passBtn = document.getElementById('passBtn');
 const cameraSection = document.getElementById('cameraSection');
-const fallbackSection = document.getElementById('fallbackSection');
-const fallbackColorPicker = document.getElementById('fallbackColorPicker');
+const cameraErrorSection = document.getElementById('cameraErrorSection');
+const colorComparison = document.getElementById('colorComparison');
+const targetColorSample = document.getElementById('targetColorSample');
+const capturedColorSample = document.getElementById('capturedColorSample');
+const comparisonResult = document.getElementById('comparisonResult');
 const ctx = canvasEl.getContext('2d', { willReadFrequently: true });
+
+// Admin 설정 로드
+function loadAdminSettings() {
+    const settings = JSON.parse(localStorage.getItem('game18_settings')) || {};
+    const difficulty = settings.difficulty !== undefined ? settings.difficulty : 0;
+
+    // 프리셋 기본값
+    const passPresets = [5, 3, 1];
+    const thresholdPresets = [150, 130, 100];
+
+    remainingPasses = settings.passCount !== undefined ? settings.passCount : passPresets[difficulty];
+    colorThreshold = settings.colorThreshold !== undefined ? settings.colorThreshold : thresholdPresets[difficulty];
+
+    updatePassButton();
+}
 
 // Initialize Game
 function initGame() {
+    loadAdminSettings();
     pickNewTarget();
     startCamera();
-    
+
     // Add Event Listeners
     captureBtn.addEventListener('click', captureFrame);
+    passBtn.addEventListener('click', handlePass);
     document.getElementById('retryCameraBtn').addEventListener('click', startCamera);
-    document.getElementById('useFallbackBtn').addEventListener('click', enableFallbackMode);
-    document.getElementById('checkFallbackBtn').addEventListener('click', checkFallbackColor);
 }
 
 function pickNewTarget() {
     const randomIndex = Math.floor(Math.random() * TARGET_COLORS.length);
     currentTarget = TARGET_COLORS[randomIndex];
-    
+
     // Update UI
     targetNameEl.textContent = currentTarget.name;
     targetNameEl.style.backgroundColor = currentTarget.code;
-    
+
     // Adjust text color for contrast
     const brightness = (currentTarget.rgb.r * 299 + currentTarget.rgb.g * 587 + currentTarget.rgb.b * 114) / 1000;
     targetNameEl.style.color = brightness > 125 ? 'black' : 'white';
+
+    // 목표 색상 샘플 업데이트
+    if (targetColorSample) {
+        targetColorSample.style.backgroundColor = currentTarget.code;
+    }
+}
+
+// 패스 버튼 상태 업데이트
+function updatePassButton() {
+    if (!passBtn) return;
+
+    passBtn.textContent = `패스 (${remainingPasses}회)`;
+    passBtn.disabled = remainingPasses <= 0;
+}
+
+// 패스 처리
+function handlePass() {
+    if (remainingPasses <= 0) return;
+
+    remainingPasses--;
+    playSound('click');
+    pickNewTarget();
+    updatePassButton();
+
+    // 피드백 표시
+    const toast = document.createElement('div');
+    toast.style.position = 'fixed';
+    toast.style.top = '50%';
+    toast.style.left = '50%';
+    toast.style.transform = 'translate(-50%, -50%)';
+    toast.style.backgroundColor = 'rgba(0,0,0,0.8)';
+    toast.style.color = 'white';
+    toast.style.padding = '15px 30px';
+    toast.style.borderRadius = '8px';
+    toast.style.fontSize = '1.1rem';
+    toast.style.zIndex = '1000';
+    toast.textContent = `패스! 남은 횟수: ${remainingPasses}회`;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 1500);
 }
 
 // Camera Handling
@@ -72,17 +133,23 @@ async function startCamera() {
         stream = await navigator.mediaDevices.getUserMedia(constraints);
         videoEl.srcObject = stream;
         await videoEl.play();
-        
+
         isCameraActive = true;
         cameraSection.classList.remove('hidden');
-        fallbackSection.classList.remove('active');
+        cameraErrorSection.classList.add('hidden');
         captureBtn.disabled = false;
-        
+
     } catch (err) {
         console.error("Camera Error:", err);
-        // If camera fails, show fallback
-        enableFallbackMode();
+        // If camera fails, show error message
+        showCameraError();
     }
+}
+
+function showCameraError() {
+    cameraSection.classList.add('hidden');
+    cameraErrorSection.classList.remove('hidden');
+    captureBtn.disabled = true;
 }
 
 function stopCamera() {
@@ -93,62 +160,47 @@ function stopCamera() {
     isCameraActive = false;
 }
 
-function enableFallbackMode() {
-    stopCamera();
-    cameraSection.classList.add('hidden');
-    fallbackSection.classList.add('active');
-}
+
 
 // Image Processing & Capture
 function captureFrame() {
     if (!isCameraActive) return;
-    
+
     playSound('click'); // Using common.js sound
 
     // Set canvas dimensions to match video
     canvasEl.width = videoEl.videoWidth;
     canvasEl.height = videoEl.videoHeight;
-    
+
     // Draw current frame
     ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
-    
+
     // Get center pixel data (10x10 area average for stability)
     const centerX = Math.floor(canvasEl.width / 2);
     const centerY = Math.floor(canvasEl.height / 2);
     const sampleSize = 10;
-    
-    const imageData = ctx.getImageData(centerX - sampleSize/2, centerY - sampleSize/2, sampleSize, sampleSize);
+
+    const imageData = ctx.getImageData(centerX - sampleSize / 2, centerY - sampleSize / 2, sampleSize, sampleSize);
     const data = imageData.data;
-    
+
     let r = 0, g = 0, b = 0;
     let count = 0;
-    
+
     for (let i = 0; i < data.length; i += 4) {
         r += data[i];
-        g += data[i+1];
-        b += data[i+2];
+        g += data[i + 1];
+        b += data[i + 2];
         count++;
     }
-    
+
     r = Math.round(r / count);
     g = Math.round(g / count);
     b = Math.round(b / count);
-    
+
     checkColorMatch(r, g, b);
 }
 
-function hexToRgb(hex) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return { r, g, b };
-}
 
-function checkFallbackColor() {
-    const hex = fallbackColorPicker.value;
-    const rgb = hexToRgb(hex);
-    checkColorMatch(rgb.r, rgb.g, rgb.b);
-}
 
 // Color Comparison Logic
 function checkColorMatch(r, g, b) {
@@ -156,30 +208,46 @@ function checkColorMatch(r, g, b) {
     // Let's stick to RGB distance for simplicity but normalize it? 
     // Actually, simple RGB distance is often not enough for "Yellow" vs "Orange".
     // Let's use RGB distance with a generous threshold.
-    
+
     const target = currentTarget.rgb;
-    
+
     // Simple Euclidian distance
     const distance = Math.sqrt(
         Math.pow(target.r - r, 2) +
         Math.pow(target.g - g, 2) +
         Math.pow(target.b - b, 2)
     );
-    
-    // Threshold: 
-    // Max distance (White to Black) is sqrt(255^2 * 3) ~= 441
-    // 100 is roughly 22% difference.
-    // Let's try 120 for forgiving gameplay for kids.
-    const THRESHOLD = 130; 
-    
+
     console.log(`Target: ${currentTarget.name} (${target.r},${target.g},${target.b})`);
     console.log(`Captured: (${r},${g},${b}), Distance: ${distance.toFixed(2)}`);
+    console.log(`Threshold: ${colorThreshold}`);
 
-    if (distance < THRESHOLD) {
+    // 색상 비교 UI 표시
+    showColorComparison(r, g, b, distance);
+
+    if (distance < colorThreshold) {
         handleSuccess();
     } else {
         handleFail();
     }
+}
+
+// 색상 비교 UI 표시
+function showColorComparison(r, g, b, distance) {
+    const capturedColor = `rgb(${r}, ${g}, ${b})`;
+
+    // 촬영한 색상 표시
+    capturedColorSample.style.backgroundColor = capturedColor;
+
+    // 결과 표시
+    const isMatch = distance < colorThreshold;
+    comparisonResult.textContent = isMatch
+        ? `✅ 일치! (차이: ${distance.toFixed(0)})`
+        : `❌ 불일치 (차이: ${distance.toFixed(0)} / 허용: ${colorThreshold})`;
+
+    comparisonResult.className = 'comparison-result ' + (isMatch ? 'success' : 'fail');
+
+    // 비교 UI 표시
 }
 
 function handleSuccess() {
@@ -189,11 +257,8 @@ function handleSuccess() {
 
 function handleFail() {
     playSound('fail');
-    // Using simple alert or toast from common? 
-    // common.js has showFailScreen but that's a modal which might stop the flow.
-    // Let's use a temporary toast message or just an alert for now, 
-    // OR create a custom flash on the camera overlay.
-    
+
+    // 빨간색 플래시 효과
     const flash = document.createElement('div');
     flash.style.position = 'fixed';
     flash.style.top = '0';
@@ -204,10 +269,8 @@ function handleFail() {
     flash.style.pointerEvents = 'none';
     flash.style.zIndex = '100';
     document.body.appendChild(flash);
-    
+
     setTimeout(() => flash.remove(), 500);
-    
-    alert(`땡! 색깔이 달라요. \n목표: ${currentTarget.name}\n비슷한 색을 다시 찾아보세요!`);
 }
 
 // Start Game Flow

@@ -1,4 +1,4 @@
-/* Color Hunter Styles */
+/* Game Area */
 .game-area {
     display: flex;
     flex-direction: column;
@@ -8,49 +8,59 @@
     margin: 0 auto;
 }
 
+/* Top Section: Mission + Color Comparison */
+.top-section {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
 /* Mission Display */
 .mission-box {
+    flex: 1;
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 12px;
     text-align: center;
-    width: 100%;
     border: 2px solid var(--border-color, #444);
 }
 
 .mission-text {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
 }
 
 .target-color-display {
     display: inline-block;
-    padding: 5px 15px;
-    border-radius: 20px;
+    padding: 4px 12px;
+    border-radius: 16px;
     font-weight: bold;
     color: #000;
-    font-size: 1.4rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    font-size: 1.2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 /* Camera Container */
 .camera-container {
     position: relative;
     width: 100%;
-    aspect-ratio: 3/4;
+    max-width: 350px;
+    aspect-ratio: 1/1;
     background-color: #000;
     border-radius: 16px;
     overflow: hidden;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    margin: 0 auto 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
 #cameraFeed {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transform: scaleX(-1); /* Mirror effect */
+    object-position: center;
+    transform: scaleX(-1);
+    /* Mirror effect */
 }
 
 /* Crosshair Overlay */
@@ -94,32 +104,19 @@
     width: 100%;
     text-align: center;
     color: white;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
     pointer-events: none;
     font-size: 0.9rem;
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0, 0, 0, 0.3);
     padding: 5px;
-}
-
-/* Fallback UI */
-.fallback-ui {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: var(--bg-card, #222);
-    border-radius: 12px;
-}
-
-.fallback-ui.active {
-    display: flex;
 }
 
 /* Controls */
 .controls {
     display: flex;
-    gap: 15px;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
     width: 100%;
 }
 
@@ -156,14 +153,105 @@
     cursor: not-allowed;
 }
 
+
 .hidden {
     display: none !important;
 }
 
+/* Color Comparison UI */
+.color-comparison {
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 10px;
+    border: 1px solid var(--border-color, #444);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.comparison-title {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 8px;
+    display: none;
+    /* 제목 숨김 */
+}
+
+.comparison-boxes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.color-box {
+    text-align: center;
+}
+
+.color-sample {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    margin: 0 auto 4px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.color-label {
+    font-size: 0.7rem;
+    color: #aaa;
+}
+
+.comparison-arrow {
+    font-size: 1.2rem;
+    color: #888;
+    margin: 0 2px;
+}
+
+.comparison-result {
+    text-align: center;
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.comparison-result.success {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+}
+
+.comparison-result.fail {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: #F44336;
+}
+
 /* Responsive adjustments */
 @media (max-width: 480px) {
+    .top-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+
     .camera-container {
-        aspect-ratio: 9/16; /* Full screen-ish on mobile */
-        max-height: 60vh;
+        max-width: 100%;
+    }
+
+    .color-comparison {
+        max-width: 100%;
+    }
+
+    .color-sample {
+        width: 45px;
+        height: 45px;
+    }
+
+    .comparison-result {
+        font-size: 0.7rem;
     }
 }

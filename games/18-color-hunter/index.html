@@ -17,10 +17,29 @@
         </div>
 
         <div class="game-area">
-            <!-- Mission Area -->
-            <div class="mission-box">
-                <p class="mission-text">다음 색깔의 물건을 찾으세요!</p>
-                <div id="targetColorName" class="target-color-display">???</div>
+            <!-- Top Section: Mission + Color Comparison -->
+            <div class="top-section">
+                <!-- Mission Area -->
+                <div class="mission-box">
+                    <p class="mission-text">다음 색깔의 물건을 찾으세요!</p>
+                    <div id="targetColorName" class="target-color-display">???</div>
+                </div>
+
+                <!-- Color Comparison UI -->
+                <div id="colorComparison" class="color-comparison">
+                    <div class="comparison-boxes">
+                        <div class="color-box">
+                            <div class="color-sample" id="targetColorSample"></div>
+                            <div class="color-label">목표</div>
+                        </div>
+                        <div class="comparison-arrow">→</div>
+                        <div class="color-box">
+                            <div class="color-sample" id="capturedColorSample"></div>
+                            <div class="color-label">촬영</div>
+                        </div>
+                    </div>
+                    <div class="comparison-result" id="comparisonResult">촬영 대기 중</div>
+                </div>
             </div>
 
             <!-- Camera Viewport -->
@@ -35,24 +54,19 @@
                 <div class="camera-instruction">십자선에 물건을 맞추세요</div>
             </div>
 
-            <!-- Fallback Viewport (If no camera) -->
-            <div id="fallbackSection" class="fallback-ui">
-                <p>카메라를 사용할 수 없어요 😢</p>
-                <p>직접 비슷한 색을 선택해주세요.</p>
-                <input type="color" id="fallbackColorPicker" value="#ff0000"
-                    style="width: 100px; height: 100px; margin: 20px;">
-                <button id="checkFallbackBtn" class="btn btn-primary">이 색깔로 확인하기</button>
-                <button id="retryCameraBtn" class="btn btn-secondary btn-small" style="margin-top:20px;">카메라 다시
-                    시도</button>
+            <!-- Camera Error Message -->
+            <div id="cameraErrorSection" class="error-message hidden"
+                style="text-align: center; padding: 30px; background: rgba(255,0,0,0.1); border-radius: 12px; margin: 20px 0;">
+                <p style="font-size: 1.2rem; margin-bottom: 10px;">📷 카메라를 사용할 수 없습니다</p>
+                <p style="color: #888; margin-bottom: 20px;">브라우저 설정에서 카메라 권한을 확인해주세요</p>
+                <button id="retryCameraBtn" class="btn btn-primary">다시 시도</button>
             </div>
 
             <!-- Controls -->
             <div class="controls">
                 <button id="captureBtn" class="btn-capture" aria-label="색깔 캡처" disabled></button>
+                <button id="passBtn" class="btn btn-secondary btn-small" style="margin-top: 10px;">패스 (0회)</button>
             </div>
-
-            <button id="useFallbackBtn" class="btn btn-text"
-                style="margin-top: 15px; color: #aaa; font-size: 0.8rem;">카메라가 안 되나요? 수동 모드</button>
         </div>
     </div>
 
