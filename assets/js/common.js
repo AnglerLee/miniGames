@@ -130,11 +130,8 @@ function showTreasureHuntSuccess(gameId) {
                 </div>
                 
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                    <button class="btn btn-primary btn-large" onclick="location.href='../../treasure-hunt.html'">
+                    <button class="btn btn-primary btn-large" id="treasureCompleteBtn">
                         📊 보물찾기 완료 화면으로
-                    </button>
-                    <button class="btn btn-secondary" onclick="location.href='../../index.html'">
-                        🏠 홈으로
                     </button>
                 </div>
             </div>
@@ -179,14 +176,8 @@ function showTreasureHuntSuccess(gameId) {
                 </div>
                 
                 <div style="display: flex; gap: 10px; justify-content: center; margin-top: 25px; flex-wrap: wrap;">
-                    <button class="btn btn-primary btn-large" onclick="location.href='${nextGameUrl}'">
+                    <button class="btn btn-primary btn-large" id="nextGameBtn">
                         ▶️ 다음 게임 시작!
-                    </button>
-                    <button class="btn btn-secondary" onclick="location.href='../../treasure-hunt.html'">
-                        📊 진행 상황 보기
-                    </button>
-                    <button class="btn btn-secondary" onclick="location.href='../../index.html'">
-                        🏠 나중에 계속하기
                     </button>
                 </div>
             </div>
@@ -194,6 +185,45 @@ function showTreasureHuntSuccess(gameId) {
     }
 
     document.body.appendChild(modal);
+
+    // 버튼 이벤트 리스너 추가 (iframe 통신)
+    if (isLastGame) {
+        const completeBtn = document.getElementById('treasureCompleteBtn');
+        if (completeBtn) {
+            completeBtn.onclick = () => {
+                // iframe 내부에서 실행되는 경우
+                if (window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'treasureHuntComplete',
+                        gameIndex: gameIndex
+                    }, '*');
+                    modal.remove();
+                } else {
+                    // 일반 페이지인 경우
+                    location.href = '../../treasure-hunt/index.html';
+                }
+            };
+        }
+    } else {
+        const nextBtn = document.getElementById('nextGameBtn');
+        if (nextBtn) {
+            nextBtn.onclick = () => {
+                // iframe 내부에서 실행되는 경우
+                if (window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'treasureHuntGameComplete',
+                        gameIndex: gameIndex,
+                        nextGame: nextGame
+                    }, '*');
+                    modal.remove();
+                } else {
+                    // 일반 페이지인 경우
+                    const nextGameUrl = TreasureHunt.getNextGameUrl(gameId);
+                    location.href = nextGameUrl;
+                }
+            };
+        }
+    }
 
     // 진동 피드백
     if (navigator.vibrate) {

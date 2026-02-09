@@ -103,11 +103,77 @@
                 margin: 20px 0;
             }
         }
+
+        .treasure-hunt-banner {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(251, 191, 36, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .treasure-hunt-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .treasure-hunt-banner:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(251, 191, 36, 0.4);
+        }
+
+        .treasure-hunt-banner h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.8rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .treasure-hunt-banner p {
+            margin: 0;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.95);
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .treasure-hunt-banner h2 {
+                font-size: 1.4rem;
+            }
+            .treasure-hunt-banner p {
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <!-- 보물찾기 배너 -->
+        <a href="treasure-hunt/index.html" class="treasure-hunt-banner" style="text-decoration: none;">
+            <h2>🎯 스토리 보물찾기 (신규!)</h2>
+            <p>순차적인 게임 진행과 스토리가 있는 특별한 모험을 시작하세요!</p>
+        </a>
+
         <h1>🎮 보물찾기 미니게임</h1>
         <p class="intro-text">게임을 선택하고 클리어해서 비밀번호를 찾아보세요!</p>
 

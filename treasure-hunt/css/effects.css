@@ -1,0 +1,417 @@
+/* Effects CSS - 시각 효과 스타일 */
+
+/* 보물 지도 스타일 */
+.treasure-map {
+    background: linear-gradient(135deg, #f4e4c1 0%, #e8d4a8 100%);
+    border: 3px solid #8b6f47;
+    border-radius: 12px;
+    padding: 30px;
+    position: relative;
+    box-shadow: inset 0 0 30px rgba(139, 111, 71, 0.2);
+}
+
+.treasure-map::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 111, 71, 0.03) 2px, rgba(139, 111, 71, 0.03) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139, 111, 71, 0.03) 2px, rgba(139, 111, 71, 0.03) 4px);
+    pointer-events: none;
+}
+
+.map-path {
+    stroke-dasharray: 5, 5;
+    stroke: #8b6f47;
+    stroke-width: 2;
+    fill: none;
+    animation: pathDraw 2s ease-in-out;
+}
+
+@keyframes pathDraw {
+    from {
+        stroke-dashoffset: 100;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.map-marker {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.map-marker.completed {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.map-marker.current {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: white;
+    animation: markerPulse 2s ease-in-out infinite;
+}
+
+.map-marker.locked {
+    background: #e5e7eb;
+    color: #9ca3af;
+}
+
+@keyframes markerPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 8px rgba(251, 191, 36, 0.4);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 6px 12px rgba(251, 191, 36, 0.6), 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+}
+
+/* 게임 카드 효과 */
+.game-card-enhanced {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.game-card-enhanced::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.5s ease;
+}
+
+.game-card-enhanced:hover::after {
+    left: 100%;
+}
+
+.game-card-locked {
+    cursor: not-allowed;
+    opacity: 0.6;
+    filter: grayscale(50%);
+}
+
+.game-card-locked:hover {
+    animation: shake 0.5s ease-in-out;
+}
+
+.game-card-current {
+    animation: currentCardGlow 2s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes currentCardGlow {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(251, 191, 36, 0.8), 0 0 50px rgba(251, 191, 36, 0.3);
+    }
+}
+
+/* 툴팁 */
+.tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 1000;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+}
+
+*:hover > .tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+/* 배지 */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: bold;
+    animation: badgeAppear 0.5s ease-out;
+}
+
+@keyframes badgeAppear {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.badge-gold {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    color: #8b6f47;
+    box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+}
+
+.badge-silver {
+    background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+    color: #666;
+    box-shadow: 0 4px 8px rgba(192, 192, 192, 0.3);
+}
+
+.badge-bronze {
+    background: linear-gradient(135deg, #cd7f32 0%, #e8a368 100%);
+    color: white;
+    box-shadow: 0 4px 8px rgba(205, 127, 50, 0.3);
+}
+
+/* 진행 바 효과 */
+.progress-bar-enhanced {
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar-enhanced::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: progressShine 2s linear infinite;
+}
+
+@keyframes progressShine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* 파티클 배경 */
+.particles-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* 자물쇠 아이콘 효과 */
+.lock-icon {
+    display: inline-block;
+    animation: lockShake 3s ease-in-out infinite;
+}
+
+@keyframes lockShake {
+    0%, 90%, 100% {
+        transform: rotate(0deg);
+    }
+    92%, 96% {
+        transform: rotate(-15deg);
+    }
+    94%, 98% {
+        transform: rotate(15deg);
+    }
+}
+
+/* 별 수집 애니메이션 */
+.star-collect {
+    animation: starCollect 1s ease-out forwards;
+}
+
+@keyframes starCollect {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(0, -50px) scale(1.5);
+    }
+    100% {
+        transform: translate(0, -100px) scale(0);
+        opacity: 0;
+    }
+}
+
+/* 성공 체크마크 */
+.success-checkmark {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #10b981;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: checkmarkPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes checkmarkPop {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.success-checkmark::after {
+    content: '✓';
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* 트로피 애니메이션 */
+.trophy-animation {
+    animation: trophyBounce 1s ease-out, trophyGlow 2s ease-in-out infinite;
+}
+
+@keyframes trophyBounce {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-30px) rotate(-10deg);
+    }
+    50% {
+        transform: translateY(0) rotate(0deg);
+    }
+    75% {
+        transform: translateY(-15px) rotate(10deg);
+    }
+}
+
+@keyframes trophyGlow {
+    0%, 100% {
+        filter: drop-shadow(0 0 5px #ffd700);
+    }
+    50% {
+        filter: drop-shadow(0 0 20px #ffd700);
+    }
+}
+
+/* 코인 스핀 */
+.coin-spin {
+    animation: coinSpin 2s linear infinite;
+}
+
+@keyframes coinSpin {
+    0% {
+        transform: rotateY(0deg);
+    }
+    100% {
+        transform: rotateY(360deg);
+    }
+}
+
+/* 그라데이션 텍스트 */
+.gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+    .treasure-map {
+        padding: 15px;
+    }
+    
+    .map-marker {
+        width: 30px;
+        height: 30px;
+        font-size: 0.875rem;
+    }
+    
+    .badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+    
+    .success-checkmark {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .success-checkmark::after {
+        font-size: 1.5rem;
+    }
+}
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+    .treasure-map {
+        background: linear-gradient(135deg, #3a3226 0%, #2d261e 100%);
+        border-color: #5c4d38;
+    }
+    
+    .tooltip {
+        background: rgba(255, 255, 255, 0.9);
+        color: black;
+    }
+    
+    .tooltip::after {
+        border-top-color: rgba(255, 255, 255, 0.9);
+    }
+}

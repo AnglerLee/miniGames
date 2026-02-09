@@ -12,6 +12,9 @@ let draggedElement = null;
 document.addEventListener('DOMContentLoaded', () => {
     renderPresets();
     setupThemeSelector();
+    setupNavigation();
+    setupMobileMenu();
+    updatePresetCount();
 });
 
 // ============================================
@@ -23,13 +26,18 @@ function renderPresets() {
     const presets = TreasureHunt.getAllPresets();
     const activeId = TreasureHunt.getActivePresetId();
 
+    // 프리셋 카운트 업데이트
+    updatePresetCount();
+
     if (presets.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
+                <div style="font-size: 4rem; margin-bottom: 20px;">📦</div>
                 <h2>아직 보물찾기가 없습니다</h2>
-                <p>새 보물찾기를 만들거나 기본 프리셋을 로드하세요!</p>
+                <p style="color: #718096; margin-bottom: 30px;">새 보물찾기를 만들거나 기본 프리셋을 로드하세요!</p>
                 <button class="btn btn-primary" onclick="loadDefaults()">
-                    📦 기본 프리셋 로드하기
+                    <span class="icon">📦</span>
+                    기본 프리셋 로드하기
                 </button>
             </div>
         `;
@@ -52,36 +60,52 @@ function renderPresets() {
                 </div>
                 
                 <div class="preset-info">
-                    <div><strong>테마:</strong> ${theme.name}</div>
-                    <div><strong>게임 수:</strong> ${preset.games.length}개</div>
-                    <div><strong>생성일:</strong> ${formatDate(preset.createdAt)}</div>
+                    <div>
+                        <span class="icon">🎨</span>
+                        <strong>${theme.name}</strong>
+                    </div>
+                    <div>
+                        <span class="icon">🎮</span>
+                        <strong>${preset.games.length}개</strong>
+                    </div>
+                    <div>
+                        <span class="icon">📅</span>
+                        <strong>${formatDate(preset.createdAt)}</strong>
+                    </div>
                 </div>
 
                 <div class="preset-actions">
                     ${!isActive ? `
-                        <button class="btn btn-primary" onclick="activatePreset('${preset.id}')">
-                            ✅ 활성화
+                        <button class="btn btn-success" onclick="activatePreset('${preset.id}')">
+                            <span class="icon">✅</span>
+                            활성화
                         </button>
                     ` : `
                         <button class="btn btn-secondary" onclick="deactivatePreset()">
-                            ⏸️ 비활성화
+                            <span class="icon">⏸️</span>
+                            비활성화
                         </button>
                     `}
-                    <button class="btn btn-secondary" onclick="editPreset('${preset.id}')">
-                        ✏️ 편집
+                    <button class="btn btn-primary" onclick="editPreset('${preset.id}')">
+                        <span class="icon">✏️</span>
+                        편집
                     </button>
                     <button class="btn btn-secondary" onclick="duplicatePresetHandler('${preset.id}')">
-                        📋 복제
+                        <span class="icon">📋</span>
+                        복제
                     </button>
                     <button class="btn btn-secondary" onclick="exportPresetHandler('${preset.id}')">
-                        💾 내보내기
+                        <span class="icon">💾</span>
+                        내보내기
                     </button>
                     <button class="btn btn-danger" onclick="deletePresetHandler('${preset.id}')">
-                        🗑️ 삭제
+                        <span class="icon">🗑️</span>
+                        삭제
                     </button>
                     ${isActive ? `
                         <button class="btn btn-secondary" onclick="viewProgress('${preset.id}')">
-                            📊 진행상황
+                            <span class="icon">📊</span>
+                            진행상황
                         </button>
                     ` : ''}
                 </div>
@@ -507,3 +531,177 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ============================================
+// 네비게이션 설정
+// ============================================
+
+function setupNavigation() {
+    const navItems = document.querySelectorAll('.nav-item[data-section], .nav-item[data-action]');
+    
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 활성화 상태 업데이트 (section 항목만)
+            if (this.dataset.section) {
+                document.querySelectorAll('.nav-item[data-section]').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            }
+            
+            // 액션 처리
+            if (this.dataset.action === 'create') {
+                showCreateModal();
+            } else if (this.dataset.action === 'defaults') {
+                loadDefaults();
+            }
+        });
+    });
+}
+
+// ============================================
+// 모바일 메뉴 설정
+// ============================================
+
+function setupMobileMenu() {
+    // 모바일 메뉴 토글 버튼 생성
+    if (window.innerWidth <= 768) {
+        const menuToggle = document.createElement('button');
+        menuToggle.className = 'mobile-menu-toggle';
+        menuToggle.innerHTML = '☰';
+        menuToggle.onclick = toggleMobileMenu;
+        document.body.appendChild(menuToggle);
+    }
+    
+    // 창 크기 변경 감지
+    window.addEventListener('resize', () => {
+        const existingToggle = document.querySelector('.mobile-menu-toggle');
+        if (window.innerWidth <= 768 && !existingToggle) {
+            const menuToggle = document.createElement('button');
+            menuToggle.className = 'mobile-menu-toggle';
+            menuToggle.innerHTML = '☰';
+            menuToggle.onclick = toggleMobileMenu;
+            document.body.appendChild(menuToggle);
+        } else if (window.innerWidth > 768 && existingToggle) {
+            existingToggle.remove();
+            document.querySelector('.sidebar').classList.remove('open');
+        }
+    });
+    
+    // 사이드바 외부 클릭 시 닫기
+    document.addEventListener('click', (e) => {
+        const sidebar = document.querySelector('.sidebar');
+        const menuToggle = document.querySelector('.mobile-menu-toggle');
+        
+        if (sidebar && sidebar.classList.contains('open') && 
+            !sidebar.contains(e.target) && 
+            e.target !== menuToggle) {
+            sidebar.classList.remove('open');
+        }
+    });
+}
+
+function toggleMobileMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('open');
+    }
+}
+
+// ============================================
+// 프리셋 카운트 업데이트
+// ============================================
+
+function updatePresetCount() {
+    const presets = TreasureHunt.getAllPresets();
+    const countElement = document.getElementById('presetCount');
+    if (countElement) {
+        countElement.textContent = presets.length;
+    }
+}
+
+// ============================================
+// 네비게이션 설정
+// ============================================
+
+function setupNavigation() {
+    const navItems = document.querySelectorAll('.nav-item[data-section], .nav-item[data-action]');
+    
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 활성화 상태 업데이트 (section 항목만)
+            if (this.dataset.section) {
+                document.querySelectorAll('.nav-item[data-section]').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            }
+            
+            // 액션 처리
+            if (this.dataset.action === 'create') {
+                showCreateModal();
+            } else if (this.dataset.action === 'defaults') {
+                loadDefaults();
+            }
+        });
+    });
+}
+
+// ============================================
+// 모바일 메뉴 설정
+// ============================================
+
+function setupMobileMenu() {
+    // 모바일 메뉴 토글 버튼 생성
+    if (window.innerWidth <= 768) {
+        const menuToggle = document.createElement('button');
+        menuToggle.className = 'mobile-menu-toggle';
+        menuToggle.innerHTML = '☰';
+        menuToggle.onclick = toggleMobileMenu;
+        document.body.appendChild(menuToggle);
+    }
+    
+    // 창 크기 변경 감지
+    window.addEventListener('resize', () => {
+        const existingToggle = document.querySelector('.mobile-menu-toggle');
+        if (window.innerWidth <= 768 && !existingToggle) {
+            const menuToggle = document.createElement('button');
+            menuToggle.className = 'mobile-menu-toggle';
+            menuToggle.innerHTML = '☰';
+            menuToggle.onclick = toggleMobileMenu;
+            document.body.appendChild(menuToggle);
+        } else if (window.innerWidth > 768 && existingToggle) {
+            existingToggle.remove();
+            document.querySelector('.sidebar').classList.remove('open');
+        }
+    });
+    
+    // 사이드바 외부 클릭 시 닫기
+    document.addEventListener('click', (e) => {
+        const sidebar = document.querySelector('.sidebar');
+        const menuToggle = document.querySelector('.mobile-menu-toggle');
+        
+        if (sidebar && sidebar.classList.contains('open') && 
+            !sidebar.contains(e.target) && 
+            e.target !== menuToggle) {
+            sidebar.classList.remove('open');
+        }
+    });
+}
+
+function toggleMobileMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('open');
+}
+
+// ============================================
+// 프리셋 카운트 업데이트
+// ============================================
+
+function updatePresetCount() {
+    const presets = TreasureHunt.getAllPresets();
+    const countElement = document.getElementById('presetCount');
+    if (countElement) {
+        countElement.textContent = presets.length;
+    }
+}

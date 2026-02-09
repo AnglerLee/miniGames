@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>보물찾기 모험!</title>
+    <link rel="stylesheet" href="../assets/css/common.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/effects.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 사운드 토글 버튼 */
+        .sound-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .sound-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sound-toggle.muted {
+            opacity: 0.5;
+        }
+
+        /* 히어로 섹션 개선 */
+        .hero-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, transparent 70%);
+            animation: heroGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes heroGlow {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translate(10%, 10%);
+                opacity: 1;
+            }
+        }
+
+        .hero-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: heroIconFloat 3s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes heroIconFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-15px) rotate(-5deg);
+            }
+            75% {
+                transform: translateY(-15px) rotate(5deg);
+            }
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 진행 상황 - 보물 지도 스타일 */
+        .progress-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .treasure-map-progress {
+            background: linear-gradient(135deg, #f4e4c1 0%, #e8d4a8 100%);
+            border: 3px solid #8b6f47;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .progress-path {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .progress-path::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 3px;
+            background: repeating-linear-gradient(
+                to right,
+                #8b6f47 0px,
+                #8b6f47 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            z-index: 0;
+        }
+
+        .progress-point {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #8b6f47;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .progress-point.completed {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: #059669;
+            color: white;
+        }
+
+        .progress-point.current {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-color: #f59e0b;
+            color: white;
+            animation: pointPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pointPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(251, 191, 36, 0);
+            }
+        }
+
+        /* 게임 카드 개선 */
+        .game-step {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .game-step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(251, 191, 36, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .game-step:hover::before {
+            opacity: 1;
+        }
+
+        .game-step.completed {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 2px solid #10b981;
+        }
+
+        .game-step.current {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 3px solid #fbbf24;
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(251, 191, 36, 0.3);
+        }
+
+        .game-step.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(50%);
+        }
+
+        .game-step.locked:hover {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            flex-shrink: 0;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .game-step.completed .step-number {
+            background: var(--success-color);
+            color: white;
+            animation: completedPop 0.5s ease-out;
+        }
+
+        .game-step.current .step-number {
+            background: var(--warning-color);
+            color: white;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .game-step.locked .step-number {
+            background: #e5e7eb;
+            color: #9ca3af;
+        }
+
+        @keyframes completedPop {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        /* 시작 버튼 개선 */
+        .btn-start {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-start::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-start:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-start:hover {
+            animation: bounce 0.5s ease-in-out;
+        }
+
+        /* 완료 섹션 */
+        .completion-section {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .completion-icon {
+            font-size: 8rem;
+            margin-bottom: 30px;
+            display: inline-block;
+            animation: trophyBounce 1s ease-out, trophyGlow 2s ease-in-out infinite;
+        }
+
+        .final-code {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 40px;
+            border-radius: 16px;
+            margin: 30px 0;
+            border: 4px solid #fbbf24;
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
+        }
+
+        .code-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #f59e0b;
+            letter-spacing: 10px;
+            font-family: 'Courier New', monospace;
+            animation: rainbow 5s linear infinite;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .hero-icon {
+                font-size: 3.5rem;
+            }
+
+            .hero-title {
+                font-size: 1.8rem;
+            }
+
+            .game-step {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .step-number {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .progress-point {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .code-display {
+                font-size: 2rem;
+                letter-spacing: 5px;
+            }
+
+            .completion-icon {
+                font-size: 5rem;
+            }
+        }
+
+        /* === SPA 뷰 전환 스타일 === */
+        .view {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .view.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* 게임 플레이 뷰 */
+        #gamePlayView {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 100;
+        }
+
+        .game-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        #gameFrame {
+            width: 100%;
+            height: calc(100% - 50px);
+            border: none;
+        }
+
+        /* 페이지 전환 애니메이션 */
+        .view.fade-out {
+            animation: fadeOut 0.3s ease forwards;
+        }
+
+        .view.fade-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(1.05); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .game-header {
+                padding: 12px 15px;
+                font-size: 1rem;
+            }
+            
+            #gameFrame {
+                height: calc(100% - 45px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 사운드 토글 버튼 -->
+    <button class="sound-toggle" id="soundToggle" title="사운드 켜기/끄기">
+        🔊
+    </button>
+
+    <div class="container">
+        <div id="huntContainer"></div>
+    </div>
+
+    <script src="../assets/js/common.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/ui-effects.js"></script>
+    <script src="js/sound-manager.js"></script>
+    <script src="js/animations.js"></script>
+    <script>
+        // 사운드 토글
+        document.getElementById('soundToggle').addEventListener('click', () => {
+            const toggle = document.getElementById('soundToggle');
+            const enabled = soundManager.toggle();
+            toggle.textContent = enabled ? '🔊' : '🔇';
+            toggle.classList.toggle('muted', !enabled);
+        });
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            // 초기 사운드 상태 설정
+            const toggle = document.getElementById('soundToggle');
+            toggle.textContent = soundManager.enabled ? '🔊' : '🔇';
+            toggle.classList.toggle('muted', !soundManager.enabled);
+            
+            renderHunt();
+        });
+
+        // 게임 완료 메시지 수신 (iframe 통신)
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'treasureHuntGameComplete') {
+                // Confetti 효과
+                uiEffects.createConfetti(2000);
+                soundManager.playSoundEffect('success');
+                
+                // 진동
+                if (navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200]);
+                }
+                
+                // 잠시 후 다음 게임으로 전환
+                setTimeout(() => {
+                    const nextGameUrl = '../' + event.data.nextGame.path + '/index.html';
+                    switchToGameView(nextGameUrl, event.data.gameIndex + 1);
+                }, 1500);
+                
+            } else if (event.data.type === 'treasureHuntComplete') {
+                // 모든 게임 완료
+                uiEffects.createConfetti(5000);
+                soundManager.playSoundEffect('fanfare');
+                
+                // 진동
+                if (navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200, 100, 200]);
+                }
+                
+                setTimeout(() => {
+                    switchToListView();
+                    renderHunt(); // 완료 화면 렌더링
+                }, 2000);
+            }
+        });
+
+        function renderHunt() {
+            const preset = TreasureHunt.getActivePreset();
+            const container = document.getElementById('huntContainer');
+
+            if (!preset) {
+                renderNoHunt(container);
+                return;
+            }
+
+            let progress = TreasureHunt.getCurrentProgress();
+
+            if (!progress || progress.presetId !== preset.id) {
+                progress = TreasureHunt.initProgress(preset.id);
+            }
+
+            const completed = progress.completedGames.length;
+            const total = preset.games.length;
+            const isComplete = completed >= total;
+
+            if (isComplete) {
+                renderCompletion(container, preset);
+            } else {
+                renderInProgress(container, preset, progress, completed, total);
+            }
+        }
+
+        function renderNoHunt(container) {
+            container.innerHTML = `
+                <div class="hero-section animate-on-scroll">
+                    <div class="hero-icon">🗺️</div>
+                    <h2>활성화된 보물찾기가 없습니다</h2>
+                    <p style="margin: 20px 0; color: var(--text-light);">
+                        관리자 페이지에서 보물찾기를 만들고 활성화하세요!
+                    </p>
+                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
+                        <a href="admin.html" class="btn btn-primary">
+                            🎯 관리자 페이지로
+                        </a>
+                        <a href="../index.html" class="btn btn-secondary">
+                            🏠 게임 목록
+                        </a>
+                    </div>
+                </div>
+            `;
+            animations.fadeInSequence([container.querySelector('.hero-section')], 0);
+        }
+
+        function renderInProgress(container, preset, progress, completed, total) {
+            const theme = TreasureHunt.getThemeInfo(preset.theme);
+            const percentage = Math.round((completed / total) * 100);
+
+            container.innerHTML = `
+                <div id="gameListView" class="view active">
+                    <div class="hero-section">
+                        <div class="hero-icon">${theme.icon}</div>
+                        <h1 class="hero-title">${preset.name}</h1>
+                        <p class="hero-description">${preset.description}</p>
+                    </div>
+
+                <div class="progress-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2>모험 진행 상황</h2>
+                        <span style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color);">
+                            ${completed}/${total}
+                        </span>
+                    </div>
+                    
+                    <div class="treasure-map-progress">
+                        <div class="progress-path">
+                            ${Array.from({ length: Math.min(total, 6) }, (_, i) => {
+                                const isCompleted = i < completed;
+                                const isCurrent = i === completed;
+                                const icon = isCompleted ? '✓' : isCurrent ? '📍' : (i + 1);
+                                const className = isCompleted ? 'completed' : isCurrent ? 'current' : '';
+                                return `<div class="progress-point ${className}">${icon}</div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <div class="games-list">
+                        ${preset.games.map((game, index) => {
+                            const gameInfo = TreasureHunt.getGameInfo(game.gameId);
+                            const isCompleted = progress.completedGames.includes(index);
+                            const isCurrent = index === progress.currentGameIndex;
+                            const isLocked = index > progress.currentGameIndex;
+                            
+                            let statusClass = '';
+                            let statusIcon = '⏸️';
+                            let buttonHtml = '';
+
+                            if (isCompleted) {
+                                statusClass = 'completed';
+                                statusIcon = '✅';
+                                buttonHtml = '<button class="btn btn-disabled" disabled>완료!</button>';
+                            } else if (isCurrent) {
+                                statusClass = 'current';
+                                statusIcon = '▶️';
+                                buttonHtml = `
+                                    <button class="btn btn-success btn-start" onclick="startGameWithCountdown('../${gameInfo.path}/index.html')">
+                                        🎮 시작하기!
+                                    </button>
+                                `;
+                            } else if (isLocked) {
+                                statusClass = 'locked';
+                                statusIcon = '🔒';
+                                buttonHtml = `
+                                    <button class="btn btn-disabled" disabled onclick="handleLockedClick(event)">
+                                        잠김
+                                    </button>
+                                    <span class="tooltip">이전 게임을 먼저 완료하세요!</span>
+                                `;
+                            }
+
+                            return `
+                                <div class="game-step ${statusClass} animate-on-scroll" data-index="${index}">
+                                    <div class="step-number">${statusIcon}</div>
+                                    <div class="step-info" style="flex: 1;">
+                                        <h3>${index + 1}. ${gameInfo.icon} ${gameInfo.name}</h3>
+                                        ${game.storyText ? `<p style="margin: 5px 0 0 0; color: var(--text-light);">${game.storyText}</p>` : ''}
+                                    </div>
+                                    <div class="step-action">
+                                        ${buttonHtml}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            </div>
+
+            <div id="gamePlayView" class="view">
+                <div class="game-header">
+                    <span id="gameProgressMini">게임 진행 중...</span>
+                </div>
+                <iframe id="gameFrame" src="" frameborder="0"></iframe>
+            </div>
+            `;
+
+            // 배경 파티클 효과
+            uiEffects.createBackgroundParticles(preset.theme);
+
+            // 순차적 fade-in
+            const cards = container.querySelectorAll('.game-step');
+            animations.fadeInSequence([...cards], 100);
+
+            // 진행바 애니메이션
+            setTimeout(() => {
+                animations.setupScrollAnimations();
+            }, 100);
+        }
+
+        function renderCompletion(container, preset) {
+            const theme = TreasureHunt.getThemeInfo(preset.theme);
+            const finalReward = preset.finalReward || {};
+
+            container.innerHTML = `
+                <div class="completion-section">
+                    <div class="completion-icon">🏆</div>
+                    <h1 class="golden-text" style="font-size: 2.5rem; margin-bottom: 20px;">축하합니다!</h1>
+                    <h2 style="color: var(--primary-color);">${preset.name} 완료!</h2>
+                    
+                    <p style="font-size: 1.3rem; margin: 30px 0; line-height: 1.8;">
+                        ${finalReward.message || '모든 미션을 완료했습니다!'}
+                    </p>
+
+                    ${finalReward.secretCode ? `
+                        <div class="final-code">
+                            <h3 style="margin-bottom: 15px;">🔑 최종 비밀번호</h3>
+                            <div class="code-display">${finalReward.secretCode}</div>
+                        </div>
+                    ` : ''}
+
+                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 40px;">
+                        <button class="btn btn-primary" onclick="resetHunt()">
+                            🔄 다시 도전하기
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Confetti 효과
+            uiEffects.createConfetti(5000);
+
+            // 사운드 효과
+            soundManager.playSoundEffect('fanfare');
+
+            // 진동
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+
+            // 트로피 애니메이션
+            const trophy = container.querySelector('.completion-icon');
+            animations.spinIn(trophy);
+        }
+
+        function startGameWithCountdown(url) {
+            soundManager.playSoundEffect('click');
+            animations.startCountdown(() => {
+                // 페이지 이동 대신 뷰 전환
+                const gameIndex = getCurrentGameIndex();
+                switchToGameView(url, gameIndex);
+            });
+        }
+
+        function getCurrentGameIndex() {
+            const progress = TreasureHunt.getCurrentProgress();
+            return progress ? progress.currentGameIndex : 0;
+        }
+
+        function switchToGameView(gameUrl, gameIndex) {
+            const listView = document.getElementById('gameListView');
+            const playView = document.getElementById('gamePlayView');
+            const iframe = document.getElementById('gameFrame');
+            const progressMini = document.getElementById('gameProgressMini');
+            
+            if (!listView || !playView || !iframe) return;
+            
+            // 진행 상황 업데이트
+            const preset = TreasureHunt.getActivePreset();
+            if (preset && progressMini) {
+                progressMini.textContent = `게임 ${gameIndex + 1}/${preset.games.length}`;
+            }
+            
+            // 효과음
+            soundManager.playSoundEffect('click');
+            
+            // Fade out 게임 목록
+            listView.classList.add('fade-out');
+            
+            setTimeout(() => {
+                listView.classList.remove('active', 'fade-out');
+                playView.classList.add('active', 'fade-in');
+                
+                // iframe 로드
+                iframe.src = gameUrl;
+                
+                // 배경 파티클 정리
+                uiEffects.clearCanvas();
+                
+                setTimeout(() => {
+                    playView.classList.remove('fade-in');
+                }, 300);
+            }, 300);
+        }
+
+        function switchToListView() {
+            const listView = document.getElementById('gameListView');
+            const playView = document.getElementById('gamePlayView');
+            const iframe = document.getElementById('gameFrame');
+            
+            if (!listView || !playView || !iframe) return;
+            
+            // Fade out 게임 플레이
+            playView.classList.add('fade-out');
+            
+            setTimeout(() => {
+                playView.classList.remove('active', 'fade-out');
+                iframe.src = '';
+                
+                listView.classList.add('active', 'fade-in');
+                
+                // 배경 파티클 재시작
+                const preset = TreasureHunt.getActivePreset();
+                if (preset) {
+                    uiEffects.createBackgroundParticles(preset.theme);
+                }
+                
+                setTimeout(() => {
+                    listView.classList.remove('fade-in');
+                }, 300);
+            }, 300);
+        }
+
+        function handleLockedClick(event) {
+            event.stopPropagation();
+            soundManager.playSoundEffect('locked');
+            const card = event.target.closest('.game-step');
+            animations.shakeEffect(card);
+        }
+
+        function resetHunt() {
+            if (confirm('처음부터 다시 시작하시겠습니까? 현재 진행 상황이 초기화됩니다.')) {
+                TreasureHunt.resetProgress();
+                uiEffects.clearCanvas();
+                renderHunt();
+                soundManager.playSoundEffect('success');
+                showNotification('초기화되었습니다!');
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: var(--success-color);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: var(--shadow-lg);
+                z-index: 2000;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>
