@@ -162,20 +162,18 @@ function resizeGame() {
     const container = document.querySelector('.game-area');
     if (!container) return;
 
-    // 사용 가능한 높이 계산
-    // 요소: Header(~40) [Outside game-area], Message(~22) + Stats(~55) + Instructions(~30) + Margins(~20) => ~130px in game-area
-
-    // game-area 전체 높이에서 여유분 제외
+    // 뷰포트 높이 기준으로 계산 (container.clientHeight는 캔버스 크기에 따라 변하므로 사용 X)
+    // Header(~60px) + Message(~30px) + Stats(~60px) + Instructions(~30px) + Margins(~40px) = ~220px
+    const headerAndUIHeight = 220;
     const availableWidth = container.clientWidth - 10;
-    const availableHeight = container.clientHeight - 40;
-
-    const maxSize = Math.min(availableWidth, availableHeight, 600);
+    const availableHeight = window.innerHeight - headerAndUIHeight;
 
     // 격자 크기에 맞춰 조정 (최소 크기 보장)
     const maxCellWidth = Math.floor(availableWidth / COLS);
     const maxCellHeight = Math.floor(availableHeight / ROWS);
 
-    CELL_SIZE = Math.min(maxCellWidth, maxCellHeight, 50); // 최대 50px 제한
+    // 셀 크기는 화면에 맞게, 최대 40px로 제한 (모바일에서 너무 크지 않게)
+    CELL_SIZE = Math.min(maxCellWidth, maxCellHeight, 40);
 
     canvas.width = CELL_SIZE * COLS;
     canvas.height = CELL_SIZE * ROWS;
