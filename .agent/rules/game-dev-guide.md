@@ -1,6 +1,5 @@
 ---
-trigger: always_on
-glob: "**/*"
+trigger: manual
 description: "Core rules and guidelines for game development tasks."
 ---
 
@@ -115,4 +114,3 @@ This document outlines the mandatory rules and workflows for the coding agent wh
 ## 6. Language & Localization
 - **Primary Language**:
   - All user-facing text (UI, instructions, modals) and developer documentation (comments, commits, docs) must be written in **Korean**.
-

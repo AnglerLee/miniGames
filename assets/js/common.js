@@ -61,7 +61,7 @@ function showSuccessScreen(gameId) {
                 <button class="btn btn-primary" onclick="location.reload()">
                     다시 하기
                 </button>
-                <button class="btn btn-secondary" onclick="location.href='../../index.html'">
+                <button class="btn btn-secondary" onclick="if(window.parent !== window) { window.parent.location.href='../../index.html'; } else { location.href='../../index.html'; }">
                     홈으로
                 </button>
             </div>
@@ -266,7 +266,7 @@ function showFailScreen(message = '아쉽지만 실패했어요. 다시 도전�
                 <button class="btn ${onRetry ? 'btn-secondary' : 'btn-primary'}" onclick="location.reload()">
                     ${onRetry ? '처음부터' : '다시 시작'}
                 </button>
-                <button class="btn btn-secondary" onclick="location.href='../../index.html'">
+                <button class="btn btn-secondary" onclick="if(window.parent !== window) { window.parent.location.href='../../index.html'; } else { location.href='../../index.html'; }">
                     홈으로
                 </button>
             </div>

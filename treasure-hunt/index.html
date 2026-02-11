@@ -66,10 +66,13 @@
         }
 
         @keyframes heroGlow {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translate(0, 0);
                 opacity: 0.5;
             }
+
             50% {
                 transform: translate(10%, 10%);
                 opacity: 1;
@@ -86,12 +89,16 @@
         }
 
         @keyframes heroIconFloat {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0) rotate(0deg);
             }
+
             25% {
                 transform: translateY(-15px) rotate(-5deg);
             }
+
             75% {
                 transform: translateY(-15px) rotate(5deg);
             }
@@ -140,13 +147,11 @@
             left: 5%;
             right: 5%;
             height: 3px;
-            background: repeating-linear-gradient(
-                to right,
-                #8b6f47 0px,
-                #8b6f47 10px,
-                transparent 10px,
-                transparent 20px
-            );
+            background: repeating-linear-gradient(to right,
+                    #8b6f47 0px,
+                    #8b6f47 10px,
+                    transparent 10px,
+                    transparent 20px);
             z-index: 0;
         }
 
@@ -179,10 +184,13 @@
         }
 
         @keyframes pointPulse {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7);
             }
+
             50% {
                 transform: scale(1.1);
                 box-shadow: 0 0 0 10px rgba(251, 191, 36, 0);
@@ -274,9 +282,12 @@
         }
 
         @keyframes completedPop {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: scale(1);
             }
+
             50% {
                 transform: scale(1.2);
             }
@@ -433,13 +444,27 @@
         }
 
         @keyframes fadeOut {
-            from { opacity: 1; transform: scale(1); }
-            to { opacity: 0; transform: scale(0.95); }
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: scale(0.95);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(1.05); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(1.05);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         @media (max-width: 768px) {
@@ -447,7 +472,7 @@
                 padding: 12px 15px;
                 font-size: 1rem;
             }
-            
+
             #gameFrame {
                 height: calc(100% - 45px);
             }
@@ -485,7 +510,7 @@
             const toggle = document.getElementById('soundToggle');
             toggle.textContent = soundManager.enabled ? '🔊' : '🔇';
             toggle.classList.toggle('muted', !soundManager.enabled);
-            
+
             renderHunt();
         });
 
@@ -495,28 +520,28 @@
                 // Confetti 효과
                 uiEffects.createConfetti(2000);
                 soundManager.playSoundEffect('success');
-                
+
                 // 진동
                 if (navigator.vibrate) {
                     navigator.vibrate([200, 100, 200]);
                 }
-                
+
                 // 잠시 후 다음 게임으로 전환
                 setTimeout(() => {
                     const nextGameUrl = '../' + event.data.nextGame.path + '/index.html';
                     switchToGameView(nextGameUrl, event.data.gameIndex + 1);
                 }, 1500);
-                
+
             } else if (event.data.type === 'treasureHuntComplete') {
                 // 모든 게임 완료
                 uiEffects.createConfetti(5000);
                 soundManager.playSoundEffect('fanfare');
-                
+
                 // 진동
                 if (navigator.vibrate) {
                     navigator.vibrate([200, 100, 200, 100, 200]);
                 }
-                
+
                 setTimeout(() => {
                     switchToListView();
                     renderHunt(); // 완료 화면 렌더링
@@ -594,50 +619,50 @@
                     <div class="treasure-map-progress">
                         <div class="progress-path">
                             ${Array.from({ length: Math.min(total, 6) }, (_, i) => {
-                                const isCompleted = i < completed;
-                                const isCurrent = i === completed;
-                                const icon = isCompleted ? '✓' : isCurrent ? '📍' : (i + 1);
-                                const className = isCompleted ? 'completed' : isCurrent ? 'current' : '';
-                                return `<div class="progress-point ${className}">${icon}</div>`;
-                            }).join('')}
+                const isCompleted = i < completed;
+                const isCurrent = i === completed;
+                const icon = isCompleted ? '✓' : isCurrent ? '📍' : (i + 1);
+                const className = isCompleted ? 'completed' : isCurrent ? 'current' : '';
+                return `<div class="progress-point ${className}">${icon}</div>`;
+            }).join('')}
                         </div>
                     </div>
 
                     <div class="games-list">
                         ${preset.games.map((game, index) => {
-                            const gameInfo = TreasureHunt.getGameInfo(game.gameId);
-                            const isCompleted = progress.completedGames.includes(index);
-                            const isCurrent = index === progress.currentGameIndex;
-                            const isLocked = index > progress.currentGameIndex;
-                            
-                            let statusClass = '';
-                            let statusIcon = '⏸️';
-                            let buttonHtml = '';
+                const gameInfo = TreasureHunt.getGameInfo(game.gameId);
+                const isCompleted = progress.completedGames.includes(index);
+                const isCurrent = index === progress.currentGameIndex;
+                const isLocked = index > progress.currentGameIndex;
 
-                            if (isCompleted) {
-                                statusClass = 'completed';
-                                statusIcon = '✅';
-                                buttonHtml = '<button class="btn btn-disabled" disabled>완료!</button>';
-                            } else if (isCurrent) {
-                                statusClass = 'current';
-                                statusIcon = '▶️';
-                                buttonHtml = `
+                let statusClass = '';
+                let statusIcon = '⏸️';
+                let buttonHtml = '';
+
+                if (isCompleted) {
+                    statusClass = 'completed';
+                    statusIcon = '✅';
+                    buttonHtml = '<button class="btn btn-disabled" disabled>완료!</button>';
+                } else if (isCurrent) {
+                    statusClass = 'current';
+                    statusIcon = '▶️';
+                    buttonHtml = `
                                     <button class="btn btn-success btn-start" onclick="startGameWithCountdown('../${gameInfo.path}/index.html')">
                                         🎮 시작하기!
                                     </button>
                                 `;
-                            } else if (isLocked) {
-                                statusClass = 'locked';
-                                statusIcon = '🔒';
-                                buttonHtml = `
+                } else if (isLocked) {
+                    statusClass = 'locked';
+                    statusIcon = '🔒';
+                    buttonHtml = `
                                     <button class="btn btn-disabled" disabled onclick="handleLockedClick(event)">
                                         잠김
                                     </button>
                                     <span class="tooltip">이전 게임을 먼저 완료하세요!</span>
                                 `;
-                            }
+                }
 
-                            return `
+                return `
                                 <div class="game-step ${statusClass} animate-on-scroll" data-index="${index}">
                                     <div class="step-number">${statusIcon}</div>
                                     <div class="step-info" style="flex: 1;">
@@ -649,7 +674,7 @@
                                     </div>
                                 </div>
                             `;
-                        }).join('')}
+            }).join('')}
                     </div>
                 </div>
             </div>
@@ -739,31 +764,75 @@
             const playView = document.getElementById('gamePlayView');
             const iframe = document.getElementById('gameFrame');
             const progressMini = document.getElementById('gameProgressMini');
-            
+
             if (!listView || !playView || !iframe) return;
-            
+
             // 진행 상황 업데이트
             const preset = TreasureHunt.getActivePreset();
             if (preset && progressMini) {
                 progressMini.textContent = `게임 ${gameIndex + 1}/${preset.games.length}`;
             }
-            
+
             // 효과음
             soundManager.playSoundEffect('click');
-            
+
             // Fade out 게임 목록
             listView.classList.add('fade-out');
-            
+
             setTimeout(() => {
                 listView.classList.remove('active', 'fade-out');
                 playView.classList.add('active', 'fade-in');
-                
+
                 // iframe 로드
                 iframe.src = gameUrl;
-                
+
+                // iframe 내부 링크 제어 (로드 완료 후)
+                iframe.onload = () => {
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+                        // 모든 링크에 대해 클릭 이벤트 감지
+                        const links = iframeDoc.getElementsByTagName('a');
+                        for (let link of links) {
+                            if (link.href.includes('index.html') && !link.href.includes('games/')) {
+                                link.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    // 메인 홈페이지로 이동 또는 보물찾기 목록으로 이동
+                                    if (confirm('게임을 종료하고 홈으로 가시겠습니까?')) {
+                                        switchToListView();
+                                    }
+                                });
+                            }
+                        }
+
+                        // 공통 JS에서 처리하는 홈 버튼 동작 오버라이드 (postMessage 활용 권장하지만, 간단하게 처리)
+                        const homeBtns = iframeDoc.querySelectorAll('.home-btn, .btn-secondary, [onclick*="index.html"]');
+                        homeBtns.forEach(btn => {
+                            // 기존 이벤트 제거는 어려우므로, 상위에 이벤트 추가
+                            btn.addEventListener('click', (e) => {
+                                // href가 index.html을 포함하거나, onclick에 index.html이 있으면
+                                const href = btn.getAttribute('href');
+                                const onclick = btn.getAttribute('onclick');
+
+                                if ((href && href.includes('index.html') && !href.includes('games/')) ||
+                                    (onclick && onclick.includes('index.html') && !onclick.includes('games/'))) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    if (confirm('게임을 종료하고 홈으로 가시겠습니까?')) {
+                                        switchToListView();
+                                    }
+                                }
+                            }, true); // 캡처링 단계에서 잡기
+                        });
+
+                    } catch (e) {
+                        console.log('Cross-origin restriction or error injecting script:', e);
+                    }
+                };
+
                 // 배경 파티클 정리
                 uiEffects.clearCanvas();
-                
+
                 setTimeout(() => {
                     playView.classList.remove('fade-in');
                 }, 300);
@@ -774,24 +843,24 @@
             const listView = document.getElementById('gameListView');
             const playView = document.getElementById('gamePlayView');
             const iframe = document.getElementById('gameFrame');
-            
+
             if (!listView || !playView || !iframe) return;
-            
+
             // Fade out 게임 플레이
             playView.classList.add('fade-out');
-            
+
             setTimeout(() => {
                 playView.classList.remove('active', 'fade-out');
                 iframe.src = '';
-                
+
                 listView.classList.add('active', 'fade-in');
-                
+
                 // 배경 파티클 재시작
                 const preset = TreasureHunt.getActivePreset();
                 if (preset) {
                     uiEffects.createBackgroundParticles(preset.theme);
                 }
-                
+
                 setTimeout(() => {
                     listView.classList.remove('fade-in');
                 }, 300);
@@ -830,9 +899,9 @@
                 animation: slideInRight 0.3s ease-out;
             `;
             notification.textContent = message;
-            
+
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.style.animation = 'slideOutRight 0.3s ease-in';
                 setTimeout(() => notification.remove(), 300);
