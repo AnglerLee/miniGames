@@ -179,7 +179,7 @@ function loadDefaults() {
 function viewProgress(presetId) {
     const progress = TreasureHunt.getCurrentProgress();
     const preset = TreasureHunt.getPresetById(presetId);
-    
+
     if (!progress || progress.presetId !== presetId) {
         alert('진행 중인 게임이 없습니다');
         return;
@@ -202,18 +202,18 @@ function showCreateModal() {
     document.getElementById('presetForm').reset();
     selectedGames = [];
     selectedTheme = 'custom';
-    
+
     setupThemeSelector();
     renderSelectedGames();
     renderAvailableGames();
-    
+
     document.getElementById('editModal').classList.add('active');
 }
 
 function editPreset(presetId) {
     currentEditingId = presetId;
     const preset = TreasureHunt.getPresetById(presetId);
-    
+
     if (!preset) return;
 
     document.getElementById('modalTitle').textContent = '보물찾기 편집';
@@ -221,15 +221,15 @@ function editPreset(presetId) {
     document.getElementById('presetDescription').value = preset.description || '';
     document.getElementById('finalMessage').value = preset.finalReward?.message || '';
     document.getElementById('finalCode').value = preset.finalReward?.secretCode || '';
-    
+
     selectedTheme = preset.theme;
     selectedGames = [...preset.games];
-    
+
     setupThemeSelector();
     renderSelectedGames();
     renderAvailableGames();
     renderGamesConfig();
-    
+
     document.getElementById('editModal').classList.add('active');
 }
 
@@ -266,7 +266,7 @@ function selectTheme(themeId) {
 
 function renderSelectedGames() {
     const container = document.getElementById('selectedGames');
-    
+
     if (selectedGames.length === 0) {
         container.innerHTML = '<p style="color: #999; text-align: center;">아래에서 게임을 선택하세요</p>';
         return;
@@ -318,7 +318,7 @@ function addGame(gameId) {
         secretCode: '',
         successMessage: '잘했어! 다음 미션으로 가자!'
     });
-    
+
     renderSelectedGames();
     renderAvailableGames();
     renderGamesConfig();
@@ -337,7 +337,7 @@ function removeGame(index) {
 
 function setupDragAndDrop() {
     const items = document.querySelectorAll('.game-item');
-    
+
     items.forEach(item => {
         item.addEventListener('dragstart', handleDragStart);
         item.addEventListener('dragover', handleDragOver);
@@ -368,16 +368,16 @@ function handleDrop(e) {
     if (draggedElement !== this) {
         const fromIndex = parseInt(draggedElement.dataset.index);
         const toIndex = parseInt(this.dataset.index);
-        
+
         // 배열 순서 변경
         const temp = selectedGames[fromIndex];
         selectedGames.splice(fromIndex, 1);
         selectedGames.splice(toIndex, 0, temp);
-        
+
         renderSelectedGames();
         renderGamesConfig();
     }
-    
+
     return false;
 }
 
@@ -391,7 +391,7 @@ function handleDragEnd(e) {
 
 function renderGamesConfig() {
     const container = document.getElementById('gamesConfig');
-    
+
     if (selectedGames.length === 0) {
         container.innerHTML = '';
         return;
@@ -401,8 +401,8 @@ function renderGamesConfig() {
         <div style="margin-top: 30px; padding-top: 30px; border-top: 2px solid var(--border-color);">
             <h3>게임별 스토리 및 힌트 설정</h3>
             ${selectedGames.map((game, index) => {
-                const gameInfo = TreasureHunt.getGameInfo(game.gameId);
-                return `
+        const gameInfo = TreasureHunt.getGameInfo(game.gameId);
+        return `
                     <div class="form-group" style="background: var(--bg-light); padding: 15px; border-radius: 8px; margin-top: 15px;">
                         <h4>${index + 1}. ${gameInfo.icon} ${gameInfo.name}</h4>
                         
@@ -427,7 +427,7 @@ function renderGamesConfig() {
                         </div>
                     </div>
                 `;
-            }).join('')}
+    }).join('')}
         </div>
     `;
 }
@@ -497,9 +497,9 @@ function showNotification(message) {
         animation: slideIn 0.3s ease;
     `;
     notification.textContent = message;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => notification.remove(), 300);
@@ -538,17 +538,17 @@ document.head.appendChild(style);
 
 function setupNavigation() {
     const navItems = document.querySelectorAll('.nav-item[data-section], .nav-item[data-action]');
-    
+
     navItems.forEach(item => {
-        item.addEventListener('click', function(e) {
+        item.addEventListener('click', function (e) {
             e.preventDefault();
-            
+
             // 활성화 상태 업데이트 (section 항목만)
             if (this.dataset.section) {
                 document.querySelectorAll('.nav-item[data-section]').forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
             }
-            
+
             // 액션 처리
             if (this.dataset.action === 'create') {
                 showCreateModal();
@@ -572,7 +572,7 @@ function setupMobileMenu() {
         menuToggle.onclick = toggleMobileMenu;
         document.body.appendChild(menuToggle);
     }
-    
+
     // 창 크기 변경 감지
     window.addEventListener('resize', () => {
         const existingToggle = document.querySelector('.mobile-menu-toggle');
@@ -587,14 +587,14 @@ function setupMobileMenu() {
             document.querySelector('.sidebar').classList.remove('open');
         }
     });
-    
+
     // 사이드바 외부 클릭 시 닫기
     document.addEventListener('click', (e) => {
         const sidebar = document.querySelector('.sidebar');
         const menuToggle = document.querySelector('.mobile-menu-toggle');
-        
-        if (sidebar && sidebar.classList.contains('open') && 
-            !sidebar.contains(e.target) && 
+
+        if (sidebar && sidebar.classList.contains('open') &&
+            !sidebar.contains(e.target) &&
             e.target !== menuToggle) {
             sidebar.classList.remove('open');
         }
@@ -620,88 +620,4 @@ function updatePresetCount() {
     }
 }
 
-// ============================================
-// 네비게이션 설정
-// ============================================
 
-function setupNavigation() {
-    const navItems = document.querySelectorAll('.nav-item[data-section], .nav-item[data-action]');
-    
-    navItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // 활성화 상태 업데이트 (section 항목만)
-            if (this.dataset.section) {
-                document.querySelectorAll('.nav-item[data-section]').forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-            }
-            
-            // 액션 처리
-            if (this.dataset.action === 'create') {
-                showCreateModal();
-            } else if (this.dataset.action === 'defaults') {
-                loadDefaults();
-            }
-        });
-    });
-}
-
-// ============================================
-// 모바일 메뉴 설정
-// ============================================
-
-function setupMobileMenu() {
-    // 모바일 메뉴 토글 버튼 생성
-    if (window.innerWidth <= 768) {
-        const menuToggle = document.createElement('button');
-        menuToggle.className = 'mobile-menu-toggle';
-        menuToggle.innerHTML = '☰';
-        menuToggle.onclick = toggleMobileMenu;
-        document.body.appendChild(menuToggle);
-    }
-    
-    // 창 크기 변경 감지
-    window.addEventListener('resize', () => {
-        const existingToggle = document.querySelector('.mobile-menu-toggle');
-        if (window.innerWidth <= 768 && !existingToggle) {
-            const menuToggle = document.createElement('button');
-            menuToggle.className = 'mobile-menu-toggle';
-            menuToggle.innerHTML = '☰';
-            menuToggle.onclick = toggleMobileMenu;
-            document.body.appendChild(menuToggle);
-        } else if (window.innerWidth > 768 && existingToggle) {
-            existingToggle.remove();
-            document.querySelector('.sidebar').classList.remove('open');
-        }
-    });
-    
-    // 사이드바 외부 클릭 시 닫기
-    document.addEventListener('click', (e) => {
-        const sidebar = document.querySelector('.sidebar');
-        const menuToggle = document.querySelector('.mobile-menu-toggle');
-        
-        if (sidebar && sidebar.classList.contains('open') && 
-            !sidebar.contains(e.target) && 
-            e.target !== menuToggle) {
-            sidebar.classList.remove('open');
-        }
-    });
-}
-
-function toggleMobileMenu() {
-    const sidebar = document.querySelector('.sidebar');
-    sidebar.classList.toggle('open');
-}
-
-// ============================================
-// 프리셋 카운트 업데이트
-// ============================================
-
-function updatePresetCount() {
-    const presets = TreasureHunt.getAllPresets();
-    const countElement = document.getElementById('presetCount');
-    if (countElement) {
-        countElement.textContent = presets.length;
-    }
-}

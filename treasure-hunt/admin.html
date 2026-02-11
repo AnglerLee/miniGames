@@ -12,13 +12,14 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #2d3748;
         }
 
         /* === Layout === */
         .admin-layout {
             display: flex;
             min-height: 100vh;
-            background: #f5f7fa;
         }
 
         .sidebar {
@@ -31,6 +32,7 @@
             position: fixed;
             height: 100vh;
             overflow-y: auto;
+            z-index: 100;
         }
 
         .main-content {
@@ -38,6 +40,7 @@
             margin-left: 280px;
             padding: 30px;
             min-height: 100vh;
+            transition: margin-left 0.3s ease;
         }
 
         /* === Sidebar === */
@@ -160,7 +163,7 @@
         }
 
         .preset-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-5px);
             box-shadow: 0 12px 24px rgba(102, 126, 234, 0.15);
             border-color: #667eea;
         }
@@ -182,26 +185,32 @@
         }
 
         .theme-icon {
-            font-size: 3rem;
+            font-size: 2.5rem;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+            flex-shrink: 0;
         }
 
         .preset-title {
             flex: 1;
+            min-width: 0;
+            /* for text truncation */
         }
 
         .preset-title h3 {
             margin: 0 0 8px 0;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             color: #1a202c;
             font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .preset-title p {
@@ -209,6 +218,10 @@
             color: #718096;
             font-size: 0.9rem;
             line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .active-badge {
@@ -217,28 +230,32 @@
             right: 16px;
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
-            padding: 6px 14px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: bold;
             box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: scale(1);
             }
+
             50% {
                 transform: scale(1.05);
             }
         }
 
         .preset-info {
-            display: flex;
-            gap: 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
             margin: 20px 0;
-            padding: 16px;
+            padding: 12px;
             background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
             border-radius: 12px;
             border-left: 4px solid #667eea;
@@ -246,10 +263,16 @@
 
         .preset-info div {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
+            gap: 4px;
+            font-size: 0.8rem;
             color: #4a5568;
+            text-align: center;
+        }
+
+        .preset-info div .icon {
+            font-size: 1.2rem;
         }
 
         .preset-actions {
@@ -260,22 +283,16 @@
         }
 
         .preset-actions button {
-            padding: 12px 16px;
+            padding: 12px;
             font-size: 0.9rem;
-            font-weight: 600;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .preset-actions button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            justify-content: center;
         }
 
         /* === Buttons === */
         .btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             padding: 12px 24px;
             border: none;
@@ -293,11 +310,6 @@
             color: white;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-
         .btn-secondary {
             background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
             color: white;
@@ -313,17 +325,22 @@
             color: white;
         }
 
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             background: white;
             border-radius: 16px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .empty-state h2 {
-            color: #718096;
-            margin-bottom: 20px;
+            grid-column: 1 / -1;
         }
 
         /* === Modal === */
@@ -338,114 +355,134 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2000;
             padding: 20px;
             animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
         }
 
         .modal-overlay.active {
             display: flex;
         }
 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
         .modal-content {
             background: white;
             border-radius: 20px;
-            padding: 40px;
             max-width: 900px;
             width: 100%;
+            height: auto;
             max-height: 90vh;
-            overflow-y: auto;
+            /* 데스크탑 기본 */
+            display: flex;
+            flex-direction: column;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             animation: slideUp 0.4s ease;
+            overflow: hidden;
+            /* 내부 스크롤을 위해 */
+        }
+
+        .modal-body {
+            padding: 20px 40px;
+            overflow-y: auto;
+            flex: 1;
         }
 
         @keyframes slideUp {
             from {
-                opacity: 0;
                 transform: translateY(30px);
+                opacity: 0;
             }
+
             to {
-                opacity: 1;
                 transform: translateY(0);
+                opacity: 1;
             }
         }
 
         .modal-header {
+            padding: 20px 40px;
+            border-bottom: 1px solid #e2e8f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e2e8f0;
+            background: white;
+            flex-shrink: 0;
         }
 
         .modal-header h2 {
             margin: 0;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: #1a202c;
-            font-weight: 700;
         }
 
         .close-btn {
             background: #f7fafc;
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             cursor: pointer;
             color: #718096;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s;
         }
 
         .close-btn:hover {
             background: #e2e8f0;
-            transform: rotate(90deg);
+            color: #2d3748;
+        }
+
+        .modal-actions {
+            padding: 20px 40px;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
         }
 
         /* === Form === */
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 600;
-            color: #2d3748;
-            font-size: 0.95rem;
+            color: #4a5568;
+            font-size: 0.9rem;
         }
 
         .form-group input,
         .form-group textarea,
         .form-group select {
             width: 100%;
-            padding: 14px 16px;
+            padding: 12px;
             border: 2px solid #e2e8f0;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 1rem;
+            transition: border-color 0.2s;
             font-family: inherit;
-            transition: all 0.3s ease;
-            background: white;
         }
 
         .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
+        .form-group textarea:focus {
             border-color: #667eea;
+            outline: none;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
@@ -454,196 +491,150 @@
             resize: vertical;
         }
 
+        /* Theme Selector */
         .theme-selector {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             gap: 12px;
-            margin-top: 12px;
         }
 
         .theme-option {
-            padding: 20px;
+            padding: 15px 10px;
             border: 2px solid #e2e8f0;
-            border-radius: 16px;
+            border-radius: 12px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .theme-option:hover {
-            transform: translateY(-4px);
-            border-color: #667eea;
-            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.1);
+            transition: all 0.2s;
         }
 
         .theme-option.selected {
             border-color: #667eea;
-            background: linear-gradient(135deg, #f0f4ff 0%, white 100%);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            background: #ebf4ff;
+            color: #4c51bf;
         }
 
         .theme-option .icon {
-            font-size: 2.5rem;
-            margin-bottom: 8px;
+            font-size: 2rem;
             display: block;
+            margin-bottom: 5px;
         }
 
         .theme-option .name {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            color: #2d3748;
         }
 
+        /* Game Selector */
         .games-selector {
             border: 2px solid #e2e8f0;
             border-radius: 12px;
             padding: 15px;
-            margin-top: 10px;
-            background: #f7fafc;
+            background: #f8fafc;
         }
 
         .game-item {
             background: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            cursor: move;
-            border: 2px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .game-item:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
-        }
-
-        .game-item.dragging {
-            opacity: 0.5;
-            transform: rotate(2deg);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .game-item-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            width: 100%;
         }
 
         .game-item-title {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             font-weight: 600;
-            color: #2d3748;
-            font-size: 1.05rem;
+            font-size: 1rem;
         }
 
         .drag-handle {
-            cursor: move;
-            font-size: 1.3rem;
-            color: #cbd5e0;
-            transition: color 0.3s ease;
-        }
-
-        .game-item:hover .drag-handle {
-            color: #667eea;
+            padding: 5px;
+            cursor: grab;
+            color: #a0aec0;
+            font-size: 1.2rem;
         }
 
         .remove-game-btn {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
+            background: #fed7d7;
+            color: #c53030;
             border: none;
             padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
+            border-radius: 6px;
             font-size: 0.8rem;
             font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .remove-game-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .add-game-section {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px dashed #e2e8f0;
+            cursor: pointer;
         }
 
         .game-select-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 10px;
-            margin-top: 12px;
+            margin-top: 10px;
         }
 
         .game-select-item {
-            padding: 16px 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
+            transition: all 0.2s;
         }
 
         .game-select-item:hover {
             border-color: #667eea;
-            transform: translateY(-4px);
-            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
         }
 
         .game-select-item.disabled {
-            opacity: 0.4;
+            opacity: 0.5;
             cursor: not-allowed;
+            background: #f7fafc;
         }
 
         .game-select-item .icon {
-            font-size: 2rem;
+            font-size: 1.8rem;
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .game-select-item .name {
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.75rem;
             color: #4a5568;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #e2e8f0;
         }
 
         /* === Mobile Menu Toggle === */
         .mobile-menu-toggle {
             display: none;
             position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            top: 15px;
+            left: 15px;
+            z-index: 2000;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
             border: none;
             background: white;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            align-items: center;
+            justify-content: center;
         }
 
-        .mobile-menu-toggle:hover {
-            transform: scale(1.05);
-        }
-
-        /* === Responsive === */
+        /* === Responsive Optimization === */
         @media (max-width: 1024px) {
             .sidebar {
                 width: 240px;
@@ -661,46 +652,139 @@
         @media (max-width: 768px) {
             .mobile-menu-toggle {
                 display: flex;
-                align-items: center;
-                justify-content: center;
             }
 
             .sidebar {
-                position: fixed;
                 left: -280px;
-                z-index: 1000;
-                transition: left 0.3s ease;
+                transition: transform 0.3s ease;
+                transform: translateX(0);
             }
 
             .sidebar.open {
-                left: 0;
+                transform: translateX(280px);
             }
 
             .main-content {
                 margin-left: 0;
-                padding: 80px 20px 20px;
+                padding: 70px 15px 30px;
             }
 
             .content-header {
                 flex-direction: column;
-                align-items: stretch;
-                gap: 16px;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .content-header h1 {
+                font-size: 1.6rem;
+                margin-left: 40px;
+                /* space for toggle */
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-actions .btn {
+                width: 100%;
             }
 
             .presets-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
 
-            .preset-actions {
-                grid-template-columns: 1fr;
+            .preset-card {
+                padding: 20px;
             }
 
-            .theme-selector {
-                grid-template-columns: repeat(2, 1fr);
+            .preset-header {
+                margin-bottom: 15px;
             }
 
-            .game-select-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .theme-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 2rem;
+            }
+
+            .preset-title h3 {
+                font-size: 1.1rem;
+            }
+
+            .preset-info {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .preset-info div {
+                flex: 1;
+            }
+
+            /* Modal Mobile Fullscreen */
+            .modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+
+            .modal-content {
+                width: 100%;
+                height: 100%;
+                max-height: 100%;
+                max-width: 100%;
+                border-radius: 0;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .modal-body {
+                padding: 20px;
+                flex: 1;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .modal-actions {
+                padding: 15px 20px;
+                flex-direction: column-reverse;
+            }
+
+            .modal-actions .btn {
+                width: 100%;
+            }
+
+            .form-group label {
+                font-size: 1rem;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 16px;
+                /* prevent zoom */
+                padding: 14px;
+            }
+
+            /* Game Item Mobile */
+            .game-item {
+                padding: 12px;
+            }
+
+            .game-item-title {
+                font-size: 0.95rem;
+            }
+
+            .drag-handle {
+                padding: 10px;
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -763,54 +847,52 @@
                 <button class="close-btn" onclick="closeModal()">✕</button>
             </div>
 
-            <form id="presetForm">
-                <div class="form-group">
-                    <label for="presetName">보물찾기 이름 *</label>
-                    <input type="text" id="presetName" required placeholder="예: 우리집 보물찾기">
-                </div>
+            <div class="modal-body">
+                <form id="presetForm">
+                    <div class="form-group">
+                        <label for="presetName">보물찾기 이름 *</label>
+                        <input type="text" id="presetName" required placeholder="예: 우리집 보물찾기">
+                    </div>
 
-                <div class="form-group">
-                    <label for="presetDescription">설명</label>
-                    <textarea id="presetDescription" placeholder="이 보물찾기에 대한 설명을 입력하세요"></textarea>
-                </div>
+                    <div class="form-group">
+                        <label for="presetDescription">설명</label>
+                        <textarea id="presetDescription" placeholder="이 보물찾기에 대한 설명을 입력하세요"></textarea>
+                    </div>
 
-                <div class="form-group">
-                    <label>테마 선택 *</label>
-                    <div id="themeSelector" class="theme-selector"></div>
-                </div>
+                    <div class="form-group">
+                        <label>테마 선택 *</label>
+                        <div id="themeSelector" class="theme-selector"></div>
+                    </div>
 
-                <div class="form-group">
-                    <label>게임 선택 및 순서 (드래그하여 순서 변경)</label>
-                    <div class="games-selector">
-                        <div id="selectedGames"></div>
-                        <div class="add-game-section">
-                            <label style="font-size: 0.9rem; margin-bottom: 10px;">게임 추가:</label>
-                            <div id="availableGames" class="game-select-grid"></div>
+                    <div class="form-group">
+                        <label>게임 선택 및 순서 (드래그하여 순서 변경)</label>
+                        <div class="games-selector">
+                            <div id="selectedGames"></div>
+                            <div class="add-game-section">
+                                <label style="font-size: 0.9rem; margin-bottom: 10px;">게임 추가:</label>
+                                <div id="availableGames" class="game-select-grid"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div id="gamesConfig"></div>
+                    <div id="gamesConfig"></div>
 
-                <div class="form-group">
-                    <label for="finalMessage">최종 보상 메시지</label>
-                    <textarea id="finalMessage" placeholder="모든 게임을 완료했을 때 보여줄 메시지"></textarea>
-                </div>
+                    <div class="form-group">
+                        <label for="finalMessage">최종 보상 메시지</label>
+                        <textarea id="finalMessage" placeholder="모든 게임을 완료했을 때 보여줄 메시지"></textarea>
+                    </div>
 
-                <div class="form-group">
-                    <label for="finalCode">최종 비밀번호/코드</label>
-                    <input type="text" id="finalCode" placeholder="최종 보상 코드">
-                </div>
+                    <div class="form-group">
+                        <label for="finalCode">최종 비밀번호 (선택)</label>
+                        <input type="text" id="finalCode" placeholder="예: LOVEYOU">
+                    </div>
+                </form>
+            </div>
 
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">
-                        취소
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        💾 저장
-                    </button>
-                </div>
-            </form>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">취소</button>
+                <button type="submit" form="presetForm" class="btn btn-primary">저장하기</button>
+            </div>
         </div>
     </div>
 
