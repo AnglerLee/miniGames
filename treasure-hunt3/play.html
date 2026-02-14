@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>홈 트레저헌트 - 미션</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <style>
+        body {
+            overflow: hidden;
+        }
+
+        /* ===== S06: Minigame Play ===== */
+        .play-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .game-iframe-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-iframe-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .game-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .game-loading .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--theme-accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== S07: Find Object ===== */
+        .find-container {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .find-container.active {
+            display: flex;
+        }
+
+        .find-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            margin-bottom: 12px;
+        }
+
+        .find-story-card {
+            background: var(--theme-bg-card);
+            border: 1px solid var(--theme-card-border);
+            border-radius: 12px;
+            padding: 20px 16px;
+            margin-bottom: 16px;
+        }
+
+        .find-story-card .story-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .find-story-card .story-text {
+            color: var(--theme-text);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .hint-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .hint-card {
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .hint-card.hidden-hint {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            justify-content: center;
+            cursor: pointer;
+            color: var(--theme-text-sub);
+            font-size: 0.9rem;
+        }
+
+        .hint-card .hint-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .hint-card .hint-text {
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .answer-section {
+            margin-top: auto;
+            padding-top: 16px;
+        }
+
+        .answer-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .answer-row input {
+            flex: 1;
+        }
+
+        .answer-attempts {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: var(--theme-text-sub);
+        }
+
+        .answer-feedback {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .answer-feedback.error {
+            color: var(--color-error);
+        }
+
+        .answer-feedback.success {
+            color: var(--color-success);
+        }
+
+        /* ===== Mission Complete Overlay ===== */
+        .complete-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .complete-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .complete-card {
+            background: var(--theme-bg);
+            border: 1px solid var(--theme-card-border);
+            border-radius: 16px;
+            padding: 30px 24px;
+            text-align: center;
+            max-width: 340px;
+            width: 90%;
+        }
+
+        .complete-card .c-icon {
+            font-size: 60px;
+            margin-bottom: 12px;
+        }
+
+        .complete-card .c-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .complete-card .c-clue {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin: 16px 0;
+        }
+
+        .complete-card .c-clue .clue-label {
+            font-size: 0.8rem;
+            color: var(--theme-text-sub);
+            margin-bottom: 4px;
+        }
+
+        .complete-card .c-clue .clue-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--theme-accent);
+        }
+
+        .complete-card .c-message {
+            color: var(--theme-text-sub);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Timer Bar -->
+    <div class="timer-bar" id="timerBar" style="display:none;">
+        <div class="timer-bar-fill" id="timerFill"></div>
+    </div>
+
+    <!-- S06: Minigame (iframe) -->
+    <div class="play-container" id="miniPlayContainer" style="display:none;">
+        <div class="game-iframe-wrapper">
+            <div class="game-loading" id="gameLoading">
+                <div class="spinner"></div>
+                <p style="margin-top:12px; color:var(--theme-text-sub);">게임 로딩 중...</p>
+            </div>
+            <iframe id="gameFrame" allow="camera; microphone; accelerometer; gyroscope; vibrate" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- S07: Find Object -->
+    <div class="find-container" id="findContainer">
+        <div class="find-header">
+            <button class="btn-icon" id="findBackBtn">←</button>
+            <span style="font-weight:600;">물건 찾기 미션</span>
+            <div style="width:48px;"></div>
+        </div>
+
+        <!-- Story -->
+        <div class="find-story-card fade-in">
+            <div class="story-icon">📖</div>
+            <div class="story-text" id="findStoryText"></div>
+        </div>
+
+        <!-- Hints -->
+        <div class="hint-section" id="hintSection"></div>
+
+        <button class="btn btn-secondary" id="revealHintBtn" style="display:none;">
+            🔍 힌트 꺼내기
+        </button>
+
+        <!-- Answer -->
+        <div class="answer-section">
+            <div class="answer-row">
+                <input class="input-field" id="findAnswer" type="text" placeholder="답변을 입력하세요" autocomplete="off">
+                <button class="btn btn-primary" id="checkAnswerBtn">확인</button>
+            </div>
+            <div class="answer-attempts" id="answerAttempts"></div>
+            <div class="answer-feedback" id="answerFeedback"></div>
+        </div>
+    </div>
+
+    <!-- Mission Complete Overlay -->
+    <div class="complete-overlay" id="completeOverlay">
+        <div class="complete-card scale-in">
+            <div class="c-icon" id="completeIcon">🎉</div>
+            <div class="c-title" id="completeTitle">미션 완료!</div>
+
+            <div class="c-clue" id="completeClue" style="display:none;">
+                <div class="clue-label">획득한 단서</div>
+                <div class="clue-value" id="completeClueValue"></div>
+            </div>
+
+            <div class="c-message" id="completeMessage"></div>
+
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="nextMissionBtn">▶ 다음 미션</button>
+                <button class="btn btn-primary" id="goTreasureFromPlay" style="display:none;">📦 보물 상자</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Handoff Overlay (2P mode) -->
+    <div class="complete-overlay" id="handoffOverlay">
+        <div class="complete-card scale-in" style="max-width:360px;">
+            <div class="c-icon" style="font-size:72px;">🔄</div>
+            <div class="c-title" style="font-size:1.2rem; color:var(--theme-text-sub); margin-bottom:4px;" id="handoffSubtitle">핸드폰을 넘겨주세요!</div>
+            <div style="font-size:1.8rem; font-weight:700; color:var(--theme-accent); margin:12px 0;" id="handoffPlayerName"></div>
+            <div class="c-message" id="handoffMessage">다음 미션을 수행할 차례입니다</div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary btn-large" id="handoffReadyBtn">🚀 준비 완료!</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/theme-manager.js"></script>
+    <script src="js/preset-data.js"></script>
+    <script src="js/effects.js"></script>
+    <script src="js/game-engine.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        /* ===== play.html - Mission Play Logic ===== */
+        (function () {
+            const type = App.getQueryParam('type');  // 'mini' or 'find'
+            const missionIdx = parseInt(App.getQueryParam('idx')) || 0;
+
+            let attempts = 0;
+            let revealedHints = 1;
+            let timer = null;
+            let missionStartTime = Date.now();
+            let missionCompleted = false;
+
+            // Init
+            App.init();
+            GameEngine.init();
+
+            const config = Storage.getConfig();
+            if (config && config.theme) {
+                ThemeManager.apply(config.theme);
+            }
+
+            const mission = GameEngine.getMissionByIndex(missionIdx);
+            if (!mission) {
+                App.navigate('index.html#hub');
+                return;
+            }
+
+            if (type === 'mini') {
+                initMinigame(mission);
+            } else {
+                initFindObject(mission);
+            }
+
+            /* ===== S06: Minigame ===== */
+            function initMinigame(m) {
+                document.getElementById('miniPlayContainer').style.display = '';
+                document.getElementById('findContainer').classList.remove('active');
+
+                const info = getGameInfo(m.gameId);
+                if (!info) {
+                    Effects.showToast('게임 정보를 찾을 수 없습니다');
+                    return;
+                }
+
+                // Note: timer/difficulty is managed by each minigame's own admin page.
+                // No duplicate timer bar here.
+
+                // Load game in iframe
+                const iframe = document.getElementById('gameFrame');
+                const gamePath = '../games/' + info.path + '/index.html';
+
+                iframe.onload = function () {
+                    document.getElementById('gameLoading').style.display = 'none';
+
+                    // Send theme background to game iframe
+                    try {
+                        var cs = getComputedStyle(document.documentElement);
+                        iframe.contentWindow.postMessage({
+                            type: 'THEME_BG',
+                            gradient: cs.getPropertyValue('--theme-gradient').trim(),
+                            bg: cs.getPropertyValue('--theme-bg').trim()
+                        }, '*');
+                    } catch (e) { /* cross-origin safe */ }
+                };
+
+                iframe.src = gamePath;
+
+                // Listen for postMessage from game
+                window.addEventListener('message', handleGameMessage);
+            }
+
+            function handleGameMessage(event) {
+                const data = event.data;
+                if (!data || !data.type) return;
+
+                // Prevent duplicate completion
+                if (missionCompleted) return;
+
+                // All known game completion message types:
+                // - GAME_CLEAR: sent by all 20 minigames directly
+                // - treasureHuntGameComplete: sent by common.js in treasure hunt mode (intermediate)
+                // - treasureHuntComplete: sent by common.js in treasure hunt mode (final)
+                var completionTypes = [
+                    'GAME_CLEAR',
+                    'treasureHuntGameComplete',
+                    'treasureHuntComplete'
+                ];
+
+                if (completionTypes.indexOf(data.type) !== -1) {
+                    missionCompleted = true;
+                    if (timer) timer.stop();
+                    window.removeEventListener('message', handleGameMessage);
+
+                    var elapsed = Math.floor((Date.now() - missionStartTime) / 1000);
+                    GameEngine.completeMission({
+                        attempts: attempts + 1,
+                        time: elapsed
+                    });
+                    showMissionComplete(mission);
+                }
+            }
+
+            /* ===== S07: Find Object ===== */
+            function initFindObject(m) {
+                document.getElementById('miniPlayContainer').style.display = 'none';
+                document.getElementById('findContainer').classList.add('active');
+
+                // Story
+                document.getElementById('findStoryText').textContent = m.storyText || '물건을 찾아보세요!';
+
+                // Hints
+                renderHints(m);
+
+                // Back button
+                App.addUnifiedEvent(document.getElementById('findBackBtn'), function () {
+                    App.navigate('index.html#hub');
+                });
+            }
+
+            function renderHints(m) {
+                const section = document.getElementById('hintSection');
+                section.innerHTML = '';
+
+                const hints = m.hints || [];
+                const revealBtn = document.getElementById('revealHintBtn');
+
+                hints.forEach(function (hint, i) {
+                    if (i < revealedHints) {
+                        // Visible hint
+                        const card = document.createElement('div');
+                        card.className = 'hint-card fade-in-up';
+                        card.style.animationDelay = (i * 0.15) + 's';
+                        card.innerHTML =
+                            '<span class="hint-icon">💡</span>' +
+                            '<span class="hint-text">힌트 ' + (i + 1) + ': ' + App.escapeHtml(hint) + '</span>';
+                        section.appendChild(card);
+                    }
+                });
+
+                if (revealedHints < hints.length) {
+                    revealBtn.style.display = '';
+                } else {
+                    revealBtn.style.display = 'none';
+                }
+            }
+
+            // Reveal Hint
+            App.addUnifiedEvent(document.getElementById('revealHintBtn'), function () {
+                if (!mission.hints) return;
+                revealedHints++;
+                GameEngine.useHint(missionIdx);
+                renderHints(mission);
+                Effects.playSound('reveal');
+                Effects.vibrateClick();
+            });
+
+            // Check Answer
+            App.addUnifiedEvent(document.getElementById('checkAnswerBtn'), function () {
+                checkAnswer();
+            });
+
+            document.getElementById('findAnswer').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    checkAnswer();
+                }
+            });
+
+            function checkAnswer() {
+                const input = document.getElementById('findAnswer');
+                const raw = input.value.trim();
+                if (!raw) return;
+
+                attempts++;
+                const normalized = raw.replace(/\s/g, '').toLowerCase();
+                const answers = (mission.answers || []).map(function (a) {
+                    return a.replace(/\s/g, '').toLowerCase();
+                });
+
+                const feedback = document.getElementById('answerFeedback');
+
+                if (answers.indexOf(normalized) !== -1) {
+                    // Correct!
+                    Effects.playSound('success');
+                    Effects.vibrateSuccess();
+                    feedback.textContent = '정답입니다!';
+                    feedback.className = 'answer-feedback success';
+
+                    const elapsed = Math.floor((Date.now() - missionStartTime) / 1000);
+                    GameEngine.completeMission({
+                        attempts: attempts,
+                        time: elapsed
+                    });
+
+                    setTimeout(function () {
+                        showMissionComplete(mission);
+                    }, 800);
+                } else {
+                    // Wrong
+                    Effects.playSound('fail');
+                    Effects.vibrateFail();
+                    feedback.textContent = '오답입니다. 다시 시도해보세요!';
+                    feedback.className = 'answer-feedback error';
+                    input.value = '';
+                    input.classList.add('shake');
+                    setTimeout(function () { input.classList.remove('shake'); }, 500);
+
+                    document.getElementById('answerAttempts').textContent = '시도: ' + attempts;
+
+                    // Auto reveal hints after 3 failures
+                    if (attempts >= 3 && mission.hints && revealedHints < mission.hints.length) {
+                        revealedHints = mission.hints.length;
+                        renderHints(mission);
+                        Effects.showToast('모든 힌트가 공개되었습니다!');
+                    }
+                }
+            }
+
+            /* ===== Mission Complete ===== */
+            function showMissionComplete(m) {
+                Effects.createConfetti(3000);
+                Effects.playSound('success');
+                Effects.vibrateSuccess();
+
+                // Dim iframe so the overlay is clearly visible
+                var iframeWrapper = document.getElementById('miniPlayContainer');
+                if (iframeWrapper) iframeWrapper.style.opacity = '0.3';
+
+                const overlay = document.getElementById('completeOverlay');
+                document.getElementById('completeIcon').textContent = '🎉';
+
+                // Show player name in title for 2P mode
+                if (GameEngine.getPlayerCount() === 2) {
+                    if (GameEngine.isCoopMission(m)) {
+                        // Co-op mission: both players completed together
+                        document.getElementById('completeTitle').textContent = '함께 미션 완료!';
+                    } else {
+                        // Turn-based: after completeMission(), currentPlayer has already switched
+                        // so the player who just completed is the "other" one now
+                        var completedPlayerName = GameEngine.getNextPlayerName();
+                        document.getElementById('completeTitle').textContent = completedPlayerName + ' 미션 완료!';
+                    }
+                } else {
+                    document.getElementById('completeTitle').textContent = '미션 완료!';
+                }
+                document.getElementById('completeMessage').textContent = m.successMessage || '잘했어요!';
+
+                // Show clue
+                if (m.clue && m.clue.content) {
+                    document.getElementById('completeClue').style.display = '';
+                    document.getElementById('completeClueValue').textContent = m.clue.content;
+                }
+
+                // Check if all missions done
+                GameEngine.init();
+                if (GameEngine.isAllCompleted()) {
+                    document.getElementById('nextMissionBtn').style.display = 'none';
+                    document.getElementById('goTreasureFromPlay').style.display = '';
+                } else {
+                    document.getElementById('nextMissionBtn').style.display = '';
+                    document.getElementById('goTreasureFromPlay').style.display = 'none';
+                }
+
+                overlay.classList.add('active');
+            }
+
+            // Next Mission
+            App.addUnifiedEvent(document.getElementById('nextMissionBtn'), function () {
+                Effects.playSound('click');
+
+                // 2-player mode: show handoff only after minigame (player switched)
+                // Co-op missions (findObject) don't switch players, so no handoff needed
+                if (GameEngine.getPlayerCount() === 2 && !GameEngine.isAllCompleted() && mission.type === 'minigame') {
+                    showHandoff();
+                } else {
+                    App.navigate('index.html#hub');
+                }
+            });
+
+            // Handoff overlay
+            function showHandoff() {
+                document.getElementById('completeOverlay').classList.remove('active');
+
+                // Check if next mission is co-op
+                var nextMission = GameEngine.getCurrentMission();
+                if (nextMission && GameEngine.isCoopMission(nextMission)) {
+                    // Next is co-op: show both names
+                    var players = GameEngine.getPlayers();
+                    var nameA = players[0] ? players[0].name : '플레이어1';
+                    var nameB = players[1] ? players[1].name : '플레이어2';
+                    document.getElementById('handoffSubtitle').textContent = '다음은 함께 하는 미션!';
+                    document.getElementById('handoffPlayerName').textContent = nameA + ' & ' + nameB;
+                    document.getElementById('handoffMessage').textContent = '둘이 함께 도전하세요!';
+                } else {
+                    // Next is turn-based: show whose turn
+                    var nextName = GameEngine.getCurrentPlayerName();
+                    document.getElementById('handoffSubtitle').textContent = '핸드폰을 넘겨주세요!';
+                    document.getElementById('handoffPlayerName').textContent = nextName + '의 차례!';
+                    document.getElementById('handoffMessage').textContent = '다음 미션을 수행할 준비가 되었나요?';
+                }
+
+                document.getElementById('handoffOverlay').classList.add('active');
+            }
+
+            App.addUnifiedEvent(document.getElementById('handoffReadyBtn'), function () {
+                Effects.playSound('click');
+                Effects.vibrateClick();
+                App.navigate('index.html#hub');
+            });
+
+            // Go to Treasure
+            App.addUnifiedEvent(document.getElementById('goTreasureFromPlay'), function () {
+                Effects.playSound('click');
+                App.navigate('treasure.html');
+            });
+
+        })();
+    </script>
+</body>
+</html>

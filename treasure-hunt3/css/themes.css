@@ -1,0 +1,83 @@
+/* ===== Home Treasure Hunt - Theme Definitions ===== */
+
+/* Default / Mystery Theme */
+:root,
+[data-theme='mystery'] {
+    --theme-primary: #2E4057;
+    --theme-secondary: #048A81;
+    --theme-accent: #FFD700;
+    --theme-bg: #0A0A2E;
+    --theme-bg-card: rgba(255, 255, 255, 0.08);
+    --theme-text: #FFFFFF;
+    --theme-text-sub: #B0B0B0;
+    --theme-btn-radius: 28px;
+    --theme-gradient: linear-gradient(135deg, #0A0A2E 0%, #1a1a4e 50%, #2E4057 100%);
+    --theme-card-border: rgba(255, 215, 0, 0.2);
+}
+
+[data-theme='pirate'] {
+    --theme-primary: #8B4513;
+    --theme-secondary: #20B2AA;
+    --theme-accent: #FFD700;
+    --theme-bg: #1A0F00;
+    --theme-bg-card: rgba(255, 248, 220, 0.08);
+    --theme-text: #F5E6C8;
+    --theme-text-sub: #C4A882;
+    --theme-btn-radius: 8px;
+    --theme-gradient: linear-gradient(135deg, #1A0F00 0%, #3D2B1F 50%, #8B4513 100%);
+    --theme-card-border: rgba(255, 215, 0, 0.25);
+}
+
+[data-theme='space'] {
+    --theme-primary: #1e3a8a;
+    --theme-secondary: #7c3aed;
+    --theme-accent: #00D4FF;
+    --theme-bg: #0A0A2E;
+    --theme-bg-card: rgba(0, 212, 255, 0.06);
+    --theme-text: #E0E7FF;
+    --theme-text-sub: #93A3CF;
+    --theme-btn-radius: 20px;
+    --theme-gradient: linear-gradient(135deg, #0A0A2E 0%, #1e1e5e 50%, #1e3a8a 100%);
+    --theme-card-border: rgba(0, 212, 255, 0.2);
+}
+
+[data-theme='magic'] {
+    --theme-primary: #7c3aed;
+    --theme-secondary: #ec4899;
+    --theme-accent: #FF6B9D;
+    --theme-bg: #1A0033;
+    --theme-bg-card: rgba(255, 107, 157, 0.06);
+    --theme-text: #F0E0FF;
+    --theme-text-sub: #C4A0D9;
+    --theme-btn-radius: 24px;
+    --theme-gradient: linear-gradient(135deg, #1A0033 0%, #3D0066 50%, #7c3aed 100%);
+    --theme-card-border: rgba(255, 107, 157, 0.2);
+}
+
+[data-theme='dino'] {
+    --theme-primary: #15803d;
+    --theme-secondary: #059669;
+    --theme-accent: #FF8C42;
+    --theme-bg: #0A1F0A;
+    --theme-bg-card: rgba(255, 140, 66, 0.06);
+    --theme-text: #E0FFE0;
+    --theme-text-sub: #8FBF8F;
+    --theme-btn-radius: 12px;
+    --theme-gradient: linear-gradient(135deg, #0A1F0A 0%, #1A3F1A 50%, #15803d 100%);
+    --theme-card-border: rgba(255, 140, 66, 0.2);
+}
+
+/* ===== Theme Background ===== */
+body {
+    background: var(--theme-gradient);
+    background-attachment: fixed;
+}
+
+/* ===== Theme-aware components ===== */
+.btn-primary {
+    border-radius: var(--theme-btn-radius, 28px);
+}
+
+.card {
+    border: 1px solid var(--theme-card-border, rgba(255, 255, 255, 0.1));
+}

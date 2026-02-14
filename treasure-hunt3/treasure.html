@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>홈 트레저헌트 - 보물 상자</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <style>
+        .treasure-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            text-align: center;
+            gap: 16px;
+        }
+
+        /* Scroll when results are shown */
+        .treasure-container.has-results {
+            justify-content: flex-start;
+            padding-top: 32px;
+        }
+
+        .treasure-congrats {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Treasure Box Visual */
+        .treasure-box {
+            position: relative;
+            width: 220px;
+            height: 200px;
+            margin: 8px auto;
+            flex-shrink: 0;
+            filter: drop-shadow(0 8px 32px rgba(255, 215, 0, 0.2));
+            transition: all 0.5s ease;
+        }
+
+        .treasure-box.mini {
+            width: 130px;
+            height: 118px;
+            filter: drop-shadow(0 4px 16px rgba(255, 215, 0, 0.3));
+        }
+
+        /* Box Body */
+        .box-body {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60%;
+            background:
+                linear-gradient(180deg, #C8781A 0%, #8B4513 30%, #6B3410 100%);
+            border-radius: 0 0 12px 12px;
+            border: 3px solid #5C3317;
+            box-shadow:
+                inset 0 -8px 16px rgba(0, 0, 0, 0.3),
+                inset 0 4px 8px rgba(255, 215, 0, 0.1),
+                0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* Body horizontal bands */
+        .box-body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #DAA520, #FFD700, #DAA520);
+            box-shadow: 0 1px 4px rgba(255, 215, 0, 0.5);
+        }
+
+        .box-body::after {
+            content: '';
+            position: absolute;
+            bottom: 30%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent 5%, #DAA520 15%, #FFD700 50%, #DAA520 85%, transparent 95%);
+            opacity: 0.7;
+        }
+
+        /* Body corner rivets */
+        .box-rivet {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #FFE55C, #DAA520, #B8860B);
+            border: 1px solid #8B6914;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            z-index: 2;
+        }
+
+        .box-rivet:nth-child(1) { bottom: 8px; left: 10px; }
+        .box-rivet:nth-child(2) { bottom: 8px; right: 10px; }
+        .box-rivet:nth-child(3) { top: 12px; left: 10px; }
+        .box-rivet:nth-child(4) { top: 12px; right: 10px; }
+
+        .treasure-box.mini .box-rivet {
+            width: 6px;
+            height: 6px;
+        }
+
+        /* Gems on body */
+        .box-gem {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            transform: rotate(45deg);
+            z-index: 2;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .box-gem.gem-red {
+            background: radial-gradient(circle at 35% 35%, #FF6B6B, #E74C3C, #C0392B);
+            border: 1px solid #922B21;
+            bottom: 20%;
+            left: 18%;
+        }
+
+        .box-gem.gem-blue {
+            background: radial-gradient(circle at 35% 35%, #74B9FF, #3498DB, #2980B9);
+            border: 1px solid #1F6F97;
+            bottom: 20%;
+            right: 18%;
+        }
+
+        .box-gem.gem-green {
+            background: radial-gradient(circle at 35% 35%, #55EFC4, #2ECC71, #27AE60);
+            border: 1px solid #1E8449;
+            bottom: 50%;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 10px;
+            height: 10px;
+        }
+
+        .treasure-box.mini .box-gem {
+            width: 8px;
+            height: 8px;
+        }
+
+        .treasure-box.mini .box-gem.gem-green {
+            width: 6px;
+            height: 6px;
+        }
+
+        /* Box Lid */
+        .box-lid {
+            position: absolute;
+            bottom: 55%;
+            width: 108%;
+            left: -4%;
+            height: 36%;
+            background:
+                linear-gradient(180deg, #CD853F 0%, #B8741A 40%, #8B4513 100%);
+            border-radius: 10px 10px 0 0;
+            border: 3px solid #5C3317;
+            transform-origin: bottom center;
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow:
+                inset 0 8px 16px rgba(255, 215, 0, 0.15),
+                inset 0 -4px 8px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        /* Lid gold band */
+        .box-lid::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #DAA520, #FFD700, #FFE55C, #FFD700, #DAA520);
+            box-shadow: 0 -1px 4px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Lid center ornament */
+        .box-lid::after {
+            content: '';
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 35%;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 6px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 215, 0, 0.02));
+        }
+
+        /* Lock */
+        .box-lock {
+            position: absolute;
+            bottom: 45%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
+            background: radial-gradient(circle at 40% 35%, #FFE55C, #FFD700, #DAA520, #B8860B);
+            border-radius: 50%;
+            border: 3px solid #8B6914;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            z-index: 5;
+            box-shadow:
+                0 2px 8px rgba(255, 215, 0, 0.5),
+                0 0 20px rgba(255, 215, 0, 0.2),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+            animation: lockGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes lockGlow {
+            0%, 100% { box-shadow: 0 2px 8px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.2); }
+            50% { box-shadow: 0 2px 12px rgba(255, 215, 0, 0.8), 0 0 36px rgba(255, 215, 0, 0.4); }
+        }
+
+        .treasure-box.mini .box-lock {
+            width: 28px;
+            height: 28px;
+            font-size: 13px;
+        }
+
+        /* Opened states */
+        .treasure-box.opened .box-lid {
+            transform: rotateX(-120deg);
+        }
+
+        .treasure-box.opened .box-lock {
+            opacity: 0;
+            transition: opacity 0.3s;
+            animation: none;
+        }
+
+        /* Glow from inside */
+        .box-glow {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 50%;
+            background: radial-gradient(ellipse, rgba(255, 215, 0, 0.7), rgba(255, 200, 0, 0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .treasure-box.opened .box-glow {
+            opacity: 1;
+            animation: glowPulse 1.5s ease infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.7; transform: translateX(-50%) scale(1.1); }
+        }
+
+        /* Sparkle particles */
+        .box-sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #FFD700;
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .treasure-box.opened .box-sparkle {
+            animation: sparkleFloat 2s ease-in-out infinite;
+        }
+
+        .box-sparkle:nth-child(1) { left: 30%; bottom: 50%; animation-delay: 0s; }
+        .box-sparkle:nth-child(2) { left: 50%; bottom: 55%; animation-delay: 0.4s; }
+        .box-sparkle:nth-child(3) { left: 70%; bottom: 48%; animation-delay: 0.8s; }
+        .box-sparkle:nth-child(4) { left: 40%; bottom: 60%; animation-delay: 1.2s; }
+        .box-sparkle:nth-child(5) { left: 60%; bottom: 52%; animation-delay: 1.6s; }
+
+        @keyframes sparkleFloat {
+            0% { opacity: 0; transform: translateY(0) scale(0.5); }
+            20% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-60px) scale(0); }
+        }
+
+        /* Floating shimmer on whole box */
+        .treasure-box::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+            transform: skewX(-20deg);
+            animation: shimmer 3s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes shimmer {
+            0% { left: -50%; }
+            100% { left: 150%; }
+        }
+
+        /* Password Text Input */
+        .password-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 360px;
+            transition: opacity 0.3s;
+        }
+
+        .password-section.hidden {
+            display: none;
+        }
+
+        .password-label {
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .password-input-area {
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .password-input-area input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-align: center;
+            border: 2px solid var(--theme-card-border);
+            border-radius: 12px;
+            background: var(--theme-bg-card);
+            color: var(--theme-accent);
+            outline: none;
+            letter-spacing: 2px;
+        }
+
+        .password-input-area input:focus {
+            border-color: var(--theme-accent);
+        }
+
+        .password-input-area input::placeholder {
+            color: var(--theme-text-sub);
+            opacity: 0.5;
+            font-weight: 400;
+            letter-spacing: 0;
+        }
+
+        .password-hint {
+            color: var(--theme-text-sub);
+            font-size: 0.9rem;
+        }
+
+        .password-error {
+            color: var(--color-error);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Clue Reminder */
+        .clue-reminder {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            padding: 8px 0;
+        }
+
+        .clue-reminder .clue-chip {
+            background: var(--theme-bg-card);
+            border: 1px solid var(--theme-card-border);
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            color: var(--theme-accent);
+            font-weight: 600;
+        }
+
+        /* Result Section */
+        .result-section {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .result-section.active {
+            display: flex;
+        }
+
+        .result-card {
+            background: var(--theme-bg-card);
+            border: 1px solid var(--theme-card-border);
+            border-radius: 12px;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .result-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-row .label {
+            color: var(--theme-text-sub);
+        }
+
+        .result-row .value {
+            font-weight: 600;
+        }
+
+        .final-secret {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 24px 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .final-secret .secret-label {
+            font-size: 0.85rem;
+            color: var(--theme-text-sub);
+            margin-bottom: 8px;
+        }
+
+        .final-secret .secret-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--theme-accent);
+            letter-spacing: 8px;
+        }
+
+        .reward-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--theme-text);
+        }
+
+        .grade-display {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .grade-S { color: #FFD700; }
+        .grade-A { color: #2ECC71; }
+        .grade-B { color: #3498DB; }
+        .grade-C { color: #F39C12; }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="treasure-container" id="treasureContainer">
+        <!-- Congrats -->
+        <div class="treasure-congrats fade-in" id="congratsText">🎉 모든 미션 완료!</div>
+
+        <!-- Treasure Box -->
+        <div class="treasure-box" id="treasureBox">
+            <div class="box-lid"></div>
+            <div class="box-body">
+                <span class="box-rivet"></span>
+                <span class="box-rivet"></span>
+                <span class="box-rivet"></span>
+                <span class="box-rivet"></span>
+                <span class="box-gem gem-red"></span>
+                <span class="box-gem gem-blue"></span>
+                <span class="box-gem gem-green"></span>
+            </div>
+            <div class="box-lock">🔒</div>
+            <div class="box-glow"></div>
+            <span class="box-sparkle"></span>
+            <span class="box-sparkle"></span>
+            <span class="box-sparkle"></span>
+            <span class="box-sparkle"></span>
+            <span class="box-sparkle"></span>
+        </div>
+
+        <!-- Password Section -->
+        <div class="password-section" id="passwordSection">
+            <div class="password-label">암호를 입력하세요</div>
+
+            <div class="password-input-area" id="passwordInputArea">
+                <input type="text" id="passwordInput" placeholder="단서를 조합하세요" autocomplete="off">
+            </div>
+
+            <button class="btn btn-primary btn-large" id="unlockBtn">🔓 열기!</button>
+            <div class="password-hint" id="passwordHint">수집한 단서를 조합해보세요</div>
+            <div class="password-error" id="passwordError" style="display:none;"></div>
+        </div>
+
+        <!-- Clue Reminder -->
+        <div class="clue-reminder" id="clueReminder"></div>
+
+        <!-- Result Section (after unlock) -->
+        <div class="result-section" id="resultSection">
+            <div class="reward-message" id="rewardMessage"></div>
+
+            <div class="final-secret" id="finalSecret">
+                <div class="secret-label">보물 암호</div>
+                <div class="secret-value" id="secretCodeValue"></div>
+            </div>
+
+            <div class="grade-display" id="gradeDisplay"></div>
+
+            <div class="result-card">
+                <h3>📊 게임 결과</h3>
+                <div class="result-row">
+                    <span class="label">총 플레이 시간</span>
+                    <span class="value" id="resultTime"></span>
+                </div>
+                <div class="result-row">
+                    <span class="label">미션 클리어</span>
+                    <span class="value" id="resultCleared"></span>
+                </div>
+                <div class="result-row">
+                    <span class="label">총 시도 횟수</span>
+                    <span class="value" id="resultAttempts"></span>
+                </div>
+                <div class="result-row">
+                    <span class="label">최종 등급</span>
+                    <span class="value" id="resultGrade"></span>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="homeBtn">🏠 홈으로</button>
+                <button class="btn btn-primary" id="replayBtn">🔄 다시하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/theme-manager.js"></script>
+    <script src="js/preset-data.js"></script>
+    <script src="js/effects.js"></script>
+    <script src="js/game-engine.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        /* ===== treasure.html - Treasure Box Logic ===== */
+        (function () {
+            let unlockAttempts = 0;
+
+            // Init
+            App.init();
+            GameEngine.init();
+
+            const config = Storage.getConfig();
+            if (config && config.theme) {
+                ThemeManager.apply(config.theme);
+            }
+
+            // Show collected clues as chips
+            const clues = GameEngine.getCollectedClues();
+            const validClues = clues.filter(function (c) { return c.content && c.content.trim() !== ''; });
+            if (validClues.length > 0) {
+                const reminder = document.getElementById('clueReminder');
+                validClues.forEach(function (c) {
+                    var chip = document.createElement('span');
+                    chip.className = 'clue-chip';
+                    chip.textContent = c.content;
+                    reminder.appendChild(chip);
+                });
+            }
+
+            // Enter key on input
+            document.getElementById('passwordInput').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    tryUnlock();
+                }
+            });
+
+            // Unlock button
+            App.addUnifiedEvent(document.getElementById('unlockBtn'), function () {
+                tryUnlock();
+            });
+
+            function tryUnlock() {
+                Effects.vibrateClick();
+
+                const password = GameEngine.getTreasurePassword();
+                const entered = document.getElementById('passwordInput').value.trim();
+
+                if (entered === password) {
+                    // Success!
+                    Effects.playSound('fanfare');
+                    Effects.vibrateFinal();
+                    Effects.createConfetti(5000);
+
+                    // Open box animation
+                    document.getElementById('treasureBox').classList.add('opened');
+
+                    // Hide password section & clue reminder
+                    document.getElementById('passwordSection').classList.add('hidden');
+                    document.getElementById('clueReminder').style.display = 'none';
+
+                    // Complete game
+                    GameEngine.completeGame();
+
+                    // Show results after animation
+                    setTimeout(showResults, 1200);
+                } else {
+                    // Wrong password
+                    unlockAttempts++;
+                    Effects.playSound('fail');
+                    Effects.vibrateFail();
+
+                    const errEl = document.getElementById('passwordError');
+                    errEl.textContent = '암호가 틀렸습니다! (' + unlockAttempts + '회 시도)';
+                    errEl.style.display = '';
+
+                    document.getElementById('passwordInputArea').classList.add('shake');
+                    setTimeout(function () {
+                        document.getElementById('passwordInputArea').classList.remove('shake');
+                    }, 500);
+                }
+            }
+
+            function showResults() {
+                const results = GameEngine.getResults();
+                const finalReward = GameEngine.getFinalReward();
+
+                // Switch to scrollable layout
+                document.getElementById('treasureContainer').classList.add('has-results');
+
+                // Shrink treasure box
+                document.getElementById('treasureBox').classList.add('mini');
+
+                // Reward message
+                document.getElementById('rewardMessage').textContent = finalReward ? finalReward.message : '축하합니다!';
+
+                // Secret code
+                if (finalReward && finalReward.secretCode) {
+                    document.getElementById('secretCodeValue').textContent = finalReward.secretCode;
+                } else {
+                    document.getElementById('finalSecret').style.display = 'none';
+                }
+
+                // Grade
+                if (results) {
+                    document.getElementById('gradeDisplay').textContent = results.grade;
+                    document.getElementById('gradeDisplay').className = 'grade-display grade-' + results.grade + ' bounce';
+
+                    document.getElementById('resultTime').textContent = App.formatTime(results.totalTime);
+                    document.getElementById('resultCleared').textContent = results.cleared + ' / ' + results.total + ' 미션';
+                    document.getElementById('resultAttempts').textContent = results.totalAttempts + '회';
+                    document.getElementById('resultGrade').textContent = results.grade + ' 등급';
+                }
+
+                // Show result section
+                document.getElementById('resultSection').classList.add('active');
+                document.getElementById('congratsText').textContent = '🏆 보물을 찾았다!';
+            }
+
+            // Home
+            App.addUnifiedEvent(document.getElementById('homeBtn'), function () {
+                GameEngine.resetGame();
+                App.navigate('index.html');
+            });
+
+            // Replay
+            App.addUnifiedEvent(document.getElementById('replayBtn'), function () {
+                GameEngine.resetGame();
+                App.navigate('index.html');
+            });
+
+        })();
+    </script>
+</body>
+</html>

@@ -1,5 +1,16 @@
 // 공통 유틸리티 함수 - 보물찾기 미니게임
 
+// 부모(treasure-hunt3)에서 전달받은 테마 배경색 적용
+window.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'THEME_BG') {
+        var bg = e.data.gradient || e.data.bg;
+        if (bg) {
+            document.body.style.background = bg;
+            document.body.style.backgroundAttachment = 'fixed';
+        }
+    }
+});
+
 // 게임 설정 가져오기
 function getGameConfig(gameId) {
     try {

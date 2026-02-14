@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>홈 트레저헌트 - 관리자</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <style>
+        /* ===== S02: PIN Auth ===== */
+        .pin-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            gap: 24px;
+        }
+
+        .pin-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .pin-dots {
+            display: flex;
+            gap: 16px;
+        }
+
+        .pin-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid var(--theme-text-sub);
+            transition: all 0.2s;
+        }
+
+        .pin-dot.filled {
+            background: var(--theme-accent);
+            border-color: var(--theme-accent);
+        }
+
+        .pin-dot.error {
+            border-color: var(--color-error);
+            background: var(--color-error);
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            max-width: 260px;
+        }
+
+        .keypad button {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--theme-text);
+            font-size: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .keypad button:active {
+            background: var(--theme-accent);
+            color: #1a1a1a;
+            transform: scale(0.95);
+        }
+
+        .keypad button.fn-key {
+            font-size: 1.2rem;
+        }
+
+        .pin-lockout {
+            color: var(--color-error);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* ===== S03: Dashboard ===== */
+        .dashboard {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            max-width: 520px;
+            gap: 20px;
+            padding-bottom: 80px;
+        }
+
+        .dashboard.active {
+            display: flex;
+        }
+
+        .dashboard > div {
+            width: 100%;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            position: sticky;
+            top: 0;
+            background: var(--theme-bg);
+            z-index: 10;
+        }
+
+        /* Theme Cards */
+        .theme-cards {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 8px 4px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            width: 100%;
+            touch-action: pan-x;
+        }
+
+        .theme-cards::-webkit-scrollbar { display: none; }
+
+        .theme-card {
+            flex-shrink: 0;
+            width: 130px;
+            padding: 16px 12px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            background: var(--theme-bg-card);
+            transition: all 0.2s;
+        }
+
+        .theme-card.selected {
+            border-color: var(--theme-accent);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .theme-card .t-icon {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .theme-card .t-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Mission List */
+        .mission-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mission-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: var(--theme-bg-card);
+            border-radius: 10px;
+            border: 1px solid var(--theme-card-border);
+        }
+
+        .mission-item .m-icon {
+            font-size: 1.5rem;
+        }
+
+        .mission-item .m-info {
+            flex: 1;
+        }
+
+        .mission-item .m-info .m-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .mission-item .m-info .m-detail {
+            font-size: 0.8rem;
+            color: var(--theme-text-sub);
+        }
+
+        .m-settings {
+            background: none;
+            border: none;
+            color: var(--theme-text-sub);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 6px;
+            min-width: 36px;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .m-settings:active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--theme-accent);
+        }
+
+        .mission-item .m-remove {
+            background: none;
+            border: none;
+            color: var(--color-error);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            min-width: 40px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add-mission-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Time limit toggle */
+        .time-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            display: none;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #555;
+            border-radius: 26px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--theme-accent);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(24px);
+        }
+
+        .time-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time-input-group input {
+            width: 80px;
+            padding: 8px;
+            text-align: center;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            border: 1px solid var(--theme-card-border);
+            background: var(--theme-bg-card);
+            color: var(--theme-text);
+        }
+
+        /* Mission Reorder Buttons */
+        .m-reorder {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .m-reorder button {
+            background: none;
+            border: none;
+            color: var(--theme-text-sub);
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 4px 6px;
+            min-width: 32px;
+            min-height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .m-reorder button:active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--theme-accent);
+        }
+
+        .m-reorder button:disabled {
+            opacity: 0.2;
+            cursor: default;
+        }
+
+        /* Game Select Modal */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 8px 0;
+        }
+
+        .game-grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 12px 4px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            background: var(--theme-bg-card);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .game-grid-item:active,
+        .game-grid-item:hover {
+            border-color: var(--theme-accent);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .game-grid-item .g-icon {
+            font-size: 28px;
+        }
+
+        .game-grid-item .g-name {
+            font-size: 0.7rem;
+            color: var(--theme-text-sub);
+        }
+
+        .game-grid-item .g-badge {
+            font-size: 0.6rem;
+        }
+
+        /* Sticky Save */
+        .save-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 16px;
+            background: var(--theme-bg);
+            border-top: 1px solid var(--theme-card-border);
+            display: none;
+            justify-content: center;
+            z-index: 20;
+        }
+
+        .save-bar.active {
+            display: flex;
+        }
+
+        /* Mission Config Modal */
+        .config-form {
+            text-align: left;
+        }
+
+        .config-form .form-group {
+            margin-bottom: 14px;
+        }
+
+        /* Find Object Config */
+        .hint-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .answer-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .answer-tag {
+            background: var(--theme-accent);
+            color: #1a1a1a;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .answer-tag button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0 2px;
+        }
+
+        /* Player Mode Toggle Active */
+        .player-mode-btn.active {
+            background: var(--theme-accent) !important;
+            color: #1a1a1a !important;
+            border-color: var(--theme-accent) !important;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 400px) {
+            .game-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .game-grid-item {
+                padding: 10px 2px;
+            }
+
+            .game-grid-item .g-icon {
+                font-size: 24px;
+            }
+
+            .game-grid-item .g-name {
+                font-size: 0.65rem;
+            }
+
+            .theme-card {
+                width: 100px;
+                padding: 12px 8px;
+            }
+
+            .theme-card .t-icon {
+                font-size: 28px;
+            }
+
+            .theme-card .t-name {
+                font-size: 0.75rem;
+            }
+
+            .mission-item {
+                gap: 6px;
+                padding: 10px 8px;
+            }
+
+            .mission-item .m-info .m-name {
+                font-size: 0.85rem;
+            }
+
+            .keypad button {
+                width: 60px;
+                height: 60px;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="content-area" style="max-width:520px;">
+
+            <!-- S02: PIN Auth -->
+            <div id="pinScreen" class="screen-section active">
+                <div class="pin-screen">
+                    <button class="btn-icon" style="align-self:flex-start;" onclick="location.href='index.html'">←</button>
+                    <div style="font-size:48px;">🔐</div>
+                    <div class="pin-title">관리자 인증</div>
+
+                    <div class="pin-dots" id="pinDots">
+                        <div class="pin-dot"></div>
+                        <div class="pin-dot"></div>
+                        <div class="pin-dot"></div>
+                        <div class="pin-dot"></div>
+                    </div>
+
+                    <div class="pin-lockout" id="pinLockout" style="display:none;"></div>
+
+                    <div class="keypad" id="keypad">
+                        <button data-key="1">1</button>
+                        <button data-key="2">2</button>
+                        <button data-key="3">3</button>
+                        <button data-key="4">4</button>
+                        <button data-key="5">5</button>
+                        <button data-key="6">6</button>
+                        <button data-key="7">7</button>
+                        <button data-key="8">8</button>
+                        <button data-key="9">9</button>
+                        <button data-key="back" class="fn-key">⌫</button>
+                        <button data-key="0">0</button>
+                        <button data-key="enter" class="fn-key">✓</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- S03: Dashboard -->
+            <div id="dashboardScreen" class="screen-section">
+                <div class="dashboard" id="dashboardInner">
+                    <div class="dashboard-header">
+                        <button class="btn-icon" onclick="location.href='index.html'">←</button>
+                        <span style="font-weight:600; font-size:1.1rem;">게임 설정</span>
+                        <div style="width:48px;"></div>
+                    </div>
+
+                    <!-- Theme Selection -->
+                    <div>
+                        <div class="section-header">▸ 테마 선택</div>
+                        <div class="theme-cards" id="themeCards"></div>
+                    </div>
+
+                    <!-- Mission Builder -->
+                    <div>
+                        <div class="section-header">▸ 미션 구성</div>
+                        <div class="mission-list" id="missionList"></div>
+                        <div class="add-mission-btns" style="margin-top:12px;">
+                            <button class="btn btn-secondary" id="addMinigameBtn">+ 미니게임</button>
+                            <button class="btn btn-secondary" id="addFindBtn">+ 물건찾기</button>
+                            <button class="btn btn-secondary" id="loadPresetBtn">📋 프리셋 불러오기</button>
+                        </div>
+                    </div>
+
+                    <!-- Treasure Password (text) -->
+                    <div>
+                        <div class="section-header">▸ 보물 상자 암호 (텍스트)</div>
+                        <input class="input-field" id="treasurePasswordInput" placeholder="단서를 조합해 만들 암호" value="">
+                        <div style="font-size:0.75rem; color:var(--theme-text-sub); margin-top:4px;">미션 단서들을 조합한 텍스트 암호</div>
+                    </div>
+
+                    <!-- Secret Code (3-digit, revealed after opening) -->
+                    <div>
+                        <div class="section-header">▸ 보물 암호 (상자 오픈 후 공개)</div>
+                        <input class="input-field" id="secretCodeInput" placeholder="예: 724" maxlength="10" value="" style="width:160px;">
+                        <div style="font-size:0.75rem; color:var(--theme-text-sub); margin-top:4px;">보물 상자를 열면 보이는 최종 암호</div>
+                    </div>
+
+                    <!-- Player Settings -->
+                    <div>
+                        <div class="section-header">▸ 플레이어 설정</div>
+                        <div class="player-mode-toggle" style="display:flex; gap:8px; margin-bottom:12px;">
+                            <button class="btn btn-secondary player-mode-btn active" id="mode1pBtn" style="flex:1;">👤 1명</button>
+                            <button class="btn btn-secondary player-mode-btn" id="mode2pBtn" style="flex:1;">👥 2명</button>
+                        </div>
+                        <div id="playerNamesArea" style="display:none;">
+                            <div style="display:flex; gap:8px; margin-bottom:8px; align-items:center;">
+                                <span style="font-size:1.2rem; min-width:28px;">🅰️</span>
+                                <input class="input-field" id="playerAName" placeholder="플레이어 A 이름" value="플레이어1">
+                            </div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <span style="font-size:1.2rem; min-width:28px;">🅱️</span>
+                                <input class="input-field" id="playerBName" placeholder="플레이어 B 이름" value="플레이어2">
+                            </div>
+                            <div style="font-size:0.75rem; color:var(--theme-text-sub); margin-top:6px;">두 명이 번갈아가며 미션을 수행합니다</div>
+                        </div>
+                    </div>
+
+                    <!-- Time Limit -->
+                    <div>
+                        <div class="section-header">▸ 전체 시간제한</div>
+                        <div class="time-toggle">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="timeLimitToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span id="timeLimitLabel">무제한</span>
+                        </div>
+                        <div class="time-input-group" id="timeLimitInput" style="display:none; margin-top:8px;">
+                            <input type="number" id="timeLimitMinutes" min="5" max="120" value="60">
+                            <span>분</span>
+                        </div>
+                    </div>
+
+                    <!-- PIN Change -->
+                    <div>
+                        <div class="section-header">▸ 관리자 PIN 변경</div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <input type="password" class="input-field" id="newPinInput" maxlength="4" placeholder="새 PIN (4자리)" style="width:160px;">
+                            <button class="btn btn-secondary" id="changePinBtn">변경</button>
+                        </div>
+                    </div>
+
+                    <!-- Reset -->
+                    <div style="margin-top:16px;">
+                        <button class="btn btn-danger btn-block" id="resetGameBtn">🗑️ 진행 중인 게임 초기화</button>
+                    </div>
+                </div>
+
+                <!-- Save Bar -->
+                <div class="save-bar">
+                    <button class="btn btn-primary btn-large" id="saveBtn">💾 저장하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Select Modal -->
+    <div class="modal" id="gameSelectModal">
+        <div class="modal-content" style="max-width:400px; text-align:left;">
+            <h2 style="text-align:center;">미니게임 선택</h2>
+            <div class="game-grid" id="gameGrid"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="closeGameModal">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Find Object Config Modal -->
+    <div class="modal" id="findConfigModal">
+        <div class="modal-content" style="max-width:400px; text-align:left;">
+            <h2 style="text-align:center;">물건찾기 설정</h2>
+            <div class="config-form">
+                <div class="form-group">
+                    <label>스토리 텍스트</label>
+                    <textarea class="input-field" id="findStory" rows="2" placeholder="미션 배경 설명..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>힌트 (최대 3개)</label>
+                    <div class="hint-inputs">
+                        <input class="input-field" id="findHint1" placeholder="힌트 1">
+                        <input class="input-field" id="findHint2" placeholder="힌트 2">
+                        <input class="input-field" id="findHint3" placeholder="힌트 3">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>정답 (Enter로 추가, 여러 정답 가능)</label>
+                    <input class="input-field" id="findAnswerInput" placeholder="정답 입력 후 Enter">
+                    <div class="answer-tags" id="findAnswerTags"></div>
+                </div>
+                <div class="form-group">
+                    <label>단서 내용</label>
+                    <input class="input-field" id="findClue" placeholder="이 미션의 단서 (숫자/글자)">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="saveFindBtn">저장</button>
+                <button class="btn btn-secondary" id="closeFindModal">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Minigame Config Modal -->
+    <div class="modal" id="miniConfigModal">
+        <div class="modal-content" style="max-width:400px; text-align:left; position:relative;">
+            <button class="m-settings" id="miniConfigSettingsBtn" title="게임 설정 페이지" style="display:none; position:absolute; top:8px; right:8px;">&#9881;</button>
+            <h2 style="text-align:center;" id="miniConfigTitle">미니게임 설정</h2>
+            <div class="config-form">
+                <div class="form-group">
+                    <label>스토리 텍스트</label>
+                    <textarea class="input-field" id="miniStory" rows="2" placeholder="미션 배경 설명..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>단서 내용</label>
+                    <input class="input-field" id="miniClue" placeholder="이 미션의 단서 (숫자/글자)">
+                </div>
+                <div class="form-group">
+                    <label>비밀번호 이모지/텍스트</label>
+                    <input class="input-field" id="miniSecretCode" placeholder="🏴‍☠️">
+                </div>
+                <div class="form-group">
+                    <label>성공 메시지</label>
+                    <input class="input-field" id="miniSuccessMsg" placeholder="미션 클리어!">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="saveMiniBtn">저장</button>
+                <button class="btn btn-secondary" id="closeMiniModal">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/theme-manager.js"></script>
+    <script src="js/preset-data.js"></script>
+    <script src="js/effects.js"></script>
+    <script src="js/game-engine.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        /* ===== admin.html - PIN Auth & Dashboard ===== */
+        (function () {
+            let pinValue = '';
+            let pinAttempts = 0;
+            let pinLocked = false;
+            let lockTimer = null;
+            let selectedTheme = 'mystery';
+            let missions = [];
+            let editingMissionIndex = -1;
+            let findAnswers = [];
+
+            /* ===== S02: PIN Authentication ===== */
+            const pinDots = document.querySelectorAll('#pinDots .pin-dot');
+            const keypadBtns = document.querySelectorAll('#keypad button');
+
+            keypadBtns.forEach(function (btn) {
+                App.addUnifiedEvent(btn, function () {
+                    if (pinLocked) return;
+                    Effects.vibrateClick();
+                    Effects.playSound('click');
+
+                    const key = btn.getAttribute('data-key');
+
+                    if (key === 'back') {
+                        if (pinValue.length > 0) {
+                            pinValue = pinValue.slice(0, -1);
+                            updatePinDots();
+                        }
+                    } else if (key === 'enter') {
+                        if (pinValue.length === 4) {
+                            checkPin();
+                        }
+                    } else {
+                        if (pinValue.length < 4) {
+                            pinValue += key;
+                            updatePinDots();
+                            if (pinValue.length === 4) {
+                                setTimeout(checkPin, 200);
+                            }
+                        }
+                    }
+                });
+            });
+
+            function updatePinDots() {
+                pinDots.forEach(function (dot, i) {
+                    dot.className = 'pin-dot' + (i < pinValue.length ? ' filled' : '');
+                });
+            }
+
+            function checkPin() {
+                const admin = Storage.getAdmin();
+                if (pinValue === admin.pin) {
+                    Effects.playSound('success');
+                    document.getElementById('pinScreen').classList.remove('active');
+                    document.getElementById('dashboardScreen').classList.add('active');
+                    document.getElementById('dashboardInner').classList.add('active');
+                    document.querySelector('.save-bar').classList.add('active');
+                    initDashboard();
+                } else {
+                    pinAttempts++;
+                    Effects.playSound('fail');
+                    Effects.vibrateFail();
+
+                    pinDots.forEach(function (d) { d.classList.add('error'); });
+                    document.getElementById('pinDots').classList.add('shake');
+                    setTimeout(function () {
+                        pinValue = '';
+                        updatePinDots();
+                        document.getElementById('pinDots').classList.remove('shake');
+                        pinDots.forEach(function (d) { d.classList.remove('error'); });
+                    }, 500);
+
+                    if (pinAttempts >= 5) {
+                        pinLocked = true;
+                        let lockSeconds = 30;
+                        const lockoutEl = document.getElementById('pinLockout');
+                        lockoutEl.style.display = '';
+                        lockoutEl.textContent = lockSeconds + '초 후 재시도';
+
+                        lockTimer = setInterval(function () {
+                            lockSeconds--;
+                            lockoutEl.textContent = lockSeconds + '초 후 재시도';
+                            if (lockSeconds <= 0) {
+                                clearInterval(lockTimer);
+                                pinLocked = false;
+                                pinAttempts = 0;
+                                lockoutEl.style.display = 'none';
+                            }
+                        }, 1000);
+                    }
+                }
+            }
+
+            /* ===== S03: Dashboard ===== */
+            function initDashboard() {
+                renderThemeCards();
+                loadExistingConfig();
+                renderMissionList();
+                setupTimeLimitToggle();
+            }
+
+            function renderThemeCards() {
+                const container = document.getElementById('themeCards');
+                container.innerHTML = '';
+                ThemeManager.getAllThemes().forEach(function (theme) {
+                    const card = document.createElement('div');
+                    card.className = 'theme-card' + (theme.id === selectedTheme ? ' selected' : '');
+                    card.innerHTML = '<span class="t-icon">' + theme.icon + '</span><span class="t-name">' + theme.name + '</span>';
+                    App.addUnifiedEvent(card, function () {
+                        selectedTheme = theme.id;
+                        ThemeManager.apply(theme.id);
+                        loadPreset(theme.id);
+                        renderThemeCards();
+                        Effects.vibrateClick();
+                    });
+                    container.appendChild(card);
+                });
+            }
+
+            /* ===== Player Mode Toggle ===== */
+            var selectedPlayerCount = 1;
+
+            App.addUnifiedEvent(document.getElementById('mode1pBtn'), function () {
+                selectedPlayerCount = 1;
+                document.getElementById('mode1pBtn').classList.add('active');
+                document.getElementById('mode2pBtn').classList.remove('active');
+                document.getElementById('playerNamesArea').style.display = 'none';
+                Effects.vibrateClick();
+            });
+
+            App.addUnifiedEvent(document.getElementById('mode2pBtn'), function () {
+                selectedPlayerCount = 2;
+                document.getElementById('mode2pBtn').classList.add('active');
+                document.getElementById('mode1pBtn').classList.remove('active');
+                document.getElementById('playerNamesArea').style.display = '';
+                Effects.vibrateClick();
+            });
+
+            function loadExistingConfig() {
+                const config = Storage.getConfig();
+                if (config) {
+                    selectedTheme = config.theme || 'mystery';
+                    ThemeManager.apply(selectedTheme);
+                    missions = config.missions || [];
+
+                    document.getElementById('treasurePasswordInput').value = config.treasurePassword || '';
+                    document.getElementById('secretCodeInput').value = (config.finalReward && config.finalReward.secretCode) || '';
+
+                    if (config.globalTimeLimit && config.globalTimeLimit > 0) {
+                        document.getElementById('timeLimitToggle').checked = true;
+                        document.getElementById('timeLimitInput').style.display = 'flex';
+                        document.getElementById('timeLimitMinutes').value = Math.floor(config.globalTimeLimit / 60);
+                        document.getElementById('timeLimitLabel').textContent = '';
+                    }
+
+                    // Restore player settings
+                    if (config.playerCount === 2) {
+                        selectedPlayerCount = 2;
+                        document.getElementById('mode2pBtn').classList.add('active');
+                        document.getElementById('mode1pBtn').classList.remove('active');
+                        document.getElementById('playerNamesArea').style.display = '';
+                        if (config.players && config.players.length >= 2) {
+                            document.getElementById('playerAName').value = config.players[0].name || '플레이어1';
+                            document.getElementById('playerBName').value = config.players[1].name || '플레이어2';
+                        }
+                    } else {
+                        selectedPlayerCount = 1;
+                        document.getElementById('mode1pBtn').classList.add('active');
+                        document.getElementById('mode2pBtn').classList.remove('active');
+                        document.getElementById('playerNamesArea').style.display = 'none';
+                    }
+
+                    renderThemeCards();
+                }
+            }
+
+            /* ===== Mission List ===== */
+            function renderMissionList() {
+                const list = document.getElementById('missionList');
+                list.innerHTML = '';
+
+                missions.forEach(function (m, i) {
+                    const item = document.createElement('div');
+                    item.className = 'mission-item fade-in';
+
+                    let icon = '🏠';
+                    let name = '물건 찾기';
+                    let detail = '';
+
+                    if (m.type === 'minigame') {
+                        const info = getGameInfo(m.gameId);
+                        icon = info ? info.icon : '🎮';
+                        name = info ? info.name : m.gameId;
+                        detail = m.storyText ? m.storyText.substring(0, 30) + (m.storyText.length > 30 ? '...' : '') : '미니게임';
+                    } else {
+                        detail = (m.answers || []).join(', ');
+                    }
+
+                    var reorderHtml =
+                        '<div class="m-reorder">' +
+                            '<button class="m-up" data-idx="' + i + '"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
+                            '<button class="m-down" data-idx="' + i + '"' + (i === missions.length - 1 ? ' disabled' : '') + '>▼</button>' +
+                        '</div>';
+
+                    item.innerHTML =
+                        reorderHtml +
+                        '<span class="m-icon">' + icon + '</span>' +
+                        '<div class="m-info">' +
+                            '<div class="m-name">' + (i + 1) + '. ' + name + '</div>' +
+                            '<div class="m-detail">' + App.escapeHtml(detail) + '</div>' +
+                        '</div>' +
+                        '<button class="m-remove" data-idx="' + i + '">✕</button>';
+
+                    // Edit on click (except remove/reorder buttons)
+                    item.addEventListener('click', function (e) {
+                        if (e.target.closest('.m-remove') || e.target.closest('.m-reorder')) return;
+                        editMission(i);
+                    });
+
+                    // Reorder up
+                    item.querySelector('.m-up').addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        if (i > 0) {
+                            var temp = missions[i];
+                            missions[i] = missions[i - 1];
+                            missions[i - 1] = temp;
+                            renderMissionList();
+                            Effects.vibrateClick();
+                        }
+                    });
+
+                    // Reorder down
+                    item.querySelector('.m-down').addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        if (i < missions.length - 1) {
+                            var temp = missions[i];
+                            missions[i] = missions[i + 1];
+                            missions[i + 1] = temp;
+                            renderMissionList();
+                            Effects.vibrateClick();
+                        }
+                    });
+
+                    // Remove
+                    item.querySelector('.m-remove').addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        missions.splice(i, 1);
+                        renderMissionList();
+                        Effects.vibrateClick();
+                    });
+
+                    list.appendChild(item);
+                });
+            }
+
+            function editMission(idx) {
+                editingMissionIndex = idx;
+                const m = missions[idx];
+                if (m.type === 'minigame') {
+                    openMiniConfig(m);
+                } else {
+                    openFindConfig(m);
+                }
+            }
+
+            /* ===== Add Minigame ===== */
+            App.addUnifiedEvent(document.getElementById('addMinigameBtn'), function () {
+                Effects.vibrateClick();
+                openGameSelectModal();
+            });
+
+            function openGameSelectModal() {
+                const grid = document.getElementById('gameGrid');
+                grid.innerHTML = '';
+
+                getAllGameIds().forEach(function (id) {
+                    const info = getGameInfo(id);
+                    const item = document.createElement('div');
+                    item.className = 'game-grid-item';
+                    item.innerHTML =
+                        '<span class="g-icon">' + info.icon + '</span>' +
+                        '<span class="g-name">' + info.name + '</span>';
+
+                    App.addUnifiedEvent(item, function () {
+                        Effects.playSound('click');
+                        closeModal('gameSelectModal');
+                        editingMissionIndex = -1;
+                        openMiniConfig({
+                            type: 'minigame',
+                            gameId: id,
+                            clue: { type: 'text', content: '' },
+                            storyText: '',
+                            hintMessage: '',
+                            secretCode: info.icon,
+                            successMessage: '미션 클리어!'
+                        });
+                    });
+
+                    grid.appendChild(item);
+                });
+
+                document.getElementById('gameSelectModal').classList.add('active');
+            }
+
+            App.addUnifiedEvent(document.getElementById('closeGameModal'), function () {
+                closeModal('gameSelectModal');
+            });
+
+            /* ===== Mini Config Modal ===== */
+            function openMiniConfig(m) {
+                const info = getGameInfo(m.gameId);
+                document.getElementById('miniConfigTitle').textContent = (info ? info.icon + ' ' + info.name : '미니게임') + ' 설정';
+                document.getElementById('miniStory').value = m.storyText || '';
+                document.getElementById('miniClue').value = m.clue ? m.clue.content : '';
+                document.getElementById('miniSecretCode').value = m.secretCode || '';
+                document.getElementById('miniSuccessMsg').value = m.successMessage || '';
+
+                // Show settings link button
+                var settingsBtn = document.getElementById('miniConfigSettingsBtn');
+                if (info && info.path) {
+                    settingsBtn.style.display = '';
+                    settingsBtn.onclick = function () {
+                        window.open('../games/' + info.path + '/admin.html', '_blank');
+                        Effects.vibrateClick();
+                    };
+                } else {
+                    settingsBtn.style.display = 'none';
+                }
+
+                document.getElementById('miniConfigModal').classList.add('active');
+
+                // temp store gameId
+                document.getElementById('miniConfigModal').dataset.gameId = m.gameId;
+            }
+
+            App.addUnifiedEvent(document.getElementById('saveMiniBtn'), function () {
+                const gameId = document.getElementById('miniConfigModal').dataset.gameId;
+                const mission = {
+                    type: 'minigame',
+                    gameId: gameId,
+                    clue: { type: 'text', content: document.getElementById('miniClue').value },
+                    storyText: document.getElementById('miniStory').value,
+                    hintMessage: '',
+                    secretCode: document.getElementById('miniSecretCode').value,
+                    successMessage: document.getElementById('miniSuccessMsg').value
+                };
+
+                if (editingMissionIndex >= 0) {
+                    missions[editingMissionIndex] = mission;
+                } else {
+                    missions.push(mission);
+                }
+
+                closeModal('miniConfigModal');
+                renderMissionList();
+                Effects.playSound('success');
+            });
+
+            App.addUnifiedEvent(document.getElementById('closeMiniModal'), function () {
+                closeModal('miniConfigModal');
+            });
+
+            /* ===== Add Find Object ===== */
+            App.addUnifiedEvent(document.getElementById('addFindBtn'), function () {
+                Effects.vibrateClick();
+                editingMissionIndex = -1;
+                findAnswers = [];
+                openFindConfig({
+                    type: 'findObject',
+                    hints: ['', '', ''],
+                    answers: [],
+                    clue: { type: 'text', content: '' },
+                    storyText: ''
+                });
+            });
+
+            function openFindConfig(m) {
+                document.getElementById('findStory').value = m.storyText || '';
+                document.getElementById('findHint1').value = (m.hints && m.hints[0]) || '';
+                document.getElementById('findHint2').value = (m.hints && m.hints[1]) || '';
+                document.getElementById('findHint3').value = (m.hints && m.hints[2]) || '';
+                document.getElementById('findClue').value = m.clue ? m.clue.content : '';
+                findAnswers = (m.answers || []).slice();
+                renderFindAnswerTags();
+                document.getElementById('findConfigModal').classList.add('active');
+            }
+
+            document.getElementById('findAnswerInput').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    var val = this.value.trim();
+                    if (val && findAnswers.indexOf(val) === -1) {
+                        findAnswers.push(val);
+                        renderFindAnswerTags();
+                    }
+                    this.value = '';
+                }
+            });
+
+            function renderFindAnswerTags() {
+                var container = document.getElementById('findAnswerTags');
+                container.innerHTML = '';
+                findAnswers.forEach(function (a, i) {
+                    var tag = document.createElement('span');
+                    tag.className = 'answer-tag';
+                    tag.innerHTML = App.escapeHtml(a) + '<button data-i="' + i + '">✕</button>';
+                    tag.querySelector('button').addEventListener('click', function () {
+                        findAnswers.splice(i, 1);
+                        renderFindAnswerTags();
+                    });
+                    container.appendChild(tag);
+                });
+            }
+
+            App.addUnifiedEvent(document.getElementById('saveFindBtn'), function () {
+                var hints = [
+                    document.getElementById('findHint1').value,
+                    document.getElementById('findHint2').value,
+                    document.getElementById('findHint3').value
+                ].filter(function (h) { return h.trim() !== ''; });
+
+                if (hints.length === 0 || findAnswers.length === 0) {
+                    Effects.showToast('힌트와 정답을 입력하세요');
+                    return;
+                }
+
+                var mission = {
+                    type: 'findObject',
+                    hints: hints,
+                    answers: findAnswers.slice(),
+                    clue: { type: 'text', content: document.getElementById('findClue').value },
+                    storyText: document.getElementById('findStory').value
+                };
+
+                if (editingMissionIndex >= 0) {
+                    missions[editingMissionIndex] = mission;
+                } else {
+                    missions.push(mission);
+                }
+
+                closeModal('findConfigModal');
+                renderMissionList();
+                Effects.playSound('success');
+            });
+
+            App.addUnifiedEvent(document.getElementById('closeFindModal'), function () {
+                closeModal('findConfigModal');
+            });
+
+            /* ===== Load Preset ===== */
+            function loadPreset(themeId) {
+                var presetData = getPresetData(themeId);
+                if (presetData) {
+                    missions = JSON.parse(JSON.stringify(presetData.missions));
+                    document.getElementById('treasurePasswordInput').value = presetData.treasurePassword || '';
+                    document.getElementById('secretCodeInput').value = (presetData.finalReward && presetData.finalReward.secretCode) || '';
+                    renderMissionList();
+                }
+            }
+
+            App.addUnifiedEvent(document.getElementById('loadPresetBtn'), function () {
+                Effects.vibrateClick();
+                loadPreset(selectedTheme);
+                if (getPresetData(selectedTheme)) {
+                    Effects.showToast('프리셋 불러오기 완료!');
+                } else {
+                    Effects.showToast('해당 테마의 프리셋이 없습니다');
+                }
+            });
+
+            /* ===== Time Limit Toggle ===== */
+            function setupTimeLimitToggle() {
+                var toggle = document.getElementById('timeLimitToggle');
+                toggle.addEventListener('change', function () {
+                    var input = document.getElementById('timeLimitInput');
+                    var label = document.getElementById('timeLimitLabel');
+                    if (this.checked) {
+                        input.style.display = 'flex';
+                        label.textContent = '';
+                    } else {
+                        input.style.display = 'none';
+                        label.textContent = '무제한';
+                    }
+                });
+            }
+
+            /* ===== PIN Change ===== */
+            App.addUnifiedEvent(document.getElementById('changePinBtn'), function () {
+                var newPin = document.getElementById('newPinInput').value;
+                if (newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
+                    Effects.showToast('PIN은 숫자 4자리여야 합니다');
+                    return;
+                }
+                Storage.setAdmin({ pin: newPin });
+                document.getElementById('newPinInput').value = '';
+                Effects.showToast('PIN이 변경되었습니다');
+                Effects.playSound('success');
+            });
+
+            /* ===== Reset Game ===== */
+            App.addUnifiedEvent(document.getElementById('resetGameBtn'), function () {
+                if (confirm('진행 중인 게임을 초기화하시겠습니까?')) {
+                    Storage.clearState();
+                    Effects.showToast('게임이 초기화되었습니다');
+                }
+            });
+
+            /* ===== Save Config ===== */
+            App.addUnifiedEvent(document.getElementById('saveBtn'), function () {
+                if (missions.length === 0) {
+                    Effects.showToast('미션을 최소 1개 추가하세요');
+                    return;
+                }
+
+                var treasurePassword = document.getElementById('treasurePasswordInput').value.trim();
+                var secretCode = document.getElementById('secretCodeInput').value.trim();
+
+                if (!treasurePassword) {
+                    Effects.showToast('보물 상자 암호를 입력하세요');
+                    return;
+                }
+
+                var timeLimit = 0;
+                if (document.getElementById('timeLimitToggle').checked) {
+                    timeLimit = (parseInt(document.getElementById('timeLimitMinutes').value) || 60) * 60;
+                }
+
+                var presetData = getPresetData(selectedTheme);
+
+                var players = [];
+                if (selectedPlayerCount === 2) {
+                    players = [
+                        { name: document.getElementById('playerAName').value.trim() || '플레이어1' },
+                        { name: document.getElementById('playerBName').value.trim() || '플레이어2' }
+                    ];
+                }
+
+                var config = {
+                    preset: selectedTheme,
+                    theme: selectedTheme,
+                    totalMissions: missions.length,
+                    globalTimeLimit: timeLimit,
+                    treasurePassword: treasurePassword,
+                    playerCount: selectedPlayerCount,
+                    players: players,
+                    missions: missions,
+                    introText: presetData ? presetData.introText : '',
+                    finalReward: {
+                        message: presetData ? presetData.finalReward.message : '축하합니다! 모든 미션을 완료했습니다!',
+                        secretCode: secretCode || ''
+                    },
+                    createdAt: new Date().toISOString()
+                };
+
+                Storage.setConfig(config);
+                Effects.playSound('success');
+                Effects.vibrateSuccess();
+                Effects.showToast('저장 완료!');
+            });
+
+
+            /* ===== Modal Helpers ===== */
+            function closeModal(id) {
+                document.getElementById(id).classList.remove('active');
+            }
+
+            // Close modals on backdrop click
+            document.querySelectorAll('.modal').forEach(function (modal) {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+                modal.addEventListener('touchend', function (e) {
+                    if (e.target === modal) {
+                        e.preventDefault();
+                        modal.classList.remove('active');
+                    }
+                });
+            });
+
+            // Prevent touch events inside modal-content from propagating to backdrop
+            document.querySelectorAll('.modal-content').forEach(function (content) {
+                content.addEventListener('touchend', function (e) {
+                    e.stopPropagation();
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
