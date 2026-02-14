@@ -19,10 +19,13 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    height: 100dvh;
     justify-content: center;
     align-items: center;
     position: relative;
     z-index: 10;
+    padding: 1rem;
+    box-sizing: border-box;
 }
 
 /* Matrix Background Canvas */
@@ -41,13 +44,17 @@ body {
     border: 2px solid var(--hacker-green);
     box-shadow: 0 0 20px var(--hacker-green);
     background-color: rgba(0, 20, 0, 0.8);
-    padding: 2rem;
+    padding: 1.2rem;
     border-radius: 10px;
     width: 80%;
     max-width: 500px;
+    max-height: calc(100vh - 2rem);
+    max-height: calc(100dvh - 2rem);
     text-align: center;
     position: relative;
     z-index: 20;
+    box-sizing: border-box;
+    overflow-y: auto;
 }
 
 .status-bar {
@@ -61,14 +68,14 @@ body {
 }
 
 .title-large {
-    font-size: 2rem;
+    font-size: clamp(1.2rem, 4vw, 2rem);
     text-shadow: 0 0 10px var(--hacker-green);
-    margin-bottom: 2rem;
+    margin-bottom: 0.8rem;
     animation: glitch 2s infinite;
 }
 
 .input-group {
-    margin: 2rem 0;
+    margin: 0.8rem 0;
 }
 
 #passwordInput {
@@ -77,11 +84,12 @@ body {
     border-bottom: 2px solid var(--hacker-green);
     color: var(--hacker-green);
     font-family: 'Courier New', Courier, monospace;
-    font-size: 3rem;
+    font-size: clamp(1.8rem, 6vw, 3rem);
     text-align: center;
     letter-spacing: 1rem;
     width: 100%;
     outline: none;
+    box-sizing: border-box;
 }
 
 #passwordInput::placeholder {
@@ -94,8 +102,8 @@ body {
     background: var(--hacker-dark-green);
     color: var(--hacker-green);
     border: 1px solid var(--hacker-green);
-    padding: 1rem 3rem;
-    font-size: 1.2rem;
+    padding: 0.6rem 1rem;
+    font-size: clamp(1rem, 3vw, 1.2rem);
     cursor: pointer;
     font-family: inherit;
     transition: all 0.3s ease;
@@ -110,9 +118,16 @@ body {
 }
 
 .message-box {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     min-height: 1.5em;
     font-weight: bold;
+}
+
+.numpad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 0.8rem;
 }
 
 .scan-animation {
@@ -410,5 +425,63 @@ body {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Mobile responsive */
+@media (max-height: 680px) {
+    .monitor-screen {
+        padding: 0.8rem;
+    }
+
+    .status-bar {
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.3rem;
+        font-size: 0.7rem;
+    }
+
+    .title-large {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .input-group {
+        margin: 0.4rem 0;
+    }
+
+    #passwordInput {
+        font-size: 1.6rem;
+        letter-spacing: 0.6rem;
+    }
+
+    .message-box {
+        margin-top: 0.3rem;
+        font-size: 0.85rem;
+    }
+
+    .numpad-grid {
+        gap: 5px;
+        margin-top: 0.5rem;
+    }
+
+    .btn-hack {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .monitor-screen {
+        width: 95%;
+        padding: 0.7rem;
+    }
+
+    .numpad-grid {
+        gap: 4px;
+    }
+
+    .btn-hack {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.9rem;
     }
 }
