@@ -184,7 +184,7 @@
     <div class="container">
         <div class="game-header">
             <h1>🎫 복권 긁기</h1>
-            <a href="../../index.html" class="home-btn">홈으로</a>
+
         </div>
 
         <p class="helper-text">회색 부분을 꼼꼼히 문질러 보세요!</p>
@@ -450,6 +450,7 @@
             canvas.style.transition = 'opacity 1s';
             canvas.style.opacity = '0';
             playSound('success');
+            window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
         }
 
         // 이벤트 리스너 등록

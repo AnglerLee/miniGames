@@ -334,7 +334,8 @@ function checkAnswer() {
             setTimeout(() => loadNextQuestion(), 500);
         } else {
             setTimeout(() => {
-                showSuccessScreen(GAME_ID);
+                // showSuccessScreen(GAME_ID);
+                window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
             }, 1000);
         }
     } else {
@@ -405,7 +406,9 @@ function completeGame() {
     saveStats();
 
     setTimeout(() => {
-        showSuccessScreen(GAME_ID);
+        setTimeout(() => {
+            window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
+        }, 1000);
     }, 1000);
 }
 

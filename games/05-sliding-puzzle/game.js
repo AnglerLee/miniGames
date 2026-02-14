@@ -272,7 +272,8 @@ function gameComplete() {
     playSound('success');
     if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
 
-    showSuccessScreen(GAME_ID);
+    // showSuccessScreen(GAME_ID);
+    window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
 }
 
 // 커스텀 확인 모달

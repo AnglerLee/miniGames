@@ -20,13 +20,12 @@ let startTime = 0;
 // 게임 초기화
 function initGame() {
     // 설정 로드
-    const config = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-    const myConfig = config[GAME_ID] || {};
-    const custom = myConfig.customSettings || {};
+    // 설정 로드
+    const settings = JSON.parse(localStorage.getItem('sequence_tap_settings')) || {};
 
-    TOTAL_NUMBERS = custom.totalNumbers || 20;
-    TIME_LIMIT = custom.timeLimit || 20;
-    SPAWN_RADIUS_PERCENT = custom.spawnRadius || 80;
+    TOTAL_NUMBERS = settings.totalNumbers || 20;
+    TIME_LIMIT = settings.timeLimit || 20;
+    SPAWN_RADIUS_PERCENT = settings.spawnRadius || 80;
     retryCount = 0;
 
     showInstructions(
@@ -324,9 +323,16 @@ function gameComplete() {
     // 성공 화면 표시 지연
     setTimeout(() => {
         // 공통 성공 화면 호출
-        showSuccessScreen(GAME_ID);
+        // showSuccessScreen(GAME_ID);
+        window.parent.postMessage({
+            type: 'GAME_CLEAR',
+            gameId: GAME_ID,
+            score: elapsedTime,
+            isNewRecord: isNewRecord
+        }, '*');
 
-        // 성공 화면에 결과 정보 추가 (커스텀 인젝션)
+        /*
+        // 성공 화면에 결과 정보 추가 (커스텀 인젝션) - 부모 창에서 처리하도록 변경
         const successContent = document.querySelector('.success-screen');
         if (successContent) {
             const resultInfo = document.createElement('div');
@@ -345,6 +351,7 @@ function gameComplete() {
                 successContent.prepend(resultInfo);
             }
         }
+        */
     }, 500);
 }
 

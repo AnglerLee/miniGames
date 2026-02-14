@@ -39,7 +39,7 @@ let passScore = 12;
 // 게임 초기화
 function initGame() {
     // 설정 로드
-    config = getGameConfig(GAME_ID);
+    config = JSON.parse(localStorage.getItem('color_rush_settings')) || {};
     timeLimit = config.timeLimit || 20;
     passScore = config.passScore || 12;
 
@@ -247,7 +247,8 @@ function endGame(isFinished, reason = 'normal') {
 
         playSound('success');
         setTimeout(() => {
-            showSuccessScreen(GAME_ID);
+            // showSuccessScreen(GAME_ID);
+            window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
         }, 500);
     } else {
         // 이곳에는 도달하지 않아야 함 (성공 시에만 endGame(true) 호출하므로)

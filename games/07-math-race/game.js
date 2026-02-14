@@ -443,7 +443,8 @@ function gameComplete() {
         playSound('success');
         if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
         setTimeout(() => {
-            showSuccessScreen(GAME_ID);
+            // showSuccessScreen(GAME_ID);
+            window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
         }, 500);
     } else {
         message = `${score}점... ${PASS_SCORE}점 이상이어야 통과입니다.`;

@@ -477,9 +477,10 @@ function levelClear() {
     messageEl.style.color = 'var(--success-color)';
     playSound('success');
 
-    setTimeout(() => {
-        showSuccessScreen(GAME_ID); // common.js 함수
-    }, 1500);
+    // setTimeout(() => {
+    //     showSuccessScreen(GAME_ID); // common.js 함수
+    // }, 1500);
+    window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
 }
 
 // 힌트 (BFS/A*)

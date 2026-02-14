@@ -252,7 +252,8 @@ function showColorComparison(r, g, b, distance) {
 
 function handleSuccess() {
     playSound('success');
-    showSuccessScreen(GAME_ID);
+    // showSuccessScreen(GAME_ID);
+    window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
 }
 
 function handleFail() {

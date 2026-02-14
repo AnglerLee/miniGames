@@ -120,7 +120,8 @@ unlockBtn.addEventListener('click', () => {
         // 성공
         found = true;
         playSound('success');
-        showSuccessScreen(GAME_ID);
+        // showSuccessScreen(GAME_ID);
+        window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
     } else {
         // 실패
         triggerError();

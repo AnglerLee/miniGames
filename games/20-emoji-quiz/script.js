@@ -216,7 +216,8 @@ function finishGame() {
     if (questionTimer) {
         questionTimer.stop();
     }
-    showSuccessScreen(GAME_ID);
+    // showSuccessScreen(GAME_ID);
+    window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
 }
 
 function updateScore() {

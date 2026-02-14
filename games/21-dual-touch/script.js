@@ -429,7 +429,8 @@ function completeGame() {
     requestAnimationFrame(() => flash.classList.add('flash'));
 
     setTimeout(() => {
-        showSuccessScreen(GAME_ID);
+        // showSuccessScreen(GAME_ID);
+        window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
     }, 1000);
 }
 

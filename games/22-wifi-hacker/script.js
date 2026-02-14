@@ -125,6 +125,8 @@ function hack() {
         setTimeout(() => playTone(1500, 'square', 0.4), 100);
         showScreen('success-screen');
         if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+        // Call success handler
+        setTimeout(onHackSuccess, 2000);
     } else {
         // Fail
         playTone(150, 'sawtooth', 0.5);
@@ -143,7 +145,8 @@ function hack() {
 
 function onHackSuccess() {
     // 공통 성공 화면 표시 (힌트/비밀번호 포함)
-    showSuccessScreen(GAME_ID);
+    // showSuccessScreen(GAME_ID);
+    window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
 }
 
 

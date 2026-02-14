@@ -25,13 +25,7 @@ function loadSettings() {
     document.getElementById('timeNormal').value = settings.timeNormal;
     document.getElementById('timeHard').value = settings.timeHard;
 
-    // 2. 글로벌 설정 로드
-    const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-    const myConfig = globalConfigs['game02'] || {};
 
-    document.getElementById('secretCode').value = myConfig.secretCode || '';
-    document.getElementById('hintMessage').value = myConfig.hintMessage || '';
-    document.getElementById('successMessage').value = myConfig.successMessage || '';
 }
 
 // 설정 저장
@@ -47,16 +41,6 @@ function saveSettings(e) {
         timeHard: parseInt(document.getElementById('timeHard').value)
     };
     localStorage.setItem('mazeGameSettings', JSON.stringify(settings));
-
-    // 2. 글로벌 설정 저장
-    const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-    globalConfigs['game02'] = {
-        secretCode: document.getElementById('secretCode').value.trim(),
-        hintMessage: document.getElementById('hintMessage').value.trim(),
-        successMessage: document.getElementById('successMessage').value.trim(),
-        isActive: true
-    };
-    localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(globalConfigs));
 
     alert('설정이 저장되었습니다!');
 }

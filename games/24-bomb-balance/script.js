@@ -87,7 +87,8 @@ function stopGame(result) {
 
     if (result === 'success') {
         playSound('success');
-        showSuccessScreen(GAME_ID);
+        // showSuccessScreen(GAME_ID);
+        window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
     } else {
         playSound('fail');
         showFailScreen('폭탄이 너무 많이 흔들려 폭발했습니다!');

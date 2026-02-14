@@ -216,13 +216,7 @@ function loadSettings() {
     targetBarcodes = settings.targetBarcodes || [];
     renderBarcodeList();
 
-    // 글로벌 설정 로드
-    const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-    const myConfig = globalConfigs[GAME_ID] || {};
 
-    document.getElementById('secretCode').value = myConfig.secretCode || '';
-    document.getElementById('hintMessage').value = myConfig.hintMessage || '';
-    document.getElementById('successMessage').value = myConfig.successMessage || '';
 }
 
 // 설정 저장
@@ -240,20 +234,6 @@ function saveSettings(e) {
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
 
-    // 글로벌 설정 저장
-    const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-
-    globalConfigs[GAME_ID] = {
-        ...globalConfigs[GAME_ID],
-        secretCode: document.getElementById('secretCode').value.trim(),
-        hintMessage: document.getElementById('hintMessage').value.trim(),
-        successMessage: document.getElementById('successMessage').value.trim(),
-        isActive: true,
-        lastUpdated: new Date().toISOString()
-    };
-
-    localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(globalConfigs));
-
     alert('설정이 저장되었습니다!');
 }
 
@@ -263,12 +243,7 @@ function resetSettings() {
         // 게임별 설정 삭제
         localStorage.removeItem(STORAGE_KEY);
 
-        // 글로벌 설정 삭제
-        const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-        if (globalConfigs[GAME_ID]) {
-            delete globalConfigs[GAME_ID];
-            localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(globalConfigs));
-        }
+
 
         // 상태 초기화
         targetBarcodes = [];

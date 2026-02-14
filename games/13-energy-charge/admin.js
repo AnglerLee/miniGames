@@ -48,20 +48,6 @@ function loadSettings() {
     updateRangeUI(timeInput, timeValue, settings.timeLimit, v => v === 0 ? '무제한' : `${v}초`);
 
     themeSelector.value = settings.theme || 'default';
-
-    // 미니게임 공통 설정
-    let gameConfig = {};
-    if (typeof getGameConfig === 'function') {
-        gameConfig = getGameConfig(GAME_ID);
-    } else {
-        const configStr = localStorage.getItem('treasureHunt_gameConfigs');
-        const configs = configStr ? JSON.parse(configStr) : {};
-        gameConfig = configs[GAME_ID] || {};
-    }
-
-    secretCodeInput.value = gameConfig.secretCode || '';
-    hintMessageInput.value = gameConfig.hintMessage || '';
-    successMessageInput.value = gameConfig.successMessage || '축하합니다! 게임을 클리어했어요!';
 }
 
 // 헬퍼 함수
@@ -105,19 +91,6 @@ function saveSettings() {
     };
 
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-
-    // 미니게임 공통 설정 저장
-    const configStr = localStorage.getItem('treasureHunt_gameConfigs');
-    const configs = configStr ? JSON.parse(configStr) : {};
-
-    configs[GAME_ID] = {
-        secretCode: secretCodeInput.value,
-        hintMessage: hintMessageInput.value,
-        successMessage: successMessageInput.value,
-        isActive: true
-    };
-
-    localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(configs));
 
     alert('설정이 저장되었습니다.');
 }

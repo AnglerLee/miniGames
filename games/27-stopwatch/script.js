@@ -109,7 +109,8 @@ class StopwatchGame {
         if (typeof playSound === 'function') playSound('success');
 
         setTimeout(() => {
-            if (typeof showSuccessScreen === 'function') showSuccessScreen(GAME_ID);
+            // if (typeof showSuccessScreen === 'function') showSuccessScreen(GAME_ID);
+            window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
         }, 1500);
     }
 

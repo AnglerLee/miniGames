@@ -20,13 +20,7 @@ function loadSettings() {
     document.getElementById('passCount').value = gameSettings.passCount !== undefined ? gameSettings.passCount : difficultyPresets[difficulty].passCount;
     document.getElementById('colorThreshold').value = gameSettings.colorThreshold !== undefined ? gameSettings.colorThreshold : difficultyPresets[difficulty].colorThreshold;
 
-    // 2. 글로벌 설정 로드
-    const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-    const myConfig = globalConfigs[GAME_ID] || {};
 
-    document.getElementById('secretCode').value = myConfig.secretCode || '';
-    document.getElementById('hintMessage').value = myConfig.hintMessage || '';
-    document.getElementById('successMessage').value = myConfig.successMessage || '';
 }
 
 // 난이도 슬라이더 변경 시 프리셋 로드
@@ -51,20 +45,7 @@ function saveSettings(e) {
     };
     localStorage.setItem('game18_settings', JSON.stringify(gameSettings));
 
-    // 2. 글로벌 설정 저장
-    const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
 
-    // 기존 설정을 유지하면서 업데이트
-    globalConfigs[GAME_ID] = {
-        ...globalConfigs[GAME_ID],
-        secretCode: document.getElementById('secretCode').value.trim(),
-        hintMessage: document.getElementById('hintMessage').value.trim(),
-        successMessage: document.getElementById('successMessage').value.trim(),
-        isActive: true,
-        lastUpdated: new Date().toISOString()
-    };
-
-    localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(globalConfigs));
 
     alert('설정이 저장되었습니다!');
 }
@@ -75,12 +56,7 @@ function resetSettings() {
         // 게임별 설정 삭제
         localStorage.removeItem('game18_settings');
 
-        // 글로벌 설정에서 해당 게임 데이터 삭제
-        const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-        if (globalConfigs[GAME_ID]) {
-            delete globalConfigs[GAME_ID];
-            localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(globalConfigs));
-        }
+
 
         loadSettings();
         alert('초기화되었습니다.');

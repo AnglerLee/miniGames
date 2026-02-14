@@ -40,7 +40,7 @@ let retryCount = 0;
 
 // 설정 로드
 function loadConfig() {
-    const savedConfig = getGameConfig(GAME_ID);
+    const savedConfig = JSON.parse(localStorage.getItem('word_search_settings')) || {};
     currentConfig = {
         gridSize: parseInt(savedConfig.gridSize) || 8,
         timeLimit: parseInt(savedConfig.timeLimit) || 180,
@@ -418,7 +418,8 @@ function gameSuccess() {
 
     // 점수 저장 (소요 시간 등) - 여기선 생략
 
-    showSuccessScreen(GAME_ID);
+    // showSuccessScreen(GAME_ID);
+    window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
 }
 
 // 힌트 보기

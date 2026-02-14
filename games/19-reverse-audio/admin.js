@@ -38,7 +38,7 @@ const successMessageInput = document.getElementById('successMessage');
 
 // 초기화
 window.addEventListener('load', () => {
-    loadGlobalSettings();
+    // loadGlobalSettings();
     onDifficultyChange();
     setupEventListeners();
 });
@@ -83,36 +83,14 @@ function saveSettings() {
     localStorage.setItem('reverseAudio_settings', JSON.stringify(settings));
 
     // 글로벌 설정 저장
-    saveGlobalSettings();
+    // saveGlobalSettings();
 
     alert('설정이 저장되었습니다!');
 }
 
-// 글로벌 설정 로드
-function loadGlobalSettings() {
-    const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-    const myConfig = globalConfigs[GAME_ID] || {};
 
-    secretCodeInput.value = myConfig.secretCode || '';
-    hintMessageInput.value = myConfig.hintMessage || '';
-    successMessageInput.value = myConfig.successMessage || '';
-}
 
-// 글로벌 설정 저장
-function saveGlobalSettings() {
-    const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
 
-    globalConfigs[GAME_ID] = {
-        ...globalConfigs[GAME_ID],
-        secretCode: secretCodeInput.value.trim(),
-        hintMessage: hintMessageInput.value.trim(),
-        successMessage: successMessageInput.value.trim(),
-        isActive: true,
-        lastUpdated: new Date().toISOString()
-    };
-
-    localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(globalConfigs));
-}
 
 // 녹음 시작
 async function startRecording() {

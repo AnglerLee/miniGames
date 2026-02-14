@@ -5,21 +5,14 @@ const resetBtn = document.getElementById('resetBtn');
 
 // 설정 로드
 function loadSettings() {
-    // 1. 글로벌 설정 로드
-    const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-    const myConfig = globalConfigs[GAME_ID] || {};
+    // 1. 게임 설정 로드
+    const gameSettings = JSON.parse(localStorage.getItem('word_search_settings')) || {};
 
-    // 게임 전용 설정
-    document.getElementById('difficulty').value = myConfig.difficulty || 'normal';
-    document.getElementById('gridSize').value = myConfig.gridSize || 8;
+    document.getElementById('difficulty').value = gameSettings.difficulty || 'normal';
+    document.getElementById('gridSize').value = gameSettings.gridSize || 8;
     document.getElementById('gridSizeDisplay').textContent = `${document.getElementById('gridSize').value}x${document.getElementById('gridSize').value}`;
-    document.getElementById('timeLimit').value = myConfig.timeLimit || 180;
-    document.getElementById('theme').value = myConfig.theme || 'random';
-
-    // 공통 설정
-    document.getElementById('secretCode').value = myConfig.secretCode || '';
-    document.getElementById('hintMessage').value = myConfig.hintMessage || '';
-    document.getElementById('successMessage').value = myConfig.successMessage || '';
+    document.getElementById('timeLimit').value = gameSettings.timeLimit || 180;
+    document.getElementById('theme').value = gameSettings.theme || 'random';
 }
 
 // 난이도 프리셋 변경 핸들러
@@ -56,27 +49,7 @@ document.getElementById('difficulty').addEventListener('change', function (e) {
 function saveSettings(e) {
     e.preventDefault();
 
-    // 1. 글로벌 설정 저장
-    const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
 
-    // 기존 설정을 유지하면서 업데이트
-    globalConfigs[GAME_ID] = {
-        ...globalConfigs[GAME_ID],
-        // 게임 전용 설정
-        difficulty: document.getElementById('difficulty').value,
-        gridSize: parseInt(document.getElementById('gridSize').value),
-        timeLimit: parseInt(document.getElementById('timeLimit').value),
-        theme: document.getElementById('theme').value,
-
-        // 공통 설정
-        secretCode: document.getElementById('secretCode').value.trim(),
-        hintMessage: document.getElementById('hintMessage').value.trim(),
-        successMessage: document.getElementById('successMessage').value.trim(),
-        isActive: true,
-        lastUpdated: new Date().toISOString()
-    };
-
-    localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(globalConfigs));
 
     alert('설정이 저장되었습니다!');
 }
@@ -84,15 +57,7 @@ function saveSettings(e) {
 // 설정 초기화
 function resetSettings() {
     if (confirm('모든 설정을 초기화하시겠습니까?')) {
-        // 글로벌 설정에서 해당 게임 데이터만 초기화하려면 신중해야 함.
-        // 여기서는 입력 필드만 비우거나, 저장된 데이터를 삭제할 수 있음.
-
-        const globalConfigs = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
-        if (globalConfigs[GAME_ID]) {
-            delete globalConfigs[GAME_ID];
-            localStorage.setItem('treasureHunt_gameConfigs', JSON.stringify(globalConfigs));
-        }
-
+        localStorage.removeItem('word_search_settings');
         loadSettings();
         alert('초기화되었습니다.');
     }
