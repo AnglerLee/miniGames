@@ -6,6 +6,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>21 Dual Touch - 관리자 설정</title>
     <link rel="stylesheet" href="../../assets/css/admin-theme.css">
+    <style>
+        .range-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .range-wrap input {
+            flex: 1;
+        }
+
+        .value-display {
+            min-width: 60px;
+            text-align: right;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .difficulty-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-section h3 {
+            margin: 0 0 10px 0;
+            font-size: 1rem;
+            color: #555;
+        }
+    </style>
 </head>
 
 <body>
@@ -22,14 +53,47 @@
         <div class="admin-form-card">
             <form id="settingsForm">
 
-                <!-- Game Specific Settings Placeholder -->
-                <!-- 
-            <div class="form-group">
-                <label>게임별 전용 설정이 있다면 이곳에 추가하세요</label>
-            </div> 
-            -->
+                <h2>🎮 게임 전용 설정</h2>
 
+                <div class="form-group">
+                    <label>기본 난이도</label>
+                    <p class="description">게임 시작 시 적용되는 난이도입니다.</p>
+                    <select id="difficultySelect" class="form-input">
+                        <option value="easy">Easy</option>
+                        <option value="normal">Normal</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
 
+                <div class="form-group">
+                    <label>목표 유지 시간</label>
+                    <p class="description">두 버튼을 동시에 누르고 있어야 하는 시간 (초)</p>
+                    <div class="range-wrap">
+                        <input type="range" id="goalTimeInput" min="1" max="10" step="0.5" value="3">
+                        <span class="value-display" id="goalTimeValue">3.0초</span>
+                    </div>
+                </div>
+
+                <hr style="margin: 25px 0; border: none; border-top: 1px solid #eee;">
+                <h2>⚙️ 상세 설정</h2>
+                <p class="description" style="margin-bottom: 15px;">난이도를 변경하면 프리셋 값으로 자동 설정됩니다. 직접 수정도 가능합니다.</p>
+
+                <div class="form-group">
+                    <label>동시 터치 허용 오차</label>
+                    <p class="description">두 버튼을 누르는 시간 차이 허용 범위 (초, 작을수록 어려움)</p>
+                    <div class="range-wrap">
+                        <input type="range" id="syncInput" min="0.005" max="0.5" step="0.005" value="0.05">
+                        <span class="value-display" id="syncValue">0.050s</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>버튼 이동 속도</label>
+                    <p class="description">버튼이 움직이는 속도 (0 = 고정, 클수록 어려움)</p>
+                    <div class="range-wrap">
+                        <input type="range" id="speedInput" min="0" max="3" step="0.25" value="0.75">
+                        <span class="value-display" id="speedValue">0.75</span>
+                    </div>
+                </div>
 
                 <div class="btn-group">
                     <button type="button" class="btn btn-home" onclick="location.href='index.html'">게임으로</button>

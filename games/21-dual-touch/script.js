@@ -1,4 +1,5 @@
 const GAME_ID = 'game21';
+const SETTINGS_KEY = 'dual_touch_settings';
 
 // Elements
 const leftBtn = document.getElementById('leftBtn');
@@ -8,33 +9,28 @@ const messageEl = document.getElementById('message');
 const connectionFill = document.querySelector('.connection-active');
 const container = document.querySelector('.touch-zone-container');
 const startBtn = document.getElementById('startBtn');
-const difficultySelect = document.getElementById('difficultySelect');
 const instructionText = document.getElementById('instructionText');
 const settingsPanel = document.querySelector('.settings-panel');
 
-// Constants
-const GOAL_TIME = 3.0;
-const BTN_RADIUS = 40; // Approx half of 80px
-const DIFFICULTY = {
-    easy: {
-        syncTolerance: 0.1, // 100ms
-        moveSpeed: 0.5,
-        text: "Easy (0.1s)"
-    },
-    normal: {
-        syncTolerance: 0.05, // 50ms
-        moveSpeed: 0.75, // Reduced from 1
-        text: "Normal (0.05s)"
-    },
-    hard: {
-        syncTolerance: 0.025, // 25ms
-        moveSpeed: 1.0, // Reduced from 2.5
-        text: "Hard (0.025s)"
+// Load settings from localStorage
+function loadGameSettings() {
+    const saved = localStorage.getItem(SETTINGS_KEY);
+    if (saved) {
+        const s = JSON.parse(saved);
+        return {
+            goalTime: s.goalTime || 3.0,
+            syncTolerance: s.syncTolerance || 0.05,
+            moveSpeed: s.moveSpeed ?? 0.75
+        };
     }
-};
+    return { goalTime: 3.0, syncTolerance: 0.05, moveSpeed: 0.75 };
+}
+
+const gameSettings = loadGameSettings();
+const GOAL_TIME = gameSettings.goalTime;
+const BTN_RADIUS = 40;
 
 // State
-let currentDifficulty = 'normal';
 let isPlaying = false;
 let isCompleted = false;
 let gameInterval = null; // For progress timer
@@ -126,9 +122,6 @@ function resetPositions() {
 function startGame() {
     if (isPlaying) return;
 
-    currentDifficulty = difficultySelect.value;
-    const diffSettings = DIFFICULTY[currentDifficulty];
-
     // Hide settings, show instruction
     settingsPanel.style.display = 'none';
     instructionText.style.display = 'block';
@@ -140,8 +133,8 @@ function startGame() {
     updateProgress();
 
     // Assign velocities if moving
-    if (diffSettings.moveSpeed > 0) {
-        assignRandomVelocities(diffSettings.moveSpeed);
+    if (gameSettings.moveSpeed > 0) {
+        assignRandomVelocities(gameSettings.moveSpeed);
     }
 
     messageEl.textContent = "두 버튼을 동시에 누르세요!";
@@ -172,9 +165,8 @@ function animLoop(timestamp) {
     // Limit dt to avoid huge jumps
     const safeDt = Math.min(dt, 50);
 
-    // Only move if difficulty allows
-    const speed = DIFFICULTY[currentDifficulty].moveSpeed;
-    if (speed > 0) {
+    // Only move if speed > 0
+    if (gameSettings.moveSpeed > 0) {
         updateMovement('left');
         updateMovement('right');
     }
@@ -336,7 +328,7 @@ function checkSync() {
         // Calculate diff
         // Time is in ms, tolerance is in sec
         const diffSec = Math.abs(btnState.left.touchTime - btnState.right.touchTime) / 1000;
-        const tolerance = DIFFICULTY[currentDifficulty].syncTolerance;
+        const tolerance = gameSettings.syncTolerance;
 
         if (diffSec <= tolerance) {
             // Success sync!
