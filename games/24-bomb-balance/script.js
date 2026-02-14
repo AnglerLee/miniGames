@@ -1,4 +1,27 @@
 const GAME_ID = 'game24';
+const SETTINGS_KEY = 'bomb_balance_settings';
+
+// Default Settings
+const DEFAULT_SETTINGS = {
+    gameDuration: 30,
+    driftBaseStrength: 5,
+    driftMaxStrength: 20,
+    driftRotationSpeed: 0.5,
+    gustCount: 3,
+    gustStrength: 15,
+    stabilityDecreaseRate: 20,
+    stabilityRecoverRate: 5,
+    tiltThreshold: 15,
+    tiltMax: 45
+};
+
+// Load settings from localStorage
+function loadSettings() {
+    const saved = localStorage.getItem(SETTINGS_KEY);
+    return saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : { ...DEFAULT_SETTINGS };
+}
+
+const settings = loadSettings();
 
 // DOM Elements
 const introScreen = document.getElementById('introScreen');
@@ -10,23 +33,32 @@ const stabilityBar = document.getElementById('stabilityBar');
 const levelBubble = document.getElementById('levelBubble');
 const dangerOverlay = document.getElementById('dangerOverlay');
 const messageArea = document.getElementById('messageArea');
-
-// Game Constants
-const GAME_DURATION = 30; // 30 seconds to survive/transport
-const MAX_STABILITY = 100;
-const STABILITY_DECREASE_RATE = 20; // Per second when unstable
-const STABILITY_RECOVER_RATE = 5;  // Per second when stable
-const TILT_THRESHOLD = 15; // Degrees for warning
-const TILT_MAX = 45; // Degrees for max penalty
+const windArrow = document.getElementById('windArrow');
+const windStrengthBar = document.getElementById('windStrengthBar');
 
 // Game State
-let currentState = 'READY'; // READY, PLAYING, ENDED
-let timeLeft = GAME_DURATION;
+const MAX_STABILITY = 100;
+let currentState = 'READY';
+let timeLeft = settings.gameDuration;
 let stability = MAX_STABILITY;
 let gameLoopId;
 let timerLoopId;
-let currentBeta = 0; // Front/Back tilt (-180 to 180)
-let currentGamma = 0; // Left/Right tilt (-90 to 90)
+let currentBeta = 0;
+let currentGamma = 0;
+let lastTimestamp = 0;
+
+// Drift State
+let driftAngle = 0;
+let driftStrength = 0;
+
+// Gust State
+let gustActive = false;
+let gustAngle = 0;
+let gustCurrentStrength = 0;
+let gustElapsed = 0;
+const GUST_DURATION = 1.5;
+let gustSchedule = [];
+let gustIndex = 0;
 
 // Game Config
 const config = getGameConfig(GAME_ID);
@@ -38,7 +70,6 @@ function init() {
 }
 
 async function handleStart() {
-    // Request permission for iOS 13+
     if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         try {
             const permission = await DeviceOrientationEvent.requestPermission();
@@ -52,9 +83,29 @@ async function handleStart() {
             alert('권한 요청 중 오류가 발생했습니다.');
         }
     } else {
-        // Non-iOS or older devices
         startGame();
     }
+}
+
+function buildGustSchedule() {
+    gustSchedule = [];
+    gustIndex = 0;
+    const count = settings.gustCount;
+    if (count <= 0) return;
+
+    // Distribute gusts across game duration with some randomness
+    // Avoid first 3 seconds and last 2 seconds
+    const safeStart = 3;
+    const safeEnd = 2;
+    const window = settings.gameDuration - safeStart - safeEnd;
+    if (window <= 0) return;
+
+    for (let i = 0; i < count; i++) {
+        const base = safeStart + (window / count) * i;
+        const jitter = (Math.random() - 0.5) * (window / count) * 0.6;
+        gustSchedule.push(Math.max(safeStart, Math.min(settings.gameDuration - safeEnd, base + jitter)));
+    }
+    gustSchedule.sort((a, b) => a - b);
 }
 
 function startGame() {
@@ -63,8 +114,19 @@ function startGame() {
     currentState = 'PLAYING';
 
     // Reset values
-    timeLeft = GAME_DURATION;
+    timeLeft = settings.gameDuration;
     stability = MAX_STABILITY;
+
+    // Drift initialization
+    driftAngle = Math.random() * Math.PI * 2;
+    driftStrength = settings.driftBaseStrength;
+    lastTimestamp = performance.now();
+
+    // Gust initialization
+    gustActive = false;
+    gustCurrentStrength = 0;
+    gustElapsed = 0;
+    buildGustSchedule();
 
     // Add Event Listeners
     window.addEventListener('deviceorientation', handleOrientation);
@@ -87,7 +149,6 @@ function stopGame(result) {
 
     if (result === 'success') {
         playSound('success');
-        // showSuccessScreen(GAME_ID);
         window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
     } else {
         playSound('fail');
@@ -114,92 +175,154 @@ function updateTimerDisplay() {
 }
 
 function handleOrientation(event) {
-    // beta: front-to-back tilt in degrees, where front is positive
-    // gamma: left-to-right tilt in degrees, where right is positive
     currentBeta = event.beta || 0;
     currentGamma = event.gamma || 0;
 
-    // Only care about tilt from flat (0,0)
-    // Beta is 0 when flat. Gamma is 0 when flat.
-    // Clamp values for UI rendering
     if (currentBeta > 90) currentBeta = 90;
     if (currentBeta < -90) currentBeta = -90;
 }
 
-function gameLoop() {
+function triggerGust() {
+    gustActive = true;
+    gustAngle = Math.random() * Math.PI * 2;
+    gustCurrentStrength = settings.gustStrength;
+    gustElapsed = 0;
+}
+
+function gameLoop(timestamp) {
     if (currentState !== 'PLAYING') return;
 
-    // 1. Calculate Tilt Magnitude
-    // A simple distance from center (0,0)
-    const tiltDistance = Math.sqrt(currentBeta * currentBeta + currentGamma * currentGamma);
+    const dt = (timestamp - lastTimestamp) / 1000;
+    lastTimestamp = timestamp;
+    const deltaTime = Math.min(dt, 0.1);
 
-    // 2. Update UI (Visual Leveler)
-    // Map tilt to bubble position (max 100px radius movement)
-    // Bubble moves OPPOSITE to tilt (like a real spirit level) or TOWARDS tilt (like a marble)?
-    // Real spirit level bubble moves UP (opposite to gravity/tilt).
-    // If I tilt phone UP (beta positive), bubble goes UP (negative Y).
-    // Let's implement "Marble on a plate" physics or "Spirit Level" physics?
-    // User Guide says "Keep level".
-    // Let's do "Spirit Level" (Air bubble): Bubble rises to highest point.
-    // Tilt Phone Forward (Beta +): Top goes down. Bubble goes to Top (Y -).
-    // Tilt Phone Right (Gamma +): Right goes down. Bubble goes to Left (X -).
+    // --- Drift Update ---
+    driftAngle += settings.driftRotationSpeed * deltaTime;
 
-    // Let's stick to a simpler logic: "Marble Rolling" might be more intuitive for "Balance".
-    // If you tilt right, marble rolls right. You must keep marble in center.
-    // Let's implement "Keep the ball in the center".
-    const maxOffset = 70; // px
-    const x = (currentGamma / TILT_MAX) * maxOffset;
-    const y = (currentBeta / TILT_MAX) * maxOffset;
+    // Drift strength ramps up over game duration
+    const elapsed = settings.gameDuration - timeLeft;
+    const progress = Math.min(1, elapsed / settings.gameDuration);
+    driftStrength = settings.driftBaseStrength +
+        (settings.driftMaxStrength - settings.driftBaseStrength) * progress;
 
+    const driftX = Math.cos(driftAngle) * driftStrength;
+    const driftY = Math.sin(driftAngle) * driftStrength;
+
+    // --- Gust Update ---
+    let gustX = 0, gustY = 0;
+
+    // Check if a gust should trigger
+    if (!gustActive && gustIndex < gustSchedule.length && elapsed >= gustSchedule[gustIndex]) {
+        triggerGust();
+        gustIndex++;
+    }
+
+    if (gustActive) {
+        gustElapsed += deltaTime;
+        if (gustElapsed >= GUST_DURATION) {
+            gustActive = false;
+            gustCurrentStrength = 0;
+        } else {
+            // Ease-out: strong at start, fades out
+            const gustProgress = gustElapsed / GUST_DURATION;
+            gustCurrentStrength = settings.gustStrength * (1 - gustProgress * gustProgress);
+        }
+        gustX = Math.cos(gustAngle) * gustCurrentStrength;
+        gustY = Math.sin(gustAngle) * gustCurrentStrength;
+    }
+
+    // --- Effective Tilt (device + drift + gust) ---
+    const effectiveBeta = currentBeta + driftY + gustY;
+    const effectiveGamma = currentGamma + driftX + gustX;
+
+    const tiltDistance = Math.sqrt(effectiveBeta * effectiveBeta + effectiveGamma * effectiveGamma);
+
+    // --- Update Bubble UI ---
+    const maxOffset = 70;
+    const x = (effectiveGamma / settings.tiltMax) * maxOffset;
+    const y = (effectiveBeta / settings.tiltMax) * maxOffset;
     const limitedX = Math.max(-maxOffset, Math.min(maxOffset, x));
     const limitedY = Math.max(-maxOffset, Math.min(maxOffset, y));
 
     levelBubble.style.transform = `translate(calc(-50% + ${limitedX}px), calc(-50% + ${limitedY}px))`;
 
-    // 3. Game Logic (Stability)
-    let isUnstable = false;
+    // --- Update Wind Indicator ---
+    const totalWindAngle = gustActive
+        ? Math.atan2(driftY + gustY, driftX + gustX)
+        : driftAngle;
+    const totalWindStrength = Math.sqrt(
+        (driftX + gustX) * (driftX + gustX) +
+        (driftY + gustY) * (driftY + gustY)
+    );
 
-    if (tiltDistance > TILT_THRESHOLD) {
-        isUnstable = true;
+    // Arrow rotates to show wind direction (CSS rotation: 0deg = right, so adjust)
+    if (windArrow) {
+        const arrowDeg = (totalWindAngle * 180 / Math.PI);
+        windArrow.style.transform = `rotate(${arrowDeg}deg)`;
+    }
+    // Wind strength bar
+    if (windStrengthBar) {
+        const maxWind = settings.driftMaxStrength + settings.gustStrength;
+        const windPercent = Math.min(100, (totalWindStrength / maxWind) * 100);
+        windStrengthBar.style.width = `${windPercent}%`;
 
-        // Calculate damage
-        const severity = (tiltDistance - TILT_THRESHOLD) / (TILT_MAX - TILT_THRESHOLD); // 0 to 1+
-        const damage = STABILITY_DECREASE_RATE * Math.min(1, severity) * 0.016; // 60fps approx
+        if (gustActive) {
+            windStrengthBar.style.background = '#ff6600';
+        } else {
+            windStrengthBar.style.background = '#44aaff';
+        }
+    }
+
+    // --- Stability Logic ---
+    if (tiltDistance > settings.tiltThreshold) {
+
+        const severity = (tiltDistance - settings.tiltThreshold) / (settings.tiltMax - settings.tiltThreshold);
+        const damage = settings.stabilityDecreaseRate * Math.min(1, severity) * deltaTime;
 
         stability -= damage;
         if (stability < 0) stability = 0;
 
         // Feedbacks
         dangerOverlay.style.opacity = Math.min(0.8, severity);
-        if (tiltDistance > TILT_MAX) {
-            dangerOverlay.classList.add('active'); // Flash
+        if (tiltDistance > settings.tiltMax) {
+            dangerOverlay.classList.add('active');
             document.body.classList.add('shaking');
-            messageArea.textContent = "위험해요! 수평을 맞추세요!";
-            messageArea.style.color = "#ff3333";
+            if (!gustActive) {
+                messageArea.textContent = "위험해요! 수평을 맞추세요!";
+                messageArea.style.color = "#ff3333";
+            }
         } else {
             dangerOverlay.classList.remove('active');
             document.body.classList.remove('shaking');
-            messageArea.textContent = "주의! 중심을 잡으세요";
-            messageArea.style.color = "#ffcc00";
+            if (!gustActive) {
+                messageArea.textContent = "주의! 중심을 잡으세요";
+                messageArea.style.color = "#ffcc00";
+            }
         }
-
     } else {
         // Recover stability slowly
-        stability += STABILITY_RECOVER_RATE * 0.016;
+        stability += settings.stabilityRecoverRate * deltaTime;
         if (stability > MAX_STABILITY) stability = MAX_STABILITY;
 
         dangerOverlay.style.opacity = 0;
         dangerOverlay.classList.remove('active');
         document.body.classList.remove('shaking');
-        messageArea.textContent = "안정적입니다. 계속 유지하세요.";
-        messageArea.style.color = "#00ff00";
+        if (!gustActive) {
+            messageArea.textContent = "안정적입니다. 계속 유지하세요.";
+            messageArea.style.color = "#00ff00";
+        }
     }
 
-    // 4. Update Health Bar
+    // Gust message override (show for first 0.5s of gust)
+    if (gustActive && gustElapsed < 0.5) {
+        messageArea.textContent = "💨 돌풍이 불어옵니다!";
+        messageArea.style.color = "#ff9900";
+    }
+
+    // --- Update Health Bar ---
     const healthPercent = (stability / MAX_STABILITY) * 100;
     stabilityBar.style.width = `${healthPercent}%`;
 
-    // Color change based on health
     if (healthPercent > 60) {
         stabilityBar.style.background = 'linear-gradient(90deg, #33ff33, #00cc00)';
     } else if (healthPercent > 30) {
@@ -208,14 +331,14 @@ function gameLoop() {
         stabilityBar.style.background = 'linear-gradient(90deg, #ff3333, #bd0000)';
     }
 
-    // Check Loss Condition
+    // --- Check Loss ---
     if (stability <= 0) {
         stopGame('fail');
         return;
     }
 
     // Loop
-    requestAnimationFrame(gameLoop);
+    gameLoopId = requestAnimationFrame(gameLoop);
 }
 
 // Start

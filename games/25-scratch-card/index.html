@@ -90,93 +90,6 @@
             margin-bottom: 10px;
         }
 
-        /* 관리자 설정 버튼 */
-        .admin-controls {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .settings-btn {
-            background: none;
-            border: 1px solid #ccc;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: #777;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        #bgInput {
-            display: none;
-        }
-
-        .reset-btn {
-            background-color: #ff9999;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.8rem;
-            margin-left: 5px;
-            cursor: pointer;
-            display: none;
-            /* 이미지가 있을 때만 표시 */
-        }
-
-        /* Camera Modal */
-        .camera-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            z-index: 9999;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .camera-modal.active {
-            display: flex;
-        }
-
-        #cameraFeed {
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-            max-height: 80vh;
-            object-fit: contain;
-        }
-
-        .camera-controls {
-            position: absolute;
-            bottom: 30px;
-            display: flex;
-            gap: 20px;
-        }
-
-        .shutter-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: white;
-            border: 5px solid #ccc;
-            cursor: pointer;
-        }
-
-        .close-camera-btn {
-            padding: 10px 20px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.3);
-            color: white;
-            border: 1px solid white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
     </style>
 </head>
 
@@ -208,26 +121,6 @@
             <div class="progress-fill" id="progressFill"></div>
         </div>
 
-        <!-- 관리자 설정 -->
-        <div class="admin-controls">
-            <p style="font-size:0.8rem; color:#777; margin-bottom:5px;">👇 정답(배경) 설정 👇</p>
-            <button class="settings-btn" onclick="openCamera()">📸 직접 촬영</button>
-            <button class="settings-btn" onclick="document.getElementById('galleryInput').click()">🖼️ 앨범 선택</button>
-            <!-- 카메라는 모달로 대체 -->
-            <input type="file" id="galleryInput" accept="image/*" style="display:none">
-            <div style="margin-top:5px;">
-                <button id="resetBtn" class="reset-btn" onclick="resetImage()">🔄 기본값 복원</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 카메라 모달 -->
-    <div class="camera-modal" id="cameraModal">
-        <video id="cameraFeed" autoplay playsinline></video>
-        <div class="camera-controls">
-            <button class="close-camera-btn" onclick="closeCamera()">닫기</button>
-            <button class="shutter-btn" onclick="takePhoto()"></button>
-        </div>
     </div>
 
     <script src="../../assets/js/common.js"></script>
@@ -239,110 +132,20 @@
         const progressFill = document.getElementById('progressFill');
         const hiddenContent = document.getElementById('hiddenContent');
         const defaultHint = document.getElementById('defaultHint');
-        const galleryInput = document.getElementById('galleryInput');
-        const resetBtn = document.getElementById('resetBtn');
-
-        // Camera Elements
-        const cameraModal = document.getElementById('cameraModal');
-        const videoEl = document.getElementById('cameraFeed');
-        let stream = null;
 
         let isScratching = false;
         let isRevealed = false;
         let width, height;
 
-        // 저장된 이미지 불러오기
+        // localStorage에서 저장된 이미지 불러오기
         function loadSavedImage() {
             const savedImage = localStorage.getItem('scratch_bg_image');
             if (savedImage) {
                 hiddenContent.style.backgroundImage = `url(${savedImage})`;
                 defaultHint.style.display = 'none';
-                resetBtn.style.display = 'inline-block';
             } else {
                 hiddenContent.style.backgroundImage = 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)';
                 defaultHint.style.display = 'block';
-                resetBtn.style.display = 'none';
-            }
-        }
-
-        // 이미지 적용 공통 함수
-        function applyImage(dataUrl) {
-            try {
-                localStorage.setItem('scratch_bg_image', dataUrl);
-                loadSavedImage();
-                alert('배경 이미지가 설정되었습니다!');
-                initCanvas();
-                progressFill.style.width = '0%';
-            } catch (err) {
-                alert('이미지 저장 용량 초과! 더 작은 이미지를 사용해주세요.');
-            }
-        }
-
-        // 갤러리 이미지 파일 처리
-        galleryInput.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                applyImage(event.target.result);
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // --- 카메라 기능 시작 ---
-        async function openCamera() {
-            try {
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                }
-                const constraints = {
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    }
-                };
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
-                videoEl.srcObject = stream;
-                cameraModal.classList.add('active');
-            } catch (err) {
-                console.error("Camera Error:", err);
-                alert("카메라를 실행할 수 없습니다. 권한을 확인해주세요.");
-            }
-        }
-
-        function closeCamera() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-            cameraModal.classList.remove('active');
-        }
-
-        function takePhoto() {
-            if (!stream) return;
-
-            // 비디오 프레임 캡처
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = videoEl.videoWidth;
-            tempCanvas.height = videoEl.videoHeight;
-            const tempCtx = tempCanvas.getContext('2d');
-
-            // 좌우 반전 없이 그대로 그리기 (후면 카메라는 보통 정방향)
-            tempCtx.drawImage(videoEl, 0, 0, tempCanvas.width, tempCanvas.height);
-
-            const dataUrl = tempCanvas.toDataURL('image/jpeg', 0.8); // JPEG 포맷, 품질 0.8
-            applyImage(dataUrl);
-            closeCamera();
-        }
-        // --- 카메라 기능 끝 ---
-
-        function resetImage() {
-            if (confirm('기본 힌트로 되돌리시겠습니까?')) {
-                localStorage.removeItem('scratch_bg_image');
-                loadSavedImage();
-                initCanvas();
-                progressFill.style.width = '0%';
             }
         }
 
@@ -494,8 +297,7 @@
 
         showInstructions('🎫 복권 긁기', [
             '화면의 회색 부분을 꼼꼼히 긁어보세요.',
-            '사진이 나타날 때까지 계속 문지르세요!',
-            '부모님은 아래 설정 버튼으로 사진을 바꿀 수 있어요.'
+            '사진이 나타날 때까지 계속 문지르세요!'
         ], () => { });
     </script>
 </body>

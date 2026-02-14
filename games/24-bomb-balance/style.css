@@ -203,8 +203,61 @@
     /* Smooth movement */
 }
 
+/* Wind Indicator */
+.wind-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 8px 14px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    border: 1px solid #335;
+    width: 100%;
+    max-width: 280px;
+}
+
+.wind-label {
+    font-size: 13px;
+    color: #88aacc;
+    white-space: nowrap;
+}
+
+.wind-arrow-wrap {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.wind-arrow {
+    font-size: 20px;
+    color: #44aaff;
+    transition: transform 0.15s ease-out;
+    line-height: 1;
+}
+
+.wind-meter {
+    flex: 1;
+    height: 8px;
+    background: #222;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #335;
+}
+
+.wind-fill {
+    width: 0%;
+    height: 100%;
+    background: #44aaff;
+    border-radius: 4px;
+    transition: width 0.15s ease-out, background 0.3s;
+}
+
 .message-area {
-    margin-top: 20px;
+    margin-top: 15px;
     font-size: 18px;
     font-weight: bold;
     color: #ccc;

@@ -23,11 +23,12 @@
                     <h2>⚠️ 미션: 불안정한 폭탄</h2>
                     <p class="mission-desc">
                         폭탄의 수평 센서가 매우 민감합니다.<br>
-                        폭탄을 안전한 장소로 옮겨야 합니다.
+                        바람이 불어 폭탄이 계속 흔들립니다!<br>
+                        폰을 기울여 균형을 잡으세요.
                     </p>
                     <div class="tutorial-box">
-                        <div class="tutorial-icon">📱</div>
-                        <p>폰을 바닥과 <strong>완전한 수평</strong>으로 만드세요.</p>
+                        <div class="tutorial-icon">📱💨</div>
+                        <p>바람 방향에 맞서 폰을 기울여<br><strong>공을 중심에 유지</strong>하세요!</p>
                     </div>
                 </div>
                 <button id="startBtn" class="btn btn-primary btn-large btn-block">미션 시작</button>
@@ -61,6 +62,16 @@
                         <div id="levelBubble" class="level-bubble"></div>
                         <!-- 중심 타겟 -->
                         <div class="target-zone"></div>
+                    </div>
+                </div>
+
+                <div class="wind-indicator">
+                    <span class="wind-label">💨 바람</span>
+                    <div class="wind-arrow-wrap">
+                        <div id="windArrow" class="wind-arrow">➤</div>
+                    </div>
+                    <div class="wind-meter">
+                        <div id="windStrengthBar" class="wind-fill"></div>
                     </div>
                 </div>
 

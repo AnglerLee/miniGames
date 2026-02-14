@@ -6,6 +6,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>25 Scratch Card - 관리자 설정</title>
     <link rel="stylesheet" href="../../assets/css/admin-theme.css">
+    <style>
+        .image-preview {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            margin: 0 auto 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px dashed #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            position: relative;
+        }
+
+        .image-preview.has-image {
+            border-style: solid;
+            border-color: var(--primary-color);
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .image-preview.has-image img {
+            display: block;
+        }
+
+        .image-preview .placeholder {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        .image-preview.has-image .placeholder {
+            display: none;
+        }
+
+        .image-btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .image-btn-group .btn {
+            flex: 1;
+            max-width: 160px;
+            font-size: 0.9rem;
+            padding: 10px 16px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .status-badge.default {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.custom {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* Camera Modal */
+        .camera-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .camera-modal.active {
+            display: flex;
+        }
+
+        #cameraFeed {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+
+        .camera-controls {
+            position: absolute;
+            bottom: 30px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .shutter-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: white;
+            border: 5px solid #ccc;
+            cursor: pointer;
+        }
+
+        .close-camera-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            border: 1px solid white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -15,29 +144,46 @@
         </a>
 
         <header class="admin-header">
-            <h1>🔧 25 Scratch Card 설정</h1>
-            <div class="subtitle">게임 설정 관리</div>
+            <h1>🔧 복권 긁기 설정</h1>
+            <div class="subtitle">긁으면 나타나는 배경 이미지를 설정합니다</div>
         </header>
 
         <div class="admin-form-card">
             <form id="settingsForm">
 
-                <!-- Game Specific Settings Placeholder -->
-                <!-- 
-            <div class="form-group">
-                <label>게임별 전용 설정이 있다면 이곳에 추가하세요</label>
-            </div> 
-            -->
+                <div class="form-group" style="text-align:center;">
+                    <label>현재 배경 이미지</label>
+                    <span class="status-badge default" id="statusBadge">기본 힌트 사용 중</span>
+                    <div class="image-preview" id="imagePreview">
+                        <img id="previewImg" src="" alt="배경 미리보기">
+                        <div class="placeholder">
+                            <div style="font-size:2rem; margin-bottom:5px;">🎁</div>
+                            이미지가 설정되지 않았습니다
+                        </div>
+                    </div>
+                </div>
 
-
+                <div class="image-btn-group">
+                    <button type="button" class="btn btn-save" onclick="openCamera()">📸 직접 촬영</button>
+                    <button type="button" class="btn btn-save" onclick="document.getElementById('galleryInput').click()">🖼️ 앨범 선택</button>
+                </div>
+                <input type="file" id="galleryInput" accept="image/*" style="display:none">
 
                 <div class="btn-group">
                     <button type="button" class="btn btn-home" onclick="location.href='index.html'">게임으로</button>
-                    <button type="button" class="btn btn-reset" id="resetBtn">초기화</button>
-                    <button type="submit" class="btn btn-save">저장하기</button>
+                    <button type="button" class="btn btn-reset" id="resetBtn">기본값 복원</button>
                 </div>
 
             </form>
+        </div>
+    </div>
+
+    <!-- 카메라 모달 -->
+    <div class="camera-modal" id="cameraModal">
+        <video id="cameraFeed" autoplay playsinline></video>
+        <div class="camera-controls">
+            <button class="close-camera-btn" onclick="closeCamera()">닫기</button>
+            <button class="shutter-btn" onclick="takePhoto()"></button>
         </div>
     </div>
 
