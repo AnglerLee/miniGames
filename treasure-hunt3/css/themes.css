@@ -67,6 +67,58 @@
     --theme-card-border: rgba(255, 140, 66, 0.2);
 }
 
+[data-theme='jungle'] {
+    --theme-primary: #2d5016;
+    --theme-secondary: #388E3C;
+    --theme-accent: #4CAF50;
+    --theme-bg: #0A1A00;
+    --theme-bg-card: rgba(76, 175, 80, 0.08);
+    --theme-text: #E8F5E9;
+    --theme-text-sub: #A5D6A7;
+    --theme-btn-radius: 14px;
+    --theme-gradient: linear-gradient(135deg, #0A1A00 0%, #1B3A0A 50%, #2d5016 100%);
+    --theme-card-border: rgba(76, 175, 80, 0.2);
+}
+
+[data-theme='ocean'] {
+    --theme-primary: #0d47a1;
+    --theme-secondary: #0097A7;
+    --theme-accent: #00BCD4;
+    --theme-bg: #001529;
+    --theme-bg-card: rgba(0, 188, 212, 0.06);
+    --theme-text: #E0F7FA;
+    --theme-text-sub: #80DEEA;
+    --theme-btn-radius: 22px;
+    --theme-gradient: linear-gradient(135deg, #001529 0%, #0A3055 50%, #0d47a1 100%);
+    --theme-card-border: rgba(0, 188, 212, 0.2);
+}
+
+[data-theme='ninja'] {
+    --theme-primary: #1a1a2e;
+    --theme-secondary: #B71C1C;
+    --theme-accent: #F44336;
+    --theme-bg: #0D0D1A;
+    --theme-bg-card: rgba(244, 67, 54, 0.06);
+    --theme-text: #FFEBEE;
+    --theme-text-sub: #EF9A9A;
+    --theme-btn-radius: 6px;
+    --theme-gradient: linear-gradient(135deg, #0D0D1A 0%, #1a1a2e 50%, #2D1B3D 100%);
+    --theme-card-border: rgba(244, 67, 54, 0.2);
+}
+
+[data-theme='haunted'] {
+    --theme-primary: #2d1b4e;
+    --theme-secondary: #6A1B9A;
+    --theme-accent: #9b59b6;
+    --theme-bg: #0D0018;
+    --theme-bg-card: rgba(155, 89, 182, 0.06);
+    --theme-text: #F3E5F5;
+    --theme-text-sub: #CE93D8;
+    --theme-btn-radius: 16px;
+    --theme-gradient: linear-gradient(135deg, #0D0018 0%, #1A0033 50%, #2d1b4e 100%);
+    --theme-card-border: rgba(155, 89, 182, 0.2);
+}
+
 /* ===== Theme Background ===== */
 body {
     background: var(--theme-gradient);

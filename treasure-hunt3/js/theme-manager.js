@@ -43,6 +43,38 @@ const ThemeManager = {
             description: '화석 단서로 타임캡슐을 해독하라!',
             primary: '#15803d',
             accent: '#FF8C42'
+        },
+        jungle: {
+            id: 'jungle',
+            name: '정글 탐험대',
+            icon: '🌴',
+            description: '정글 속 황금 신전을 찾아라!',
+            primary: '#2d5016',
+            accent: '#4CAF50'
+        },
+        ocean: {
+            id: 'ocean',
+            name: '심해 탐험대',
+            icon: '🐚',
+            description: '아틀란티스의 비밀을 밝혀라!',
+            primary: '#0d47a1',
+            accent: '#00BCD4'
+        },
+        ninja: {
+            id: 'ninja',
+            name: '닌자 수련관',
+            icon: '🥷',
+            description: '비밀 두루마리를 지켜라!',
+            primary: '#1a1a2e',
+            accent: '#F44336'
+        },
+        haunted: {
+            id: 'haunted',
+            name: '유령의 집',
+            icon: '👻',
+            description: '유령 저택에서 탈출하라!',
+            primary: '#2d1b4e',
+            accent: '#9b59b6'
         }
     },
 

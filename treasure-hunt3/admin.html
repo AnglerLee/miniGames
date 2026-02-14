@@ -436,6 +436,42 @@
             border-color: var(--theme-accent) !important;
         }
 
+        /* Scenario List */
+        .scenario-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .scenario-card {
+            padding: 14px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            background: var(--theme-bg-card);
+            transition: all 0.2s;
+        }
+
+        .scenario-card.selected {
+            border-color: var(--theme-accent);
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+        }
+
+        .scenario-card:active {
+            transform: scale(0.98);
+        }
+
+        .scenario-card .s-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .scenario-card .s-desc {
+            font-size: 0.8rem;
+            color: var(--theme-text-sub);
+        }
+
         /* ===== Responsive ===== */
         @media (max-width: 400px) {
             .game-grid {
@@ -537,6 +573,12 @@
                         <div class="theme-cards" id="themeCards"></div>
                     </div>
 
+                    <!-- Scenario Selection -->
+                    <div id="scenarioSection" style="display:none;">
+                        <div class="section-header">▸ 시나리오 선택</div>
+                        <div class="scenario-list" id="scenarioList"></div>
+                    </div>
+
                     <!-- Mission Builder -->
                     <div>
                         <div class="section-header">▸ 미션 구성</div>
@@ -544,7 +586,7 @@
                         <div class="add-mission-btns" style="margin-top:12px;">
                             <button class="btn btn-secondary" id="addMinigameBtn">+ 미니게임</button>
                             <button class="btn btn-secondary" id="addFindBtn">+ 물건찾기</button>
-                            <button class="btn btn-secondary" id="loadPresetBtn">📋 프리셋 불러오기</button>
+                            <button class="btn btn-secondary" id="loadPresetBtn">📋 시나리오 불러오기</button>
                         </div>
                     </div>
 
@@ -699,6 +741,15 @@
     <script src="js/storage.js"></script>
     <script src="js/theme-manager.js"></script>
     <script src="js/preset-data.js"></script>
+    <script src="data/mystery.js"></script>
+    <script src="data/pirate.js"></script>
+    <script src="data/space.js"></script>
+    <script src="data/magic.js"></script>
+    <script src="data/dino.js"></script>
+    <script src="data/jungle.js"></script>
+    <script src="data/ocean.js"></script>
+    <script src="data/ninja.js"></script>
+    <script src="data/haunted.js"></script>
     <script src="js/effects.js"></script>
     <script src="js/game-engine.js"></script>
     <script src="js/app.js"></script>
@@ -710,6 +761,7 @@
             let pinLocked = false;
             let lockTimer = null;
             let selectedTheme = 'mystery';
+            let selectedScenarioId = null;
             let missions = [];
             let editingMissionIndex = -1;
             let findAnswers = [];
@@ -814,13 +866,65 @@
                     card.innerHTML = '<span class="t-icon">' + theme.icon + '</span><span class="t-name">' + theme.name + '</span>';
                     App.addUnifiedEvent(card, function () {
                         selectedTheme = theme.id;
+                        selectedScenarioId = null;
                         ThemeManager.apply(theme.id);
-                        loadPreset(theme.id);
+                        showScenarios(theme.id);
                         renderThemeCards();
                         Effects.vibrateClick();
                     });
                     container.appendChild(card);
                 });
+            }
+
+            function showScenarios(themeId) {
+                var scenarios = getScenarios(themeId);
+                var section = document.getElementById('scenarioSection');
+                var list = document.getElementById('scenarioList');
+
+                if (scenarios.length <= 1) {
+                    // Auto-select the only scenario
+                    section.style.display = 'none';
+                    if (scenarios.length === 1) {
+                        selectScenario(scenarios[0].id);
+                    }
+                    return;
+                }
+
+                section.style.display = '';
+                list.innerHTML = '';
+                scenarios.forEach(function (s) {
+                    var card = document.createElement('div');
+                    card.className = 'scenario-card' + (s.id === selectedScenarioId ? ' selected' : '');
+                    card.innerHTML = '<div class="s-name">' + App.escapeHtml(s.name) + '</div>' +
+                        '<div class="s-desc">' + App.escapeHtml(s.description) + '</div>';
+                    App.addUnifiedEvent(card, function () {
+                        selectScenario(s.id);
+                        Effects.vibrateClick();
+                    });
+                    list.appendChild(card);
+                });
+            }
+
+            function selectScenario(scenarioId) {
+                selectedScenarioId = scenarioId;
+                var scenario = getScenarioById(scenarioId);
+                if (scenario) {
+                    missions = JSON.parse(JSON.stringify(scenario.missions));
+                    document.getElementById('treasurePasswordInput').value = scenario.treasurePassword || '';
+                    document.getElementById('secretCodeInput').value = (scenario.finalReward && scenario.finalReward.secretCode) || '';
+                    renderMissionList();
+                }
+                // Update scenario card selection
+                document.querySelectorAll('.scenario-card').forEach(function (card) {
+                    card.classList.remove('selected');
+                });
+                var cards = document.querySelectorAll('.scenario-card');
+                var scenarios = getScenarios(selectedTheme);
+                for (var i = 0; i < scenarios.length; i++) {
+                    if (scenarios[i].id === scenarioId && cards[i]) {
+                        cards[i].classList.add('selected');
+                    }
+                }
             }
 
             /* ===== Player Mode Toggle ===== */
@@ -846,8 +950,10 @@
                 const config = Storage.getConfig();
                 if (config) {
                     selectedTheme = config.theme || 'mystery';
+                    selectedScenarioId = config.scenarioId || (selectedTheme + '-01');
                     ThemeManager.apply(selectedTheme);
                     missions = config.missions || [];
+                    showScenarios(selectedTheme);
 
                     document.getElementById('treasurePasswordInput').value = config.treasurePassword || '';
                     document.getElementById('secretCodeInput').value = (config.finalReward && config.finalReward.secretCode) || '';
@@ -1153,24 +1259,26 @@
                 closeModal('findConfigModal');
             });
 
-            /* ===== Load Preset ===== */
-            function loadPreset(themeId) {
-                var presetData = getPresetData(themeId);
-                if (presetData) {
-                    missions = JSON.parse(JSON.stringify(presetData.missions));
-                    document.getElementById('treasurePasswordInput').value = presetData.treasurePassword || '';
-                    document.getElementById('secretCodeInput').value = (presetData.finalReward && presetData.finalReward.secretCode) || '';
-                    renderMissionList();
-                }
-            }
-
+            /* ===== Load Preset (Scenario) ===== */
             App.addUnifiedEvent(document.getElementById('loadPresetBtn'), function () {
                 Effects.vibrateClick();
-                loadPreset(selectedTheme);
-                if (getPresetData(selectedTheme)) {
-                    Effects.showToast('프리셋 불러오기 완료!');
+                var scenarios = getScenarios(selectedTheme);
+                if (scenarios.length === 0) {
+                    Effects.showToast('해당 테마의 시나리오가 없습니다');
+                    return;
+                }
+                if (scenarios.length === 1) {
+                    selectScenario(scenarios[0].id);
+                    Effects.showToast('시나리오 불러오기 완료!');
+                } else if (selectedScenarioId && selectedScenarioId.indexOf(selectedTheme + '-') === 0) {
+                    // Reload currently selected scenario (same theme)
+                    selectScenario(selectedScenarioId);
+                    showScenarios(selectedTheme);
+                    Effects.showToast('시나리오 불러오기 완료!');
                 } else {
-                    Effects.showToast('해당 테마의 프리셋이 없습니다');
+                    showScenarios(selectedTheme);
+                    document.getElementById('scenarioSection').scrollIntoView({ behavior: 'smooth' });
+                    Effects.showToast('시나리오를 선택하세요');
                 }
             });
 
@@ -1231,7 +1339,7 @@
                     timeLimit = (parseInt(document.getElementById('timeLimitMinutes').value) || 60) * 60;
                 }
 
-                var presetData = getPresetData(selectedTheme);
+                var scenarioData = (selectedScenarioId && getScenarioById(selectedScenarioId)) || getPresetData(selectedTheme);
 
                 var players = [];
                 if (selectedPlayerCount === 2) {
@@ -1244,15 +1352,16 @@
                 var config = {
                     preset: selectedTheme,
                     theme: selectedTheme,
+                    scenarioId: selectedScenarioId || '',
                     totalMissions: missions.length,
                     globalTimeLimit: timeLimit,
                     treasurePassword: treasurePassword,
                     playerCount: selectedPlayerCount,
                     players: players,
                     missions: missions,
-                    introText: presetData ? presetData.introText : '',
+                    introText: scenarioData ? scenarioData.introText : '',
                     finalReward: {
-                        message: presetData ? presetData.finalReward.message : '축하합니다! 모든 미션을 완료했습니다!',
+                        message: scenarioData ? scenarioData.finalReward.message : '축하합니다! 모든 미션을 완료했습니다!',
                         secretCode: secretCode || ''
                     },
                     createdAt: new Date().toISOString()

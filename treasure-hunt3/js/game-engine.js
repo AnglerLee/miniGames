@@ -194,6 +194,7 @@ const GameEngine = {
         Storage.addHistory({
             theme: this.config.theme,
             preset: this.config.preset || this.config.theme,
+            scenarioId: this.config.scenarioId || '',
             completedAt: this.state.completedAt,
             results: this.getResults()
         });
