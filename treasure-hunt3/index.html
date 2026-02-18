@@ -566,8 +566,14 @@
                     renderCurrentMission();
                 }
 
-                // Clues
-                renderClues();
+                // Clues (show/hide based on config)
+                var cluesSection = document.querySelector('.clues-section');
+                if (config.showClues === false) {
+                    cluesSection.style.display = 'none';
+                } else {
+                    cluesSection.style.display = '';
+                    renderClues();
+                }
             }
 
             function renderProgress() {

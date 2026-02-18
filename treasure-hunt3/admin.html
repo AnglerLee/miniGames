@@ -640,6 +640,18 @@
                         </div>
                     </div>
 
+                    <!-- Show Clues Toggle -->
+                    <div>
+                        <div class="section-header">▸ 단서 표시</div>
+                        <div class="time-toggle">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="showCluesToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span id="showCluesLabel">허브 화면에서 수집한 단서를 표시합니다</span>
+                        </div>
+                    </div>
+
                     <!-- PIN Change -->
                     <div>
                         <div class="section-header">▸ 관리자 PIN 변경</div>
@@ -963,6 +975,12 @@
                         document.getElementById('timeLimitInput').style.display = 'flex';
                         document.getElementById('timeLimitMinutes').value = Math.floor(config.globalTimeLimit / 60);
                         document.getElementById('timeLimitLabel').textContent = '';
+                    }
+
+                    // Restore showClues setting
+                    if (config.showClues === false) {
+                        document.getElementById('showCluesToggle').checked = false;
+                        document.getElementById('showCluesLabel').textContent = '허브 화면에서 단서를 숨깁니다';
                     }
 
                     // Restore player settings
@@ -1298,6 +1316,13 @@
                 });
             }
 
+            /* ===== Show Clues Toggle ===== */
+            document.getElementById('showCluesToggle').addEventListener('change', function () {
+                document.getElementById('showCluesLabel').textContent = this.checked
+                    ? '허브 화면에서 수집한 단서를 표시합니다'
+                    : '허브 화면에서 단서를 숨깁니다';
+            });
+
             /* ===== PIN Change ===== */
             App.addUnifiedEvent(document.getElementById('changePinBtn'), function () {
                 var newPin = document.getElementById('newPinInput').value;
@@ -1356,6 +1381,7 @@
                     totalMissions: missions.length,
                     globalTimeLimit: timeLimit,
                     treasurePassword: treasurePassword,
+                    showClues: document.getElementById('showCluesToggle').checked,
                     playerCount: selectedPlayerCount,
                     players: players,
                     missions: missions,
