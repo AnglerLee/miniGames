@@ -1,0 +1,36 @@
+{
+  "status": "playing",
+  "currentMissionIndex": 2,
+  "currentPlayer": 0,
+  "startedAt": "2026-02-18T07:26:20.297Z",
+  "elapsedTime": 0,
+  "missionResults": [
+    {
+      "id": "m1",
+      "status": "cleared",
+      "grade": "S",
+      "attempts": 1,
+      "time": 9,
+      "player": 0
+    },
+    {
+      "id": "m2",
+      "status": "cleared",
+      "grade": "S",
+      "attempts": 1,
+      "time": 7,
+      "player": 0
+    }
+  ],
+  "collectedClues": [
+    {
+      "type": "text",
+      "content": "보석"
+    },
+    {
+      "type": "text",
+      "content": ""
+    }
+  ],
+  "hintsUsed": {}
+}

@@ -1,0 +1,65 @@
+[
+  {
+    "theme": "mystery",
+    "preset": "mystery",
+    "scenarioId": "mystery-02",
+    "completedAt": "2026-02-18T05:23:08.966Z",
+    "results": {
+      "totalTime": 86,
+      "cleared": 6,
+      "total": 6,
+      "grade": "S",
+      "totalAttempts": 6,
+      "missions": [
+        {
+          "id": "m1",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 10,
+          "player": 0
+        },
+        {
+          "id": "m2",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 10,
+          "player": 0
+        },
+        {
+          "id": "m3",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 6,
+          "player": 0
+        },
+        {
+          "id": "m4",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 5,
+          "player": 0
+        },
+        {
+          "id": "m5",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 7,
+          "player": 0
+        },
+        {
+          "id": "m6",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 17,
+          "player": 0
+        }
+      ]
+    }
+  }
+]

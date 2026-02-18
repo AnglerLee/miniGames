@@ -49,8 +49,14 @@ document.getElementById('difficulty').addEventListener('change', function (e) {
 function saveSettings(e) {
     e.preventDefault();
 
+    const settings = {
+        difficulty: document.getElementById('difficulty').value,
+        gridSize: parseInt(document.getElementById('gridSize').value),
+        timeLimit: parseInt(document.getElementById('timeLimit').value),
+        theme: document.getElementById('theme').value
+    };
 
-
+    localStorage.setItem('word_search_settings', JSON.stringify(settings));
     alert('설정이 저장되었습니다!');
 }
 

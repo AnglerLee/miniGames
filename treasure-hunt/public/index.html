@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>홈 트레저헌트</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <style>
+        /* ===== S01 Main Screen ===== */
+        #mainScreen {
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+        }
+
+        .main-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            gap: 24px;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .main-icon {
+            font-size: 80px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .main-text-area {
+            width: 100%;
+        }
+
+        .main-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .main-subtitle {
+            font-size: 1rem;
+            color: var(--theme-text-sub);
+            line-height: 1.5;
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .main-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 320px;
+            margin-top: 16px;
+        }
+
+        .main-buttons .btn-start {
+            background: linear-gradient(135deg, var(--theme-accent, #FFD700), #FFA500);
+            color: #1a1a1a;
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding: 16px 32px;
+            border-radius: 28px;
+            width: 100%;
+            border: none;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .main-buttons .btn-start:hover {
+            box-shadow: 0 6px 24px rgba(255, 215, 0, 0.45);
+            filter: brightness(1.05);
+        }
+
+        .main-buttons .btn-start:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--theme-text-sub);
+            box-shadow: none;
+        }
+
+        .main-buttons .btn-resume {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            color: var(--theme-accent, #FFD700);
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 14px 32px;
+            border-radius: 28px;
+            width: 100%;
+        }
+
+        .main-buttons .btn-resume:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .settings-icon {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 10;
+        }
+
+        /* ===== S04 Story Intro ===== */
+        .intro-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            gap: 24px;
+            padding: 20px;
+        }
+
+        .intro-text-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--theme-card-border);
+            border-radius: 16px;
+            padding: 30px 24px;
+            max-width: 400px;
+            width: 100%;
+            min-height: 200px;
+            text-align: left;
+        }
+
+        .intro-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        .intro-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.1em;
+            background: var(--theme-accent);
+            vertical-align: text-bottom;
+            margin-left: 2px;
+        }
+
+        .skip-btn {
+            background: none;
+            border: none;
+            color: var(--theme-text-sub);
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 8px 16px;
+        }
+
+        /* ===== S05 Mission Hub ===== */
+        .hub-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 16px;
+            padding-bottom: 24px;
+        }
+
+        .hub-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+
+        .hub-header .theme-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .hub-timer {
+            font-size: 1rem;
+            color: var(--theme-accent);
+            font-weight: 600;
+        }
+
+        .mission-card {
+            background: var(--theme-bg-card);
+            border: 1px solid var(--theme-card-border);
+            border-radius: 16px;
+            padding: 24px 20px;
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+        }
+
+        .mission-card .mission-number {
+            font-size: 0.875rem;
+            color: var(--theme-text-sub);
+            margin-bottom: 8px;
+        }
+
+        .mission-card .mission-icon {
+            font-size: 48px;
+            margin: 8px 0;
+        }
+
+        .mission-card .mission-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .mission-card .mission-story {
+            color: var(--theme-text-sub);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .mission-card .btn-large {
+            max-width: 260px;
+        }
+
+        .clues-section {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .clues-section .section-header {
+            font-size: 0.9rem;
+            color: var(--theme-text-sub);
+        }
+
+        .clue-cards {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 8px 0;
+        }
+
+        .clue-card {
+            background: var(--theme-bg-card);
+            border: 1px solid var(--theme-card-border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .clue-card .clue-content {
+            color: var(--theme-accent);
+            font-weight: 600;
+        }
+
+        /* Player Turn Banner */
+        .player-turn-banner {
+            width: 100%;
+            max-width: 480px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--theme-text);
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .player-turn-banner .player-name {
+            color: var(--theme-accent);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Settings Icon -->
+    <button class="btn-icon settings-icon" id="settingsBtn" title="관리자 설정">&#9881;</button>
+
+    <div class="page-container">
+        <div class="content-area">
+
+            <!-- S01: Main Screen -->
+            <div id="mainScreen" class="screen-section active">
+                <div class="main-screen fade-in">
+                    <div class="main-icon" id="mainIcon">🏴‍☠️</div>
+                    <div class="main-text-area">
+                        <div class="main-title">홈 트레저헌트</div>
+                        <div class="main-subtitle">집 안에 숨겨진 보물을 찾아<br>모험을 떠나자!</div>
+                    </div>
+
+                    <div class="main-buttons">
+                        <button class="btn btn-start" id="startBtn" disabled>🎮 게임 시작</button>
+                        <button class="btn btn-resume" id="resumeBtn" style="display:none;">▶ 이어하기</button>
+                    </div>
+
+                    <div id="playerInfoMain" style="display:none; text-align:center; margin-top:8px;">
+                        <span style="font-size:0.9rem; color:var(--theme-text-sub);" id="playerInfoText"></span>
+                    </div>
+
+                    <div id="noConfigMsg" style="color:var(--theme-text-sub); font-size:0.85rem; margin-top:8px;">
+                        설정 아이콘(⚙)을 눌러 게임을 설정하세요
+                    </div>
+                </div>
+            </div>
+
+            <!-- S04: Story Intro -->
+            <div id="introScreen" class="screen-section">
+                <div class="intro-screen">
+                    <div class="main-icon" id="introIcon">🏴‍☠️</div>
+                    <div class="intro-text-box">
+                        <div class="intro-text" id="introText"></div>
+                        <span class="intro-cursor cursor-blink" id="introCursor"></span>
+                    </div>
+                    <button class="skip-btn" id="skipIntroBtn">넘어가기 →</button>
+                    <button class="btn btn-primary btn-large" id="startMissionBtn"
+                        style="opacity:0; pointer-events:none;">🚀 미션 시작!</button>
+                </div>
+            </div>
+
+            <!-- S05: Mission Hub -->
+            <div id="hubScreen" class="screen-section">
+                <div class="hub-screen">
+                    <div class="hub-header">
+                        <div class="theme-label">
+                            <span id="hubThemeIcon">🏴‍☠️</span>
+                            <span id="hubThemeName">해적 보물찾기</span>
+                        </div>
+                        <div class="hub-timer" id="hubTimer" style="display:none;"></div>
+                    </div>
+
+                    <!-- Progress Indicator -->
+                    <div class="progress-indicator" id="progressBar"></div>
+
+                    <!-- Player Turn Banner (2P mode) -->
+                    <div id="playerTurnBanner" class="player-turn-banner" style="display:none;"></div>
+
+                    <!-- Current Mission Card -->
+                    <div class="mission-card fade-in-up" id="missionCard">
+                        <div class="mission-number" id="missionNumber">미션 1 / 5</div>
+                        <div class="mission-icon" id="missionIcon">🃏</div>
+                        <div class="mission-name" id="missionName">짝 맞추기</div>
+                        <div class="mission-story" id="missionStory">카드 매칭으로 단서를 찾아라!</div>
+                        <button class="btn btn-primary btn-large" id="goMissionBtn">🎮 시작!</button>
+                    </div>
+
+                    <!-- All Complete -->
+                    <div id="allCompleteCard" style="display:none;" class="mission-card">
+                        <div class="mission-icon">🎉</div>
+                        <div class="mission-name">모든 미션 완료!</div>
+                        <div class="mission-story">보물 상자를 열 준비가 되었다!</div>
+                        <button class="btn btn-primary btn-large" id="goTreasureBtn">📦 보물 상자 열기!</button>
+                    </div>
+
+                    <!-- Collected Clues -->
+                    <div class="clues-section">
+                        <div class="section-header">🔑 수집한 단서 (<span id="clueCount">0</span>/<span
+                                id="clueTotal">0</span>)</div>
+                        <div class="clue-cards" id="clueCards"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="js/api-client.js"></script>
+    <script src="js/sse-client.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/theme-manager.js"></script>
+    <script src="js/preset-data.js"></script>
+    <script src="data/mystery.js"></script>
+    <script src="data/pirate.js"></script>
+    <script src="data/space.js"></script>
+    <script src="data/magic.js"></script>
+    <script src="data/dino.js"></script>
+    <script src="data/jungle.js"></script>
+    <script src="data/ocean.js"></script>
+    <script src="data/ninja.js"></script>
+    <script src="data/haunted.js"></script>
+    <script src="js/effects.js"></script>
+    <script src="js/game-engine.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        /* ===== index.html - Main / Intro / Hub Logic (Server Version) ===== */
+
+        (async function () {
+            const screens = {
+                main: document.getElementById('mainScreen'),
+                intro: document.getElementById('introScreen'),
+                hub: document.getElementById('hubScreen')
+            };
+
+            let typingInterval = null;
+
+            function showScreen(name) {
+                Object.values(screens).forEach(s => s.classList.remove('active'));
+                if (screens[name]) {
+                    screens[name].classList.add('active');
+                }
+            }
+
+            /* ===== S01: Main Screen ===== */
+            async function initMainScreen() {
+                await App.init();
+
+                const config = await Storage.getConfig();
+                const state = await Storage.getState();
+                const startBtn = document.getElementById('startBtn');
+                const resumeBtn = document.getElementById('resumeBtn');
+                const noConfigMsg = document.getElementById('noConfigMsg');
+                const mainIcon = document.getElementById('mainIcon');
+
+                if (config) {
+                    startBtn.disabled = false;
+                    noConfigMsg.style.display = 'none';
+
+                    const theme = ThemeManager.getTheme(config.theme);
+                    if (theme) {
+                        mainIcon.textContent = theme.icon;
+                        ThemeManager.apply(config.theme);
+                    }
+
+                    if (state && state.status === 'playing') {
+                        resumeBtn.style.display = '';
+                    }
+
+                    // Show player info
+                    var playerInfoMain = document.getElementById('playerInfoMain');
+                    var playerInfoText = document.getElementById('playerInfoText');
+                    if (config.playerCount === 2 && config.players && config.players.length >= 2) {
+                        playerInfoMain.style.display = '';
+                        playerInfoText.textContent = '👥 ' + config.players[0].name + ' & ' + config.players[1].name;
+                    } else {
+                        playerInfoMain.style.display = 'none';
+                    }
+                } else {
+                    startBtn.disabled = true;
+                    noConfigMsg.style.display = '';
+                    resumeBtn.style.display = 'none';
+                    document.getElementById('playerInfoMain').style.display = 'none';
+                }
+            }
+
+            // Start button
+            App.addUnifiedEvent(document.getElementById('startBtn'), async function () {
+                const config = await Storage.getConfig();
+                if (config) {
+                    Effects.playSound('click');
+                    Effects.vibrateClick();
+                    await GameEngine.init();
+                    await GameEngine.startNewGame();
+                    showScreen('intro');
+                    await startIntro();
+                }
+            });
+
+            // Resume button
+            App.addUnifiedEvent(document.getElementById('resumeBtn'), async function () {
+                Effects.playSound('click');
+                Effects.vibrateClick();
+                await GameEngine.init();
+                await GameEngine.resumeGame();
+                showScreen('hub');
+                renderHub();
+            });
+
+            // Settings button
+            App.addUnifiedEvent(document.getElementById('settingsBtn'), function () {
+                Effects.playSound('click');
+                App.navigate('admin.html');
+            });
+
+            /* ===== S04: Story Intro ===== */
+            async function startIntro() {
+                const config = await Storage.getConfig();
+                if (!config) return;
+
+                const theme = ThemeManager.getTheme(config.theme);
+                document.getElementById('introIcon').textContent = theme ? theme.icon : '🏴‍☠️';
+
+                const presetData = (config.scenarioId && getScenarioById(config.scenarioId)) || getPresetData(config.theme);
+                const introText = (config.introText || (presetData ? presetData.introText : '')) || '모험을 시작하자!';
+
+                const textEl = document.getElementById('introText');
+                const cursorEl = document.getElementById('introCursor');
+                const startMissionBtn = document.getElementById('startMissionBtn');
+
+                textEl.textContent = '';
+                startMissionBtn.style.opacity = '0';
+                startMissionBtn.style.pointerEvents = 'none';
+
+                let i = 0;
+                typingInterval = setInterval(function () {
+                    if (i < introText.length) {
+                        textEl.textContent += introText[i];
+                        i++;
+                    } else {
+                        clearInterval(typingInterval);
+                        typingInterval = null;
+                        cursorEl.style.display = 'none';
+                        startMissionBtn.style.opacity = '1';
+                        startMissionBtn.style.pointerEvents = 'auto';
+                        startMissionBtn.classList.add('fade-in-up');
+                    }
+                }, 50);
+            }
+
+            // Skip intro
+            App.addUnifiedEvent(document.getElementById('skipIntroBtn'), async function () {
+                if (typingInterval) {
+                    clearInterval(typingInterval);
+                    typingInterval = null;
+                }
+                const config = await Storage.getConfig();
+                const presetData = (config.scenarioId && getScenarioById(config.scenarioId)) || getPresetData(config.theme);
+                const introText = (config.introText || (presetData ? presetData.introText : '')) || '모험을 시작하자!';
+                document.getElementById('introText').textContent = introText;
+                document.getElementById('introCursor').style.display = 'none';
+                const btn = document.getElementById('startMissionBtn');
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                btn.classList.add('fade-in-up');
+            });
+
+            // Start Mission button
+            App.addUnifiedEvent(document.getElementById('startMissionBtn'), function () {
+                Effects.playSound('click');
+                Effects.vibrateClick();
+                showScreen('hub');
+                renderHub();
+            });
+
+            /* ===== S05: Mission Hub ===== */
+            function renderHub() {
+                // Use cached data since GameEngine.init() was called before
+                const config = Storage.getCachedConfig();
+                if (!config) return;
+
+                const theme = ThemeManager.getTheme(config.theme);
+                ThemeManager.apply(config.theme);
+
+                document.getElementById('hubThemeIcon').textContent = theme ? theme.icon : '';
+                document.getElementById('hubThemeName').textContent = theme ? theme.name : '';
+
+                // Global timer
+                if (config.globalTimeLimit && config.globalTimeLimit > 0) {
+                    document.getElementById('hubTimer').style.display = '';
+                    document.getElementById('hubTimer').textContent = App.formatTime(config.globalTimeLimit);
+                }
+
+                // Progress bar
+                renderProgress();
+
+                // Player turn banner (2P mode)
+                renderPlayerBanner();
+
+                // Check if all complete
+                if (GameEngine.isAllCompleted()) {
+                    document.getElementById('missionCard').style.display = 'none';
+                    document.getElementById('allCompleteCard').style.display = '';
+                } else {
+                    document.getElementById('missionCard').style.display = '';
+                    document.getElementById('allCompleteCard').style.display = 'none';
+                    renderCurrentMission();
+                }
+
+                // Clues (show/hide based on config)
+                var cluesSection = document.querySelector('.clues-section');
+                if (config.showClues === false) {
+                    cluesSection.style.display = 'none';
+                } else {
+                    cluesSection.style.display = '';
+                    renderClues();
+                }
+            }
+
+            function renderProgress() {
+                const progress = GameEngine.getProgress();
+                const bar = document.getElementById('progressBar');
+                bar.innerHTML = '';
+
+                for (let i = 0; i < progress.total; i++) {
+                    if (i > 0) {
+                        const line = document.createElement('div');
+                        line.className = 'progress-line' + (i <= progress.current ? ' completed' : '');
+                        bar.appendChild(line);
+                    }
+
+                    const dot = document.createElement('div');
+                    if (i < progress.current) {
+                        dot.className = 'progress-dot completed';
+                        dot.textContent = '✓';
+                    } else if (i === progress.current) {
+                        dot.className = 'progress-dot current';
+                        dot.textContent = (i + 1);
+                    } else {
+                        dot.className = 'progress-dot pending';
+                        dot.textContent = (i + 1);
+                    }
+                    bar.appendChild(dot);
+                }
+            }
+
+            function renderCurrentMission() {
+                const mission = GameEngine.getCurrentMission();
+                if (!mission) return;
+
+                const progress = GameEngine.getProgress();
+                document.getElementById('missionNumber').textContent = '미션 ' + (mission.index + 1) + ' / ' + progress.total;
+
+                if (mission.type === 'minigame') {
+                    const info = getGameInfo(mission.gameId);
+                    document.getElementById('missionIcon').textContent = info ? info.icon : '🎮';
+                    document.getElementById('missionName').textContent = info ? info.name : '미니게임';
+                } else {
+                    document.getElementById('missionIcon').textContent = '🏠';
+                    document.getElementById('missionName').textContent = '물건 찾기';
+                }
+
+                document.getElementById('missionStory').textContent = mission.storyText || '';
+            }
+
+            function renderClues() {
+                const clues = GameEngine.getCollectedClues();
+                const total = GameEngine.getProgress().total;
+                const validClues = clues.filter(function (c) { return c.content && c.content.trim() !== ''; });
+
+                document.getElementById('clueCount').textContent = validClues.length;
+                document.getElementById('clueTotal').textContent = total;
+
+                const container = document.getElementById('clueCards');
+                container.innerHTML = '';
+
+                if (validClues.length === 0) {
+                    container.innerHTML = '<div style="font-size:0.85rem; color:var(--theme-text-sub); padding:4px 0;">아직 수집한 단서가 없습니다</div>';
+                    return;
+                }
+
+                validClues.forEach(function (clue, i) {
+                    const card = document.createElement('div');
+                    card.className = 'clue-card fade-in';
+                    card.style.animationDelay = (i * 0.1) + 's';
+                    card.innerHTML = '<span class="clue-content">' + App.escapeHtml(clue.content) + '</span>';
+                    container.appendChild(card);
+                });
+            }
+
+            function renderPlayerBanner() {
+                var banner = document.getElementById('playerTurnBanner');
+                if (GameEngine.getPlayerCount() === 2 && !GameEngine.isAllCompleted()) {
+                    banner.style.display = '';
+                    if (GameEngine.isCoopMission()) {
+                        var players = GameEngine.getPlayers();
+                        var nameA = players[0] ? players[0].name : '플레이어1';
+                        var nameB = players[1] ? players[1].name : '플레이어2';
+                        banner.innerHTML = '🤝 <span class="player-name">' + App.escapeHtml(nameA) + ' & ' + App.escapeHtml(nameB) + '</span> 함께 하는 미션!';
+                    } else {
+                        var playerName = GameEngine.getCurrentPlayerName();
+                        banner.innerHTML = '🎯 지금은 <span class="player-name">' + App.escapeHtml(playerName) + '</span>의 차례!';
+                    }
+                } else {
+                    banner.style.display = 'none';
+                }
+            }
+
+            // Go to mission
+            App.addUnifiedEvent(document.getElementById('goMissionBtn'), function () {
+                Effects.playSound('click');
+                Effects.vibrateClick();
+                const mission = GameEngine.getCurrentMission();
+                if (!mission) return;
+
+                if (mission.type === 'minigame') {
+                    App.navigate('play.html?type=mini&idx=' + mission.index);
+                } else {
+                    App.navigate('play.html?type=find&idx=' + mission.index);
+                }
+            });
+
+            // Go to treasure
+            App.addUnifiedEvent(document.getElementById('goTreasureBtn'), function () {
+                Effects.playSound('click');
+                Effects.vibrateClick();
+                App.navigate('treasure.html');
+            });
+
+            /* ===== SSE: Real-time Config Updates ===== */
+            SSEClient.on('config_updated', async function (data) {
+                GameEngine.updateConfig(data);
+                Storage._cache.config = data;
+                // Refresh current screen if on main
+                var hash = App.getHash();
+                if (!hash || hash === '') {
+                    await initMainScreen();
+                }
+            });
+
+            SSEClient.on('state_updated', function (data) {
+                GameEngine.updateState(data);
+                Storage._cache.state = data;
+            });
+
+            SSEClient.on('game_reset', async function () {
+                GameEngine.state = null;
+                Storage._cache.state = null;
+                var hash = App.getHash();
+                if (hash === 'hub') {
+                    showScreen('main');
+                    window.location.hash = '';
+                    await initMainScreen();
+                } else {
+                    await initMainScreen();
+                }
+            });
+
+            /* ===== Hash-based Navigation ===== */
+            async function handleRoute() {
+                const hash = App.getHash();
+                if (hash === 'intro') {
+                    showScreen('intro');
+                    await startIntro();
+                } else if (hash === 'hub') {
+                    await GameEngine.init();
+                    showScreen('hub');
+                    renderHub();
+                } else {
+                    showScreen('main');
+                    await initMainScreen();
+                }
+            }
+
+            window.addEventListener('hashchange', async function () {
+                await handleRoute();
+            });
+
+            // Initial load
+            await handleRoute();
+        })();
+    </script>
+</body>
+
+</html>

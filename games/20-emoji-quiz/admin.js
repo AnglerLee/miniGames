@@ -96,8 +96,13 @@ function showConfirmModal(message, onConfirm) {
 function saveSettings(e) {
     e.preventDefault();
 
+    const settings = {
+        difficulty: parseInt(difficultySlider.value),
+        timePerQuestion: parseInt(timePerQuestionInput.value),
+        totalQuestions: parseInt(totalQuestionsInput.value)
+    };
 
-
+    localStorage.setItem('game20_settings', JSON.stringify(settings));
     showCustomModal('설정이 저장되었습니다! 🎉', 'success');
 }
 

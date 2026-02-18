@@ -5,7 +5,11 @@
       "Bash(for:*)",
       "Bash(do echo \"=== $f ===\")",
       "Bash(python3:*)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(npm install:*)",
+      "Bash(node:*)",
+      "Bash(curl:*)",
+      "Bash(taskkill:*)"
     ]
   }
 }

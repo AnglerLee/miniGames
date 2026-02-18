@@ -1,0 +1,15 @@
+{
+  "name": "treasure-hunt",
+  "version": "1.0.0",
+  "description": "Home Treasure Hunt - Node.js Server Edition",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "selfsigned": "^5.5.0"
+  }
+}

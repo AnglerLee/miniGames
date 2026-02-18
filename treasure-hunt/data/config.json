@@ -1,0 +1,95 @@
+{
+  "preset": "mystery",
+  "theme": "mystery",
+  "scenarioId": "mystery-02",
+  "totalMissions": 6,
+  "globalTimeLimit": 0,
+  "treasurePassword": "보석감정사의눈물",
+  "showClues": true,
+  "playerCount": 1,
+  "players": [],
+  "missions": [
+    {
+      "type": "minigame",
+      "gameId": "game08",
+      "clue": {
+        "type": "text",
+        "content": "보석"
+      },
+      "storyText": "범인이 남긴 암호 편지가 발견되었다! 숨겨진 단어를 찾아내라!",
+      "hintMessage": "",
+      "secretCode": "💎",
+      "successMessage": "암호 편지 해독! 범인의 첫 번째 흔적을 발견했다!"
+    },
+    {
+      "type": "minigame",
+      "gameId": "game25",
+      "clue": {
+        "type": "text",
+        "content": ""
+      },
+      "storyText": "암호 편지에 숨겨진 장소의 사진이 있다, 스크래치를 긁어 장소를 확인하라.",
+      "hintMessage": "",
+      "secretCode": "🔍",
+      "successMessage": "장소를 확인했다! 다음 단서를 찾아라!"
+    },
+    {
+      "type": "minigame",
+      "gameId": "game17",
+      "clue": {
+        "type": "text",
+        "content": "감정"
+      },
+      "storyText": "현장에 남은 바코드가 수상하다! 스캔해서 증거를 확보하라!",
+      "hintMessage": "",
+      "secretCode": "📱",
+      "successMessage": "바코드 분석 완료! 범인의 동선이 드러나고 있다!"
+    },
+    {
+      "type": "findObject",
+      "hints": [
+        "방 어딘가에 감정 도구가 숨겨져 있다",
+        "장난감 선반 위를 살펴봐",
+        "물건을 확대해서 보는 도구이다."
+      ],
+      "answers": [
+        "돋보기"
+      ],
+      "clue": {
+        "type": "text",
+        "content": "사"
+      },
+      "storyText": "보석 감정에 사용된 돋보기다, 돋보기를 이용해서 다음 미션을 진행하라."
+    },
+    {
+      "type": "minigame",
+      "gameId": "game12",
+      "clue": {
+        "type": "text",
+        "content": "의"
+      },
+      "storyText": "다이아몬드의 진위를 판별해야 한다! 빛의 색깔 패턴을 분석하라!",
+      "hintMessage": "",
+      "secretCode": "🌈",
+      "successMessage": "진품 감별 완료! 가짜 다이아몬드 사이에서 단서를 발견!"
+    },
+    {
+      "type": "minigame",
+      "gameId": "game23",
+      "clue": {
+        "type": "text",
+        "content": "눈물"
+      },
+      "storyText": "범인의 비밀 금고를 찾았다! 안에 '별의 눈물'이 있을 것이다!",
+      "hintMessage": "",
+      "secretCode": "🔓",
+      "successMessage": "금고 오픈! 사라진 다이아몬드를 되찾았다!"
+    }
+  ],
+  "introText": "긴급 속보!\n\n시립 박물관 보석 전시회에서 세계 최대 다이아몬드 '별의 눈물'이 사라졌다!\n\n범인은 전시장 곳곳에 교묘한 흔적을 남겼다.\n\n보석감정사의 도움을 받아 단서를 추적하고 다이아몬드를 되찾아라!",
+  "finalReward": {
+    "message": "축하한다! 전설의 다이아몬드 '별의 눈물'을 되찾았다! 최고의 보석 탐정이다!",
+    "secretCode": "408"
+  },
+  "createdAt": "2026-02-18T05:21:38.355Z"
+}
