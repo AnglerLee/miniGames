@@ -52,7 +52,7 @@ PRESET_DATA.mystery = {
             "name": "사라진 다이아몬드",
             "description": "보석 전시회에서 다이아몬드가 사라졌다! 범인을 추적하라!",
             "introText": "긴급 속보!\n\n시립 박물관 보석 전시회에서 세계 최대 다이아몬드 '별의 눈물'이 사라졌다!\n\n범인은 전시장 곳곳에 교묘한 흔적을 남겼다.\n\n보석감정사의 도움을 받아 단서를 추적하고 다이아몬드를 되찾아라!",
-            "treasurePassword": "보석감정사",
+            "treasurePassword": "보석감정사의눈물",
             "missions": [
                 {
                     "type": "minigame",
@@ -65,6 +65,15 @@ PRESET_DATA.mystery = {
                 },
                 {
                     "type": "minigame",
+                    "gameId": "game25",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "암호 편지에 숨겨진 장소의 사진이 있다, 스크래치를 긁어 장소를 확인하라.",
+                    "hintMessage": "",
+                    "secretCode": "🔍",
+                    "successMessage": "장소를 확인했다! 다음 단서를 찾아라!"
+                },
+                {
+                    "type": "minigame",
                     "gameId": "game17",
                     "clue": { "type": "text", "content": "감정" },
                     "storyText": "현장에 남은 바코드가 수상하다! 스캔해서 증거를 확보하라!",
@@ -74,15 +83,15 @@ PRESET_DATA.mystery = {
                 },
                 {
                     "type": "findObject",
-                    "hints": ["서재나 방 어딘가에 감정 도구가 숨겨져 있다", "서랍장 위를 살펴봐", "안경이나 돋보기 근처를 확인해봐"],
-                    "answers": ["돋보기", "안경", "루페"],
+                    "hints": ["방 어딘가에 감정 도구가 숨겨져 있다", "장난감 선반 위를 살펴봐", "물건을 확대해서 보는 도구이다."],
+                    "answers": ["돋보기"],
                     "clue": { "type": "text", "content": "사" },
-                    "storyText": "보석 감정에 사용된 돋보기에 범인의 지문이 남아있다! 찾아라!"
+                    "storyText": "보석 감정에 사용된 돋보기다, 돋보기를 이용해서 다음 미션을 진행하라."
                 },
                 {
                     "type": "minigame",
                     "gameId": "game12",
-                    "clue": { "type": "text", "content": "" },
+                    "clue": { "type": "text", "content": "의" },
                     "storyText": "다이아몬드의 진위를 판별해야 한다! 빛의 색깔 패턴을 분석하라!",
                     "hintMessage": "",
                     "secretCode": "🌈",
@@ -91,7 +100,7 @@ PRESET_DATA.mystery = {
                 {
                     "type": "minigame",
                     "gameId": "game23",
-                    "clue": { "type": "text", "content": "" },
+                    "clue": { "type": "text", "content": "눈물" },
                     "storyText": "범인의 비밀 금고를 찾았다! 안에 '별의 눈물'이 있을 것이다!",
                     "hintMessage": "",
                     "secretCode": "🔓",
@@ -100,7 +109,7 @@ PRESET_DATA.mystery = {
             ],
             "finalReward": {
                 "message": "축하한다! 전설의 다이아몬드 '별의 눈물'을 되찾았다! 최고의 보석 탐정이다!",
-                "secretCode": "291"
+                "secretCode": "408"
             }
         },
         {
