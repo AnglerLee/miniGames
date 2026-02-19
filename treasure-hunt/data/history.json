@@ -61,5 +61,840 @@
         }
       ]
     }
+  },
+  {
+    "theme": "pirate",
+    "preset": "pirate",
+    "scenarioId": "pirate-01",
+    "completedAt": "2026-02-18T08:20:27.064Z",
+    "results": {
+      "totalTime": 186,
+      "total": 2,
+      "teamGrade": "S",
+      "playerResults": {
+        "player0": {
+          "name": "Alice",
+          "cleared": 2,
+          "total": 2,
+          "grade": "S",
+          "totalAttempts": 2,
+          "totalTime": 76,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 21
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 55
+            }
+          }
+        },
+        "player1": {
+          "name": "Bob",
+          "cleared": 2,
+          "total": 2,
+          "grade": "S",
+          "totalAttempts": 2,
+          "totalTime": 109,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 10
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 99
+            }
+          }
+        }
+      },
+      "cleared": 2,
+      "grade": "S",
+      "totalAttempts": 4,
+      "missions": []
+    }
+  },
+  {
+    "theme": "pirate",
+    "preset": "pirate",
+    "scenarioId": "pirate-01",
+    "completedAt": "2026-02-18T08:20:36.545Z",
+    "results": {
+      "totalTime": 195,
+      "total": 2,
+      "teamGrade": "S",
+      "playerResults": {
+        "player0": {
+          "name": "Alice",
+          "cleared": 2,
+          "total": 2,
+          "grade": "S",
+          "totalAttempts": 2,
+          "totalTime": 76,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 21
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 55
+            }
+          }
+        },
+        "player1": {
+          "name": "Bob",
+          "cleared": 2,
+          "total": 2,
+          "grade": "S",
+          "totalAttempts": 2,
+          "totalTime": 109,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 10
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 99
+            }
+          }
+        }
+      },
+      "cleared": 2,
+      "grade": "S",
+      "totalAttempts": 4,
+      "missions": []
+    }
+  },
+  {
+    "theme": "mystery",
+    "preset": "mystery",
+    "scenarioId": "mystery-02",
+    "completedAt": "2026-02-18T08:25:16.453Z",
+    "results": {
+      "totalTime": 242,
+      "total": 6,
+      "teamGrade": "S",
+      "playerResults": {
+        "player0": {
+          "name": "Alice",
+          "cleared": 6,
+          "total": 6,
+          "grade": "S",
+          "totalAttempts": 6,
+          "totalTime": 76,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 7
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 24
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 7
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 6
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 6
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 26
+            }
+          }
+        },
+        "player1": {
+          "name": "Bob",
+          "cleared": 6,
+          "total": 6,
+          "grade": "S",
+          "totalAttempts": 6,
+          "totalTime": 54,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 6
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 16
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 7
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 12
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 5
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 8
+            }
+          }
+        }
+      },
+      "cleared": 6,
+      "grade": "S",
+      "totalAttempts": 12,
+      "missions": []
+    }
+  },
+  {
+    "theme": "mystery",
+    "preset": "mystery",
+    "scenarioId": "mystery-02",
+    "completedAt": "2026-02-18T08:25:26.718Z",
+    "results": {
+      "totalTime": 252,
+      "total": 6,
+      "teamGrade": "S",
+      "playerResults": {
+        "player0": {
+          "name": "Alice",
+          "cleared": 6,
+          "total": 6,
+          "grade": "S",
+          "totalAttempts": 6,
+          "totalTime": 76,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 7
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 24
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 7
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 6
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 6
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 26
+            }
+          }
+        },
+        "player1": {
+          "name": "Bob",
+          "cleared": 6,
+          "total": 6,
+          "grade": "S",
+          "totalAttempts": 6,
+          "totalTime": 54,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 6
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 16
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 7
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 12
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 5
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 8
+            }
+          }
+        }
+      },
+      "cleared": 6,
+      "grade": "S",
+      "totalAttempts": 12,
+      "missions": []
+    }
+  },
+  {
+    "theme": "mystery",
+    "preset": "mystery",
+    "scenarioId": "mystery-02",
+    "completedAt": "2026-02-18T08:28:12.418Z",
+    "results": {
+      "totalTime": 73,
+      "cleared": 6,
+      "total": 6,
+      "grade": "S",
+      "teamGrade": "S",
+      "totalAttempts": 6,
+      "missions": [
+        {
+          "id": "m1",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 8
+        },
+        {
+          "id": "m2",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 7
+        },
+        {
+          "id": "m3",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 4
+        },
+        {
+          "id": "m4",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 3
+        },
+        {
+          "id": "m5",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 7
+        },
+        {
+          "id": "m6",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 16
+        }
+      ],
+      "playerResults": {}
+    }
+  },
+  {
+    "theme": "mystery",
+    "preset": "mystery",
+    "scenarioId": "mystery-02",
+    "completedAt": "2026-02-18T08:37:38.804Z",
+    "results": {
+      "totalTime": 247,
+      "total": 6,
+      "teamGrade": "S",
+      "playerResults": {
+        "player0": {
+          "name": "서아",
+          "cleared": 6,
+          "total": 6,
+          "grade": "S",
+          "totalAttempts": 6,
+          "totalTime": 97,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 14
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 9
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 9
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 11
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 6
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 48
+            }
+          }
+        },
+        "player1": {
+          "name": "지연",
+          "cleared": 6,
+          "total": 6,
+          "grade": "S",
+          "totalAttempts": 6,
+          "totalTime": 65,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 8
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 10
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 9
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 6
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 14
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 18
+            }
+          }
+        }
+      },
+      "cleared": 6,
+      "grade": "S",
+      "totalAttempts": 12,
+      "missions": []
+    }
+  },
+  {
+    "theme": "mystery",
+    "preset": "mystery",
+    "scenarioId": "mystery-02",
+    "completedAt": "2026-02-18T08:37:48.627Z",
+    "results": {
+      "totalTime": 257,
+      "total": 6,
+      "teamGrade": "S",
+      "playerResults": {
+        "player0": {
+          "name": "서아",
+          "cleared": 6,
+          "total": 6,
+          "grade": "S",
+          "totalAttempts": 6,
+          "totalTime": 97,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 14
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 9
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 9
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 11
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 6
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 48
+            }
+          }
+        },
+        "player1": {
+          "name": "지연",
+          "cleared": 6,
+          "total": 6,
+          "grade": "S",
+          "totalAttempts": 6,
+          "totalTime": 65,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 8
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 10
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 9
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 6
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 14
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 18
+            }
+          }
+        }
+      },
+      "cleared": 6,
+      "grade": "S",
+      "totalAttempts": 12,
+      "missions": []
+    }
+  },
+  {
+    "theme": "mystery",
+    "preset": "mystery",
+    "scenarioId": "mystery-02",
+    "completedAt": "2026-02-18T09:21:17.602Z",
+    "results": {
+      "totalTime": 214,
+      "total": 6,
+      "teamGrade": "S",
+      "playerResults": {
+        "player0": {
+          "name": "서아",
+          "cleared": 6,
+          "total": 6,
+          "grade": "S",
+          "totalAttempts": 6,
+          "totalTime": 108,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 8
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 4
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 21
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 11
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 13
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 51
+            }
+          }
+        },
+        "player1": {
+          "name": "지연",
+          "cleared": 6,
+          "total": 6,
+          "grade": "S",
+          "totalAttempts": 6,
+          "totalTime": 65,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 9
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 4
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 26
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 5
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 13
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 8
+            }
+          }
+        }
+      },
+      "cleared": 6,
+      "grade": "S",
+      "totalAttempts": 12,
+      "missions": []
+    }
+  },
+  {
+    "theme": "mystery",
+    "preset": "mystery",
+    "scenarioId": "mystery-02",
+    "completedAt": "2026-02-18T09:21:20.739Z",
+    "results": {
+      "totalTime": 217,
+      "total": 6,
+      "teamGrade": "S",
+      "playerResults": {
+        "player0": {
+          "name": "서아",
+          "cleared": 6,
+          "total": 6,
+          "grade": "S",
+          "totalAttempts": 6,
+          "totalTime": 108,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 8
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 4
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 21
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 11
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 13
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 51
+            }
+          }
+        },
+        "player1": {
+          "name": "지연",
+          "cleared": 6,
+          "total": 6,
+          "grade": "S",
+          "totalAttempts": 6,
+          "totalTime": 65,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 9
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 4
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 26
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 5
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 13
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 8
+            }
+          }
+        }
+      },
+      "cleared": 6,
+      "grade": "S",
+      "totalAttempts": 12,
+      "missions": []
+    }
   }
 ]

@@ -1,6 +1,8 @@
 /* ===== app.js - App Initialization & Utilities (Server Version) ===== */
 
 const App = {
+    heartbeatInterval: null,
+
     async init() {
         await GameEngine.init();
 
@@ -9,8 +11,77 @@ const App = {
             ThemeManager.apply(config.theme);
         }
 
-        // Connect SSE for real-time updates
-        SSEClient.connect();
+        // Connect SSE with playerId (if available)
+        const playerId = Storage.getMyPlayerId();
+        SSEClient.connect(playerId);
+
+        // Start heartbeat if player is registered
+        if (playerId) {
+            this.startHeartbeat(playerId);
+        }
+    },
+
+    startHeartbeat(playerId) {
+        this.stopHeartbeat();
+        const sendBeat = async () => {
+            const result = await ApiClient.sendHeartbeat(playerId);
+            if (result && result.sessionMismatch) {
+                // New game session started while we were active → reset and go to player select
+                this.stopHeartbeat();
+                Storage.clearMyPlayer();
+                SSEClient.disconnect();
+                window.location.href = 'index.html';
+            }
+        };
+        // Send immediately, then every 15 seconds
+        sendBeat();
+        this.heartbeatInterval = setInterval(sendBeat, 15000);
+    },
+
+    stopHeartbeat() {
+        if (this.heartbeatInterval) {
+            clearInterval(this.heartbeatInterval);
+            this.heartbeatInterval = null;
+        }
+    },
+
+    /**
+     * Register as a player and start heartbeat + SSE
+     */
+    async registerPlayer(name) {
+        const result = await ApiClient.joinGame(name);
+        if (result && result.playerId) {
+            Storage.setMyPlayerId(result.playerId);
+            Storage.setMyPlayerName(name);
+
+            // Save session ID so we can detect when a new game starts
+            if (result.state && result.state.sessionId) {
+                Storage.setMySessionId(result.state.sessionId);
+            }
+
+            // Reconnect SSE with new playerId
+            SSEClient.connect(result.playerId);
+            this.startHeartbeat(result.playerId);
+
+            // Update game engine state
+            if (result.state) {
+                GameEngine.updateState(result.state);
+            }
+
+            return result.playerId;
+        }
+        return null;
+    },
+
+    /**
+     * Check if the stored session ID matches the server's current session.
+     * Returns false when a new game has been started and the player must re-select.
+     */
+    isSessionValid(state) {
+        if (!state || !state.sessionId) return true; // server has no session tracking yet
+        const mySessionId = Storage.getMySessionId();
+        if (!mySessionId) return false;              // we never joined this session
+        return mySessionId === state.sessionId;
     },
 
     formatTime(seconds) {

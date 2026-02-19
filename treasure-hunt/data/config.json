@@ -6,8 +6,16 @@
   "globalTimeLimit": 0,
   "treasurePassword": "보석감정사의눈물",
   "showClues": true,
-  "playerCount": 1,
-  "players": [],
+  "playerCount": 2,
+  "gameMode": "coop",
+  "players": [
+    {
+      "name": "서아"
+    },
+    {
+      "name": "지연"
+    }
+  ],
   "missions": [
     {
       "type": "minigame",
@@ -91,5 +99,5 @@
     "message": "축하한다! 전설의 다이아몬드 '별의 눈물'을 되찾았다! 최고의 보석 탐정이다!",
     "secretCode": "408"
   },
-  "createdAt": "2026-02-18T05:21:38.355Z"
+  "createdAt": "2026-02-18T09:17:42.486Z"
 }

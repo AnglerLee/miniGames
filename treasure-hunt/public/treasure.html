@@ -480,6 +480,38 @@
             position: relative;
             z-index: 10000;
         }
+
+        /* Per-Player Result */
+        .player-result-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .player-result-row:last-child {
+            border-bottom: none;
+        }
+
+        .player-result-row .pr-name {
+            flex: 1;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .player-result-row .pr-grade {
+            font-weight: 700;
+            font-size: 1.1rem;
+            min-width: 28px;
+            text-align: center;
+        }
+
+        .player-result-row .pr-stats {
+            font-size: 0.8rem;
+            color: var(--theme-text-sub);
+            text-align: right;
+        }
     </style>
 </head>
 <body>
@@ -535,24 +567,27 @@
 
             <div class="grade-display" id="gradeDisplay"></div>
 
+            <!-- Team Results -->
             <div class="result-card">
-                <h3>📊 게임 결과</h3>
+                <h3>📊 팀 결과</h3>
                 <div class="result-row">
                     <span class="label">총 플레이 시간</span>
                     <span class="value" id="resultTime"></span>
-                </div>
-                <div class="result-row">
-                    <span class="label">미션 클리어</span>
-                    <span class="value" id="resultCleared"></span>
                 </div>
                 <div class="result-row">
                     <span class="label">총 시도 횟수</span>
                     <span class="value" id="resultAttempts"></span>
                 </div>
                 <div class="result-row">
-                    <span class="label">최종 등급</span>
+                    <span class="label">팀 등급</span>
                     <span class="value" id="resultGrade"></span>
                 </div>
+            </div>
+
+            <!-- Per-Player Results (Co-op) -->
+            <div class="result-card" id="playerResultCard" style="display:none;">
+                <h3>👥 플레이어별 결과</h3>
+                <div id="playerResultRows"></div>
             </div>
 
             <div class="action-buttons">
@@ -586,13 +621,16 @@
 
             // Show collected clues as chips
             const clues = GameEngine.getCollectedClues();
-            const validClues = clues.filter(function (c) { return c.content && c.content.trim() !== ''; });
+            const validClues = clues.filter(function (c) {
+                if (typeof c === 'string') return c.trim() !== '';
+                return c && c.content && c.content.trim() !== '';
+            });
             if (validClues.length > 0) {
                 const reminder = document.getElementById('clueReminder');
                 validClues.forEach(function (c) {
                     var chip = document.createElement('span');
                     chip.className = 'clue-chip';
-                    chip.textContent = c.content;
+                    chip.textContent = typeof c === 'string' ? c : c.content;
                     reminder.appendChild(chip);
                 });
             }
@@ -671,15 +709,36 @@
                     document.getElementById('finalSecret').style.display = 'none';
                 }
 
-                // Grade
+                // Grade & team results
                 if (results) {
-                    document.getElementById('gradeDisplay').textContent = results.grade;
-                    document.getElementById('gradeDisplay').className = 'grade-display grade-' + results.grade + ' bounce';
+                    var displayGrade = results.teamGrade || results.grade;
+                    document.getElementById('gradeDisplay').textContent = displayGrade;
+                    document.getElementById('gradeDisplay').className = 'grade-display grade-' + displayGrade + ' bounce';
 
                     document.getElementById('resultTime').textContent = App.formatTime(results.totalTime);
-                    document.getElementById('resultCleared').textContent = results.cleared + ' / ' + results.total + ' 미션';
                     document.getElementById('resultAttempts').textContent = results.totalAttempts + '회';
-                    document.getElementById('resultGrade').textContent = results.grade + ' 등급';
+                    document.getElementById('resultGrade').textContent = displayGrade + ' 등급';
+
+                    // Per-player results (Co-op mode)
+                    if (results.playerResults && Object.keys(results.playerResults).length > 1) {
+                        var playerCard = document.getElementById('playerResultCard');
+                        var playerRows = document.getElementById('playerResultRows');
+                        playerCard.style.display = '';
+                        playerRows.innerHTML = '';
+
+                        var gradeColors = { S: '#FFD700', A: '#2ECC71', B: '#3498DB', C: '#F39C12' };
+
+                        Object.keys(results.playerResults).forEach(function (pid) {
+                            var pr = results.playerResults[pid];
+                            var row = document.createElement('div');
+                            row.className = 'player-result-row';
+                            row.innerHTML =
+                                '<span class="pr-name">' + App.escapeHtml(pr.name) + '</span>' +
+                                '<span class="pr-stats">' + pr.cleared + '/' + pr.total + ' 클리어<br>' + pr.totalAttempts + '회 시도</span>' +
+                                '<span class="pr-grade" style="color:' + (gradeColors[pr.grade] || '#fff') + '">' + pr.grade + '</span>';
+                            playerRows.appendChild(row);
+                        });
+                    }
                 }
 
                 // Show result section

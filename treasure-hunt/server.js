@@ -24,9 +24,11 @@ app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
 app.use('/uploads', express.static(path.join(__dirname, 'data', 'uploads')));
 
 // ===== SSE (Server-Sent Events) =====
-const sseClients = new Set();
+const sseClients = new Map(); // playerId -> Set<res>
 
 app.get('/api/events', (req, res) => {
+    const playerId = req.query.playerId || 'anonymous';
+
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -34,23 +36,29 @@ app.get('/api/events', (req, res) => {
         'Access-Control-Allow-Origin': '*'
     });
 
-    // Send initial connection event
     res.write('event: connected\ndata: {"status":"connected"}\n\n');
 
-    sseClients.add(res);
+    if (!sseClients.has(playerId)) sseClients.set(playerId, new Set());
+    sseClients.get(playerId).add(res);
 
     req.on('close', () => {
-        sseClients.delete(res);
+        const clients = sseClients.get(playerId);
+        if (clients) {
+            clients.delete(res);
+            if (clients.size === 0) sseClients.delete(playerId);
+        }
     });
 });
 
 function broadcast(event, data) {
     const message = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
-    for (const client of sseClients) {
-        try {
-            client.write(message);
-        } catch (e) {
-            sseClients.delete(client);
+    for (const [, clients] of sseClients) {
+        for (const client of clients) {
+            try {
+                client.write(message);
+            } catch (e) {
+                clients.delete(client);
+            }
         }
     }
 }
@@ -59,6 +67,14 @@ function broadcast(event, data) {
 setInterval(() => {
     broadcast('heartbeat', { timestamp: Date.now() });
 }, 30000);
+
+// ===== State Lock (serialize concurrent writes) =====
+let stateLock = Promise.resolve();
+function withStateLock(fn) {
+    const next = stateLock.then(fn, fn);
+    stateLock = next;
+    return next;
+}
 
 // ===== REST API: Config =====
 app.get('/api/config', (req, res) => {
@@ -94,6 +110,266 @@ app.delete('/api/state', (req, res) => {
     writeJSON('state.json', null);
     broadcast('game_reset', {});
     res.json({ success: true });
+});
+
+// ===== REST API: Co-op Multiplayer =====
+
+// Start game (admin triggers)
+app.post('/api/game/start', (req, res) => {
+    const config = readJSON('config.json');
+    if (!config) return res.status(400).json({ error: 'No config found' });
+
+    const players = {};
+    const playerCount = config.playerCount || 1;
+    for (let i = 0; i < playerCount; i++) {
+        const pid = 'player' + i;
+        const name = (config.players && config.players[i]) ? config.players[i].name : ('플레이어' + (i + 1));
+        players[pid] = {
+            name: name,
+            joinedAt: null,
+            connected: false,
+            lastSeen: null,
+            missionResults: {}
+        };
+    }
+
+    // Generate unique session ID to detect stale player connections
+    const sessionId = Date.now().toString(36) + Math.random().toString(36).substr(2, 8);
+
+    const state = {
+        sessionId: sessionId,
+        status: playerCount > 1 ? 'waiting_for_players' : 'playing',
+        currentMissionIndex: 0,
+        startedAt: new Date().toISOString(),
+        players: players,
+        collectedClues: [],
+        hintsUsed: {}
+    };
+
+    writeJSON('state.json', state);
+    broadcast('game_started', { state });
+    res.json({ success: true, state });
+});
+
+// Player join (select name)
+app.post('/api/players/join', (req, res) => {
+    const { name } = req.body;
+    if (!name) return res.status(400).json({ error: 'Name required' });
+
+    const state = readJSON('state.json');
+    if (!state || !state.players) return res.status(400).json({ error: 'Game not started' });
+
+    // Find matching player slot by name
+    let foundPid = null;
+    for (const [pid, pdata] of Object.entries(state.players)) {
+        if (pdata.name === name) {
+            foundPid = pid;
+            break;
+        }
+    }
+
+    if (!foundPid) return res.status(404).json({ error: 'Player name not found' });
+
+    // Mark as joined
+    state.players[foundPid].joinedAt = new Date().toISOString();
+    state.players[foundPid].connected = true;
+    state.players[foundPid].lastSeen = new Date().toISOString();
+
+    // Check if all players joined → start game
+    const allJoined = Object.values(state.players).every(p => p.joinedAt);
+    if (allJoined && state.status === 'waiting_for_players') {
+        state.status = 'playing';
+    }
+
+    writeJSON('state.json', state);
+    broadcast('player_joined', { playerId: foundPid, name: name, allJoined, state });
+    res.json({ success: true, playerId: foundPid, name: name, status: state.status, state });
+});
+
+// Get players
+app.get('/api/players', (req, res) => {
+    const state = readJSON('state.json');
+    const config = readJSON('config.json');
+    if (!state || !state.players) return res.json({ players: {}, totalExpected: 0 });
+    res.json({
+        players: state.players,
+        totalExpected: config ? (config.playerCount || 1) : 1,
+        status: state.status
+    });
+});
+
+// Player heartbeat
+app.post('/api/players/:playerId/heartbeat', (req, res) => {
+    const { playerId } = req.params;
+    const { sessionId } = req.body;
+    const state = readJSON('state.json');
+    if (!state || !state.players || !state.players[playerId]) {
+        return res.status(404).json({ error: 'Player not found' });
+    }
+
+    // Session mismatch → this player belongs to an old game session
+    if (state.sessionId && sessionId && state.sessionId !== sessionId) {
+        return res.status(409).json({ error: 'Session mismatch', currentSessionId: state.sessionId });
+    }
+
+    const wasConnected = state.players[playerId].connected;
+    state.players[playerId].connected = true;
+    state.players[playerId].lastSeen = new Date().toISOString();
+    writeJSON('state.json', state);
+
+    // Broadcast state update only when connection status first changes (for admin dashboard)
+    if (!wasConnected) {
+        broadcast('state_updated', state);
+    }
+
+    res.json({ success: true, sessionId: state.sessionId });
+});
+
+// Mission complete (concurrent-safe)
+app.post('/api/missions/:missionIndex/complete', async (req, res) => {
+    const missionIndex = parseInt(req.params.missionIndex);
+    const { playerId } = req.body;
+    // result can be nested or flat
+    const result = req.body.result || req.body;
+    const grade = result.grade;
+    const attempts = result.attempts;
+    const time = result.time;
+
+    if (!playerId) return res.status(400).json({ error: 'playerId required' });
+
+    try {
+        const result = await withStateLock(async () => {
+            const state = readJSON('state.json');
+            if (!state || !state.players) throw new Error('Game not started');
+            if (!state.players[playerId]) throw new Error('Player not found');
+            if (missionIndex !== state.currentMissionIndex) {
+                throw new Error('Mission index mismatch');
+            }
+
+            // Record this player's result
+            state.players[playerId].missionResults[String(missionIndex)] = {
+                status: 'cleared',
+                grade: grade || 'C',
+                attempts: attempts || 1,
+                time: time || 0
+            };
+
+            // Broadcast this player's completion (include state for client sync)
+            broadcast('player_mission_complete', {
+                playerId,
+                missionIndex,
+                result: state.players[playerId].missionResults[String(missionIndex)],
+                state
+            });
+
+            // Check if ALL players completed this mission
+            const allComplete = Object.values(state.players).every(p => {
+                const r = p.missionResults[String(missionIndex)];
+                return r && r.status === 'cleared';
+            });
+
+            if (allComplete) {
+                // Collect clue from config
+                const config = readJSON('config.json');
+                const mission = config && config.missions ? config.missions[missionIndex] : null;
+                if (mission && mission.clue && mission.clue.content) {
+                    state.collectedClues.push(mission.clue.content);
+                }
+
+                // Advance to next mission
+                state.currentMissionIndex++;
+
+                const totalMissions = config ? config.missions.length : 0;
+                const isGameComplete = state.currentMissionIndex >= totalMissions;
+
+                if (isGameComplete) {
+                    state.status = 'completed';
+                    writeJSON('state.json', state);
+                    broadcast('all_missions_complete', { state });
+                    return { allComplete: true, gameComplete: true, state };
+                } else {
+                    writeJSON('state.json', state);
+                    broadcast('mission_advance', {
+                        nextMissionIndex: state.currentMissionIndex,
+                        clue: mission && mission.clue ? mission.clue.content : null,
+                        state
+                    });
+                    return { allComplete: true, gameComplete: false, nextMissionIndex: state.currentMissionIndex, state };
+                }
+            } else {
+                writeJSON('state.json', state);
+                return { allComplete: false, state };
+            }
+        });
+
+        res.json({ success: true, ...result });
+    } catch (e) {
+        res.status(400).json({ error: e.message });
+    }
+});
+
+// Admin skip mission for a player
+app.post('/api/admin/skip-mission', async (req, res) => {
+    const { playerId, missionIndex } = req.body;
+
+    try {
+        const result = await withStateLock(async () => {
+            const state = readJSON('state.json');
+            if (!state || !state.players || !state.players[playerId]) {
+                throw new Error('Player not found');
+            }
+
+            state.players[playerId].missionResults[String(missionIndex)] = {
+                status: 'skipped',
+                grade: 'F',
+                attempts: 0,
+                time: 0
+            };
+
+            broadcast('player_mission_complete', {
+                playerId,
+                missionIndex,
+                result: state.players[playerId].missionResults[String(missionIndex)]
+            });
+
+            // Check all complete
+            const allComplete = Object.values(state.players).every(p => {
+                const r = p.missionResults[String(missionIndex)];
+                return r && (r.status === 'cleared' || r.status === 'skipped');
+            });
+
+            if (allComplete) {
+                const config = readJSON('config.json');
+                const mission = config && config.missions ? config.missions[missionIndex] : null;
+                if (mission && mission.clue && mission.clue.content) {
+                    state.collectedClues.push(mission.clue.content);
+                }
+                state.currentMissionIndex++;
+
+                const totalMissions = config ? config.missions.length : 0;
+                if (state.currentMissionIndex >= totalMissions) {
+                    state.status = 'completed';
+                    writeJSON('state.json', state);
+                    broadcast('all_missions_complete', {});
+                    return { allComplete: true, gameComplete: true };
+                } else {
+                    writeJSON('state.json', state);
+                    broadcast('mission_advance', {
+                        nextMissionIndex: state.currentMissionIndex,
+                        clue: mission && mission.clue ? mission.clue.content : null
+                    });
+                    return { allComplete: true, gameComplete: false };
+                }
+            } else {
+                writeJSON('state.json', state);
+                return { allComplete: false };
+            }
+        });
+
+        res.json({ success: true, ...result });
+    } catch (e) {
+        res.status(400).json({ error: e.message });
+    }
 });
 
 // ===== REST API: Admin =====

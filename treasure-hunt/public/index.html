@@ -256,23 +256,109 @@
             font-weight: 600;
         }
 
-        /* Player Turn Banner */
-        .player-turn-banner {
+        /* Player Status Panel (Co-op) */
+        .player-status-panel {
             width: 100%;
             max-width: 480px;
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
             border: 1px solid rgba(255, 215, 0, 0.3);
             border-radius: 12px;
             padding: 12px 16px;
-            text-align: center;
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: var(--theme-text);
             animation: fadeInUp 0.4s ease-out;
         }
 
-        .player-turn-banner .player-name {
+        .player-status-panel .panel-title {
+            font-size: 0.85rem;
+            color: var(--theme-text-sub);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .player-status-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .player-status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .player-status-item .status-icon {
+            font-size: 1rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .player-status-item .player-name {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .player-status-item .player-name.is-me {
             color: var(--theme-accent);
+        }
+
+        .player-status-item .status-text {
+            font-size: 0.8rem;
+            color: var(--theme-text-sub);
+        }
+
+        /* Player Select Screen */
+        .player-select-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            gap: 24px;
+            padding: 20px;
+        }
+
+        .player-select-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .player-select-btn {
+            padding: 16px 24px;
+            border-radius: 16px;
+            border: 2px solid var(--theme-card-border);
+            background: var(--theme-bg-card);
+            color: var(--theme-text);
+            font-size: 1.15rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .player-select-btn:active {
+            transform: scale(0.97);
+        }
+
+        .player-select-btn:hover {
+            border-color: var(--theme-accent);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .player-select-btn.taken {
+            opacity: 0.4;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .player-select-btn .select-icon {
+            font-size: 1.5rem;
         }
     </style>
 </head>
@@ -308,6 +394,18 @@
                 </div>
             </div>
 
+            <!-- Player Select Screen (Co-op) -->
+            <div id="playerSelectScreen" class="screen-section">
+                <div class="player-select-screen fade-in">
+                    <div class="main-icon">👥</div>
+                    <div class="main-text-area">
+                        <div class="main-title">플레이어 선택</div>
+                        <div class="main-subtitle">자신의 이름을 선택하세요</div>
+                    </div>
+                    <div class="player-select-list" id="playerSelectList"></div>
+                </div>
+            </div>
+
             <!-- S04: Story Intro -->
             <div id="introScreen" class="screen-section">
                 <div class="intro-screen">
@@ -336,8 +434,11 @@
                     <!-- Progress Indicator -->
                     <div class="progress-indicator" id="progressBar"></div>
 
-                    <!-- Player Turn Banner (2P mode) -->
-                    <div id="playerTurnBanner" class="player-turn-banner" style="display:none;"></div>
+                    <!-- Player Status Panel (Co-op mode) -->
+                    <div id="playerStatusPanel" class="player-status-panel" style="display:none;">
+                        <div class="panel-title">👥 플레이어 현황</div>
+                        <div class="player-status-list" id="playerStatusList"></div>
+                    </div>
 
                     <!-- Current Mission Card -->
                     <div class="mission-card fade-in-up" id="missionCard">
@@ -391,6 +492,7 @@
         (async function () {
             const screens = {
                 main: document.getElementById('mainScreen'),
+                playerSelect: document.getElementById('playerSelectScreen'),
                 intro: document.getElementById('introScreen'),
                 hub: document.getElementById('hubScreen')
             };
@@ -416,7 +518,6 @@
                 const mainIcon = document.getElementById('mainIcon');
 
                 if (config) {
-                    startBtn.disabled = false;
                     noConfigMsg.style.display = 'none';
 
                     const theme = ThemeManager.getTheme(config.theme);
@@ -425,20 +526,61 @@
                         ThemeManager.apply(config.theme);
                     }
 
-                    if (state && state.status === 'playing') {
-                        resumeBtn.style.display = '';
-                    }
+                    // Co-op mode: check if game is active and player needs to join
+                    if (config.gameMode === 'coop' && config.playerCount >= 2) {
+                        var myPlayerId = Storage.getMyPlayerId();
 
-                    // Show player info
-                    var playerInfoMain = document.getElementById('playerInfoMain');
-                    var playerInfoText = document.getElementById('playerInfoText');
-                    if (config.playerCount === 2 && config.players && config.players.length >= 2) {
-                        playerInfoMain.style.display = '';
-                        playerInfoText.textContent = '👥 ' + config.players[0].name + ' & ' + config.players[1].name;
+                        if (state && (state.status === 'playing' || state.status === 'waiting_for_players')) {
+                            // Validate session — if a new game was started, clear stale player info
+                            if (myPlayerId && !App.isSessionValid(state)) {
+                                Storage.clearMyPlayer();
+                                myPlayerId = null;
+                            }
+
+                            // Game is active
+                            if (myPlayerId && state.players && state.players[myPlayerId]) {
+                                // Already joined this session - show resume
+                                startBtn.disabled = true;
+                                startBtn.style.display = 'none';
+                                resumeBtn.style.display = '';
+                            } else {
+                                // Need to select player
+                                startBtn.textContent = '👥 참가하기';
+                                startBtn.disabled = false;
+                                startBtn.style.display = '';
+                                resumeBtn.style.display = 'none';
+                            }
+                        } else {
+                            // No game started yet
+                            startBtn.textContent = '⏳ 게임 대기 중...';
+                            startBtn.disabled = true;
+                            startBtn.style.display = '';
+                            resumeBtn.style.display = 'none';
+                        }
+
+                        // Show player names
+                        var playerInfoMain = document.getElementById('playerInfoMain');
+                        var playerInfoText = document.getElementById('playerInfoText');
+                        if (config.players && config.players.length > 0) {
+                            playerInfoMain.style.display = '';
+                            playerInfoText.textContent = '👥 ' + config.players.map(function (p) { return p.name; }).join(' · ');
+                        }
                     } else {
-                        playerInfoMain.style.display = 'none';
+                        // Solo mode
+                        startBtn.textContent = '🎮 게임 시작';
+                        startBtn.disabled = false;
+                        startBtn.style.display = '';
+
+                        if (state && state.status === 'playing') {
+                            resumeBtn.style.display = '';
+                        } else {
+                            resumeBtn.style.display = 'none';
+                        }
+
+                        document.getElementById('playerInfoMain').style.display = 'none';
                     }
                 } else {
+                    startBtn.textContent = '🎮 게임 시작';
                     startBtn.disabled = true;
                     noConfigMsg.style.display = '';
                     resumeBtn.style.display = 'none';
@@ -446,12 +588,20 @@
                 }
             }
 
-            // Start button
+            // Start / Join button
             App.addUnifiedEvent(document.getElementById('startBtn'), async function () {
                 const config = await Storage.getConfig();
-                if (config) {
-                    Effects.playSound('click');
-                    Effects.vibrateClick();
+                if (!config) return;
+
+                Effects.playSound('click');
+                Effects.vibrateClick();
+
+                if (config.gameMode === 'coop' && config.playerCount >= 2) {
+                    // Co-op: go to player select
+                    showScreen('playerSelect');
+                    renderPlayerSelect();
+                } else {
+                    // Solo: start new game directly
                     await GameEngine.init();
                     await GameEngine.startNewGame();
                     showScreen('intro');
@@ -468,6 +618,50 @@
                 showScreen('hub');
                 renderHub();
             });
+
+            /* ===== Player Select Screen (Co-op) ===== */
+            async function renderPlayerSelect() {
+                const state = await Storage.getState();
+                const list = document.getElementById('playerSelectList');
+                list.innerHTML = '';
+
+                if (!state || !state.players) {
+                    list.innerHTML = '<div style="color:var(--theme-text-sub);">게임이 아직 시작되지 않았습니다</div>';
+                    return;
+                }
+
+                var playerEmojis = ['🅰️', '🅱️', '©️', '🅿️'];
+                var idx = 0;
+                Object.keys(state.players).forEach(function (pid) {
+                    var p = state.players[pid];
+                    var isTaken = p.connected;
+                    var btn = document.createElement('button');
+                    btn.className = 'player-select-btn' + (isTaken ? ' taken' : '');
+                    btn.innerHTML =
+                        '<span class="select-icon">' + (playerEmojis[idx] || '👤') + '</span>' +
+                        '<span>' + App.escapeHtml(p.name) + '</span>' +
+                        (isTaken ? '<span style="margin-left:auto; font-size:0.8rem; color:var(--theme-text-sub);">접속 중</span>' : '');
+
+                    if (!isTaken) {
+                        App.addUnifiedEvent(btn, async function () {
+                            Effects.playSound('click');
+                            Effects.vibrateClick();
+                            var playerId = await App.registerPlayer(p.name);
+                            if (playerId) {
+                                // Refresh game engine state
+                                await GameEngine.init();
+                                showScreen('intro');
+                                await startIntro();
+                            } else {
+                                Effects.showToast('접속에 실패했습니다. 다시 시도하세요.');
+                            }
+                        });
+                    }
+
+                    list.appendChild(btn);
+                    idx++;
+                });
+            }
 
             // Settings button
             App.addUnifiedEvent(document.getElementById('settingsBtn'), function () {
@@ -556,8 +750,8 @@
                 // Progress bar
                 renderProgress();
 
-                // Player turn banner (2P mode)
-                renderPlayerBanner();
+                // Player status panel (Co-op mode)
+                renderPlayerStatusPanel();
 
                 // Check if all complete
                 if (GameEngine.isAllCompleted()) {
@@ -628,7 +822,11 @@
             function renderClues() {
                 const clues = GameEngine.getCollectedClues();
                 const total = GameEngine.getProgress().total;
-                const validClues = clues.filter(function (c) { return c.content && c.content.trim() !== ''; });
+                // Handle both string clues (co-op server: ["A","B"]) and object clues ({content: "A"})
+                const validClues = clues.filter(function (c) {
+                    if (typeof c === 'string') return c.trim() !== '';
+                    return c && c.content && c.content.trim() !== '';
+                });
 
                 document.getElementById('clueCount').textContent = validClues.length;
                 document.getElementById('clueTotal').textContent = total;
@@ -642,30 +840,53 @@
                 }
 
                 validClues.forEach(function (clue, i) {
+                    var text = typeof clue === 'string' ? clue : clue.content;
                     const card = document.createElement('div');
                     card.className = 'clue-card fade-in';
                     card.style.animationDelay = (i * 0.1) + 's';
-                    card.innerHTML = '<span class="clue-content">' + App.escapeHtml(clue.content) + '</span>';
+                    card.innerHTML = '<span class="clue-content">' + App.escapeHtml(text) + '</span>';
                     container.appendChild(card);
                 });
             }
 
-            function renderPlayerBanner() {
-                var banner = document.getElementById('playerTurnBanner');
-                if (GameEngine.getPlayerCount() === 2 && !GameEngine.isAllCompleted()) {
-                    banner.style.display = '';
-                    if (GameEngine.isCoopMission()) {
-                        var players = GameEngine.getPlayers();
-                        var nameA = players[0] ? players[0].name : '플레이어1';
-                        var nameB = players[1] ? players[1].name : '플레이어2';
-                        banner.innerHTML = '🤝 <span class="player-name">' + App.escapeHtml(nameA) + ' & ' + App.escapeHtml(nameB) + '</span> 함께 하는 미션!';
-                    } else {
-                        var playerName = GameEngine.getCurrentPlayerName();
-                        banner.innerHTML = '🎯 지금은 <span class="player-name">' + App.escapeHtml(playerName) + '</span>의 차례!';
-                    }
-                } else {
-                    banner.style.display = 'none';
+            function renderPlayerStatusPanel() {
+                var panel = document.getElementById('playerStatusPanel');
+                var list = document.getElementById('playerStatusList');
+                var playerCount = GameEngine.getPlayerCount();
+
+                if (playerCount < 2 || GameEngine.isAllCompleted()) {
+                    panel.style.display = 'none';
+                    return;
                 }
+
+                panel.style.display = '';
+                list.innerHTML = '';
+
+                var statuses = GameEngine.getMissionPlayerStatuses();
+                var myPlayerId = GameEngine.getMyPlayerId();
+
+                Object.keys(statuses).forEach(function (pid) {
+                    var s = statuses[pid];
+                    var isMe = (pid === myPlayerId);
+                    var statusIcon = '🎮';
+                    var statusText = '플레이 중...';
+
+                    if (s.status === 'cleared') {
+                        statusIcon = '✅';
+                        statusText = '완료! (' + (s.grade || '') + ')';
+                    } else if (!s.connected) {
+                        statusIcon = '⚪';
+                        statusText = '미접속';
+                    }
+
+                    var item = document.createElement('div');
+                    item.className = 'player-status-item';
+                    item.innerHTML =
+                        '<span class="status-icon">' + statusIcon + '</span>' +
+                        '<span class="player-name' + (isMe ? ' is-me' : '') + '">' + App.escapeHtml(s.name) + (isMe ? ' (나)' : '') + '</span>' +
+                        '<span class="status-text">' + statusText + '</span>';
+                    list.appendChild(item);
+                });
             }
 
             // Go to mission
@@ -675,10 +896,20 @@
                 const mission = GameEngine.getCurrentMission();
                 if (!mission) return;
 
+                // Check if I already completed this mission (co-op mode)
+                if (GameEngine.getPlayerCount() >= 2 && GameEngine.haveICompleted()) {
+                    Effects.showToast('이미 완료한 미션입니다. 다른 플레이어를 기다리세요.');
+                    return;
+                }
+
+                var pidParam = '';
+                var myPid = Storage.getMyPlayerId();
+                if (myPid) pidParam = '&pid=' + encodeURIComponent(myPid);
+
                 if (mission.type === 'minigame') {
-                    App.navigate('play.html?type=mini&idx=' + mission.index);
+                    App.navigate('play.html?type=mini&idx=' + mission.index + pidParam);
                 } else {
-                    App.navigate('play.html?type=find&idx=' + mission.index);
+                    App.navigate('play.html?type=find&idx=' + mission.index + pidParam);
                 }
             });
 
@@ -689,11 +920,10 @@
                 App.navigate('treasure.html');
             });
 
-            /* ===== SSE: Real-time Config Updates ===== */
+            /* ===== SSE: Real-time Updates ===== */
             SSEClient.on('config_updated', async function (data) {
                 GameEngine.updateConfig(data);
                 Storage._cache.config = data;
-                // Refresh current screen if on main
                 var hash = App.getHash();
                 if (!hash || hash === '') {
                     await initMainScreen();
@@ -708,6 +938,7 @@
             SSEClient.on('game_reset', async function () {
                 GameEngine.state = null;
                 Storage._cache.state = null;
+                Storage.clearMyPlayer();
                 var hash = App.getHash();
                 if (hash === 'hub') {
                     showScreen('main');
@@ -716,6 +947,59 @@
                 } else {
                     await initMainScreen();
                 }
+            });
+
+            // Co-op: game started by admin → new session, clear stale player info
+            SSEClient.on('game_started', async function (data) {
+                // Always clear old player binding — new session requires fresh player select
+                Storage.clearMyPlayer();
+                App.stopHeartbeat();
+                GameEngine.state = null;
+                Storage._cache.state = null;
+                if (data.state) GameEngine.updateState(data.state);
+
+                var hash = App.getHash();
+                // If player was in the middle of the game, kick back to main screen
+                if (hash === 'hub' || hash === 'intro' || hash === 'select') {
+                    showScreen('main');
+                    window.location.hash = '';
+                }
+                await initMainScreen();
+            });
+
+            // Co-op: player joined
+            SSEClient.on('player_joined', function (data) {
+                if (data.state) GameEngine.updateState(data.state);
+                // Refresh player select if visible
+                if (screens.playerSelect.classList.contains('active')) {
+                    renderPlayerSelect();
+                }
+                // Refresh hub status panel
+                if (screens.hub.classList.contains('active')) {
+                    renderPlayerStatusPanel();
+                }
+            });
+
+            // Co-op: someone completed a mission
+            SSEClient.on('player_mission_complete', function (data) {
+                if (data.state) GameEngine.updateState(data.state);
+                if (screens.hub.classList.contains('active')) {
+                    renderPlayerStatusPanel();
+                }
+            });
+
+            // Co-op: all players completed → advance to next mission
+            SSEClient.on('mission_advance', function (data) {
+                if (data.state) GameEngine.updateState(data.state);
+                if (screens.hub.classList.contains('active')) {
+                    renderHub();
+                }
+            });
+
+            // Co-op: all missions complete → go to treasure
+            SSEClient.on('all_missions_complete', function (data) {
+                if (data.state) GameEngine.updateState(data.state);
+                App.navigate('treasure.html');
             });
 
             /* ===== Hash-based Navigation ===== */
@@ -728,6 +1012,9 @@
                     await GameEngine.init();
                     showScreen('hub');
                     renderHub();
+                } else if (hash === 'select') {
+                    showScreen('playerSelect');
+                    await renderPlayerSelect();
                 } else {
                     showScreen('main');
                     await initMainScreen();

@@ -5,19 +5,23 @@ const SSEClient = {
     listeners: {},
     reconnectDelay: 3000,
     connected: false,
+    playerId: null,
 
-    connect() {
+    connect(playerId) {
         if (this.source) {
             this.disconnect();
         }
 
-        this.source = new EventSource('/api/events');
+        this.playerId = playerId || null;
+        const url = playerId ? `/api/events?playerId=${encodeURIComponent(playerId)}` : '/api/events';
+        this.source = new EventSource(url);
 
         this.source.addEventListener('connected', () => {
             this.connected = true;
-            console.log('[SSE] Connected');
+            console.log('[SSE] Connected' + (playerId ? ` as ${playerId}` : ''));
         });
 
+        // --- Existing events ---
         this.source.addEventListener('config_updated', (e) => {
             try {
                 const data = JSON.parse(e.data);
@@ -41,6 +45,42 @@ const SSEClient = {
                 const data = JSON.parse(e.data);
                 this._emit('game_settings_updated', data);
             } catch (err) { console.error('[SSE] game_settings parse error:', err); }
+        });
+
+        // --- Co-op multiplayer events ---
+        this.source.addEventListener('game_started', (e) => {
+            try {
+                const data = JSON.parse(e.data);
+                this._emit('game_started', data);
+            } catch (err) { console.error('[SSE] game_started parse error:', err); }
+        });
+
+        this.source.addEventListener('player_joined', (e) => {
+            try {
+                const data = JSON.parse(e.data);
+                this._emit('player_joined', data);
+            } catch (err) { console.error('[SSE] player_joined parse error:', err); }
+        });
+
+        this.source.addEventListener('player_mission_complete', (e) => {
+            try {
+                const data = JSON.parse(e.data);
+                this._emit('player_mission_complete', data);
+            } catch (err) { console.error('[SSE] player_mission_complete parse error:', err); }
+        });
+
+        this.source.addEventListener('mission_advance', (e) => {
+            try {
+                const data = JSON.parse(e.data);
+                this._emit('mission_advance', data);
+            } catch (err) { console.error('[SSE] mission_advance parse error:', err); }
+        });
+
+        this.source.addEventListener('all_missions_complete', (e) => {
+            try {
+                const data = JSON.parse(e.data);
+                this._emit('all_missions_complete', data);
+            } catch (err) { console.error('[SSE] all_missions_complete parse error:', err); }
         });
 
         this.source.onerror = () => {

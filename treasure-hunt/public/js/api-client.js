@@ -66,6 +66,59 @@ const ApiClient = {
     async getGameSettings(gameId) { return this.get(`/api/games/${gameId}/settings`); },
     async setGameSettings(gameId, settings) { return this.put(`/api/games/${gameId}/settings`, settings); },
 
+    // === Co-op Multiplayer APIs ===
+
+    // Start game (admin)
+    async startGame() {
+        return this.post('/api/game/start', {});
+    },
+
+    // Player join
+    async joinGame(name) {
+        return this.post('/api/players/join', { name });
+    },
+
+    // Get all players
+    async getPlayers() {
+        return this.get('/api/players');
+    },
+
+    // Player heartbeat (includes sessionId for stale-session detection)
+    async sendHeartbeat(playerId) {
+        const sessionId = Storage.getMySessionId();
+        try {
+            const res = await fetch(`/api/players/${playerId}/heartbeat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sessionId })
+            });
+            if (res.status === 409) {
+                // New game session started → signal caller to reset
+                return { sessionMismatch: true };
+            }
+            if (!res.ok) return null;
+            return res.json();
+        } catch (e) {
+            return null;
+        }
+    },
+
+    // Complete a mission for a player
+    async completeMission(missionIndex, playerId, result) {
+        return this.post(`/api/missions/${missionIndex}/complete`, {
+            playerId,
+            result
+        });
+    },
+
+    // Admin skip mission for a player
+    async adminSkipMission(missionIndex, playerId) {
+        return this.post('/api/admin/skip-mission', {
+            missionIndex,
+            playerId
+        });
+    },
+
     // File Upload
     async uploadFile(file, gameId, type) {
         const formData = new FormData();

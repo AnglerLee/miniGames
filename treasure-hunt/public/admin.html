@@ -607,21 +607,21 @@
                     <!-- Player Settings -->
                     <div>
                         <div class="section-header">▸ 플레이어 설정</div>
-                        <div class="player-mode-toggle" style="display:flex; gap:8px; margin-bottom:12px;">
-                            <button class="btn btn-secondary player-mode-btn active" id="mode1pBtn" style="flex:1;">👤 1명</button>
-                            <button class="btn btn-secondary player-mode-btn" id="mode2pBtn" style="flex:1;">👥 2명</button>
+                        <div class="player-mode-toggle" style="display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap;">
+                            <button class="btn btn-secondary player-mode-btn active" data-count="1" style="flex:1; min-width:60px;">👤 1명</button>
+                            <button class="btn btn-secondary player-mode-btn" data-count="2" style="flex:1; min-width:60px;">👥 2명</button>
+                            <button class="btn btn-secondary player-mode-btn" data-count="3" style="flex:1; min-width:60px;">👥 3명</button>
+                            <button class="btn btn-secondary player-mode-btn" data-count="4" style="flex:1; min-width:60px;">👥 4명</button>
                         </div>
-                        <div id="playerNamesArea" style="display:none;">
-                            <div style="display:flex; gap:8px; margin-bottom:8px; align-items:center;">
-                                <span style="font-size:1.2rem; min-width:28px;">🅰️</span>
-                                <input class="input-field" id="playerAName" placeholder="플레이어 A 이름" value="플레이어1">
-                            </div>
-                            <div style="display:flex; gap:8px; align-items:center;">
-                                <span style="font-size:1.2rem; min-width:28px;">🅱️</span>
-                                <input class="input-field" id="playerBName" placeholder="플레이어 B 이름" value="플레이어2">
-                            </div>
-                            <div style="font-size:0.75rem; color:var(--theme-text-sub); margin-top:6px;">두 명이 번갈아가며 미션을 수행합니다</div>
-                        </div>
+                        <div id="playerNamesArea" style="display:none;"></div>
+                        <div style="font-size:0.75rem; color:var(--theme-text-sub); margin-top:6px;" id="playerModeDesc">1인 모드</div>
+                    </div>
+
+                    <!-- Game Start Button (Co-op) -->
+                    <div id="gameStartSection" style="display:none;">
+                        <div class="section-header">▸ 게임 시작</div>
+                        <div id="gameStatusInfo" style="padding:8px 12px; border-radius:8px; background:var(--theme-bg-card); margin-bottom:8px; font-size:0.85rem;"></div>
+                        <button class="btn btn-primary btn-block" id="startGameBtn">🚀 게임 시작</button>
                     </div>
 
                     <!-- Time Limit -->
@@ -942,23 +942,137 @@
                 }
             }
 
-            /* ===== Player Mode Toggle ===== */
+            /* ===== Player Mode Toggle (1~4) ===== */
             var selectedPlayerCount = 1;
+            var playerEmojis = ['🅰️', '🅱️', '©️', '🅿️'];
+            var playerDefaults = ['플레이어1', '플레이어2', '플레이어3', '플레이어4'];
 
-            App.addUnifiedEvent(document.getElementById('mode1pBtn'), function () {
-                selectedPlayerCount = 1;
-                document.getElementById('mode1pBtn').classList.add('active');
-                document.getElementById('mode2pBtn').classList.remove('active');
-                document.getElementById('playerNamesArea').style.display = 'none';
-                Effects.vibrateClick();
+            document.querySelectorAll('.player-mode-btn').forEach(function (btn) {
+                App.addUnifiedEvent(btn, function () {
+                    var count = parseInt(btn.dataset.count);
+                    selectedPlayerCount = count;
+
+                    document.querySelectorAll('.player-mode-btn').forEach(function (b) {
+                        b.classList.remove('active');
+                    });
+                    btn.classList.add('active');
+
+                    renderPlayerNameInputs(count);
+                    updateGameStartSection();
+                    Effects.vibrateClick();
+                });
             });
 
-            App.addUnifiedEvent(document.getElementById('mode2pBtn'), function () {
-                selectedPlayerCount = 2;
-                document.getElementById('mode2pBtn').classList.add('active');
-                document.getElementById('mode1pBtn').classList.remove('active');
-                document.getElementById('playerNamesArea').style.display = '';
-                Effects.vibrateClick();
+            function renderPlayerNameInputs(count) {
+                var area = document.getElementById('playerNamesArea');
+                var desc = document.getElementById('playerModeDesc');
+
+                if (count <= 1) {
+                    area.style.display = 'none';
+                    desc.textContent = '1인 모드';
+                    return;
+                }
+
+                area.style.display = '';
+                area.innerHTML = '';
+                desc.textContent = count + '명이 각자 모바일로 동시에 미션을 수행합니다';
+
+                for (var i = 0; i < count; i++) {
+                    var row = document.createElement('div');
+                    row.style.cssText = 'display:flex; gap:8px; margin-bottom:8px; align-items:center;';
+                    row.innerHTML =
+                        '<span style="font-size:1.2rem; min-width:28px;">' + playerEmojis[i] + '</span>' +
+                        '<input class="input-field player-name-input" data-idx="' + i + '" placeholder="플레이어 ' + (i + 1) + ' 이름" value="' + playerDefaults[i] + '">';
+                    area.appendChild(row);
+                }
+            }
+
+            function getPlayerNames() {
+                var inputs = document.querySelectorAll('.player-name-input');
+                var names = [];
+                inputs.forEach(function (inp) {
+                    names.push(inp.value.trim() || playerDefaults[parseInt(inp.dataset.idx)]);
+                });
+                return names;
+            }
+
+            /* ===== Game Start Section ===== */
+            function updateGameStartSection() {
+                var section = document.getElementById('gameStartSection');
+                if (selectedPlayerCount >= 2) {
+                    section.style.display = '';
+                } else {
+                    section.style.display = 'none';
+                }
+            }
+
+            App.addUnifiedEvent(document.getElementById('startGameBtn'), async function () {
+                // Save config first, then start game
+                var saved = await saveConfigToServer();
+                if (!saved) return;
+
+                var result = await ApiClient.startGame();
+                if (result && result.state) {
+                    GameEngine.updateState(result.state);
+                    Effects.playSound('success');
+                    Effects.showToast('게임이 시작되었습니다! 플레이어들에게 접속하라고 알려주세요.');
+                    updateGameStatusInfo();
+                } else {
+                    Effects.showToast('게임 시작에 실패했습니다');
+                }
+            });
+
+            function updateGameStatusInfo() {
+                var info = document.getElementById('gameStatusInfo');
+                var state = GameEngine.state;
+                if (!state || !state.players) {
+                    info.textContent = '게임이 시작되지 않았습니다. 설정을 저장한 후 게임을 시작하세요.';
+                    return;
+                }
+
+                var lines = [];
+                if (state.status === 'waiting_for_players') {
+                    lines.push('⏳ 플레이어 접속 대기 중...');
+                } else if (state.status === 'playing') {
+                    lines.push('🎮 게임 진행 중 (미션 ' + (state.currentMissionIndex + 1) + ')');
+                }
+
+                Object.keys(state.players).forEach(function (pid) {
+                    var p = state.players[pid];
+                    var status = p.connected ? '🟢 접속' : '⚪ 대기';
+                    lines.push(status + ' ' + p.name);
+                });
+
+                info.innerHTML = lines.join('<br>');
+            }
+
+            // SSE listeners for admin
+            SSEClient.on('player_joined', function (data) {
+                GameEngine.state = data.state || GameEngine.state;
+                updateGameStatusInfo();
+                Effects.showToast(data.name + '님이 접속했습니다!');
+            });
+
+            SSEClient.on('game_started', function (data) {
+                if (data.state) GameEngine.updateState(data.state);
+                updateGameStatusInfo();
+            });
+
+            // state_updated fires when a player's heartbeat first connects them
+            // → keeps the admin dashboard in sync without polling
+            SSEClient.on('state_updated', function (data) {
+                if (data) GameEngine.updateState(data);
+                updateGameStatusInfo();
+            });
+
+            SSEClient.on('player_mission_complete', function (data) {
+                if (data.state) GameEngine.updateState(data.state);
+                updateGameStatusInfo();
+            });
+
+            SSEClient.on('mission_advance', function (data) {
+                if (data.state) GameEngine.updateState(data.state);
+                updateGameStatusInfo();
             });
 
             async function loadExistingConfig() {
@@ -986,22 +1100,23 @@
                         document.getElementById('showCluesLabel').textContent = '허브 화면에서 단서를 숨깁니다';
                     }
 
-                    // Restore player settings
-                    if (config.playerCount === 2) {
-                        selectedPlayerCount = 2;
-                        document.getElementById('mode2pBtn').classList.add('active');
-                        document.getElementById('mode1pBtn').classList.remove('active');
-                        document.getElementById('playerNamesArea').style.display = '';
-                        if (config.players && config.players.length >= 2) {
-                            document.getElementById('playerAName').value = config.players[0].name || '플레이어1';
-                            document.getElementById('playerBName').value = config.players[1].name || '플레이어2';
+                    // Restore player settings (1~4)
+                    selectedPlayerCount = config.playerCount || 1;
+                    document.querySelectorAll('.player-mode-btn').forEach(function (b) {
+                        b.classList.remove('active');
+                        if (parseInt(b.dataset.count) === selectedPlayerCount) {
+                            b.classList.add('active');
                         }
-                    } else {
-                        selectedPlayerCount = 1;
-                        document.getElementById('mode1pBtn').classList.add('active');
-                        document.getElementById('mode2pBtn').classList.remove('active');
-                        document.getElementById('playerNamesArea').style.display = 'none';
+                    });
+                    renderPlayerNameInputs(selectedPlayerCount);
+                    if (config.players && config.players.length > 0) {
+                        config.players.forEach(function (p, i) {
+                            playerDefaults[i] = p.name || playerDefaults[i];
+                        });
+                        renderPlayerNameInputs(selectedPlayerCount);
                     }
+                    updateGameStartSection();
+                    updateGameStatusInfo();
 
                     renderThemeCards();
                 }
@@ -1341,10 +1456,10 @@
             });
 
             /* ===== Save Config ===== */
-            App.addUnifiedEvent(document.getElementById('saveBtn'), async function () {
+            async function saveConfigToServer() {
                 if (missions.length === 0) {
                     Effects.showToast('미션을 최소 1개 추가하세요');
-                    return;
+                    return false;
                 }
 
                 var treasurePassword = document.getElementById('treasurePasswordInput').value.trim();
@@ -1352,7 +1467,7 @@
 
                 if (!treasurePassword) {
                     Effects.showToast('보물 상자 암호를 입력하세요');
-                    return;
+                    return false;
                 }
 
                 var timeLimit = 0;
@@ -1363,11 +1478,11 @@
                 var scenarioData = (selectedScenarioId && getScenarioById(selectedScenarioId)) || getPresetData(selectedTheme);
 
                 var players = [];
-                if (selectedPlayerCount === 2) {
-                    players = [
-                        { name: document.getElementById('playerAName').value.trim() || '플레이어1' },
-                        { name: document.getElementById('playerBName').value.trim() || '플레이어2' }
-                    ];
+                if (selectedPlayerCount >= 2) {
+                    var names = getPlayerNames();
+                    for (var i = 0; i < selectedPlayerCount; i++) {
+                        players.push({ name: names[i] || playerDefaults[i] });
+                    }
                 }
 
                 var config = {
@@ -1379,6 +1494,7 @@
                     treasurePassword: treasurePassword,
                     showClues: document.getElementById('showCluesToggle').checked,
                     playerCount: selectedPlayerCount,
+                    gameMode: selectedPlayerCount >= 2 ? 'coop' : 'solo',
                     players: players,
                     missions: missions,
                     introText: scenarioData ? scenarioData.introText : '',
@@ -1390,9 +1506,17 @@
                 };
 
                 await Storage.setConfig(config);
-                Effects.playSound('success');
-                Effects.vibrateSuccess();
-                Effects.showToast('저장 완료!');
+                GameEngine.updateConfig(config);
+                return true;
+            }
+
+            App.addUnifiedEvent(document.getElementById('saveBtn'), async function () {
+                var saved = await saveConfigToServer();
+                if (saved) {
+                    Effects.playSound('success');
+                    Effects.vibrateSuccess();
+                    Effects.showToast('저장 완료!');
+                }
             });
 
 

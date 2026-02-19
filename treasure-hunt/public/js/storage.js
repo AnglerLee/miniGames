@@ -54,5 +54,49 @@ const Storage = {
 
     getCachedState() {
         return this._cache.state || null;
+    },
+
+    // === Local Player Session (localStorage - device-specific) ===
+
+    getMyPlayerId() {
+        return localStorage.getItem('treasureHunt_myPlayerId') || null;
+    },
+
+    setMyPlayerId(playerId) {
+        if (playerId) {
+            localStorage.setItem('treasureHunt_myPlayerId', playerId);
+        } else {
+            localStorage.removeItem('treasureHunt_myPlayerId');
+        }
+    },
+
+    getMyPlayerName() {
+        return localStorage.getItem('treasureHunt_myPlayerName') || null;
+    },
+
+    setMyPlayerName(name) {
+        if (name) {
+            localStorage.setItem('treasureHunt_myPlayerName', name);
+        } else {
+            localStorage.removeItem('treasureHunt_myPlayerName');
+        }
+    },
+
+    getMySessionId() {
+        return localStorage.getItem('treasureHunt_mySessionId') || null;
+    },
+
+    setMySessionId(sessionId) {
+        if (sessionId) {
+            localStorage.setItem('treasureHunt_mySessionId', sessionId);
+        } else {
+            localStorage.removeItem('treasureHunt_mySessionId');
+        }
+    },
+
+    clearMyPlayer() {
+        localStorage.removeItem('treasureHunt_myPlayerId');
+        localStorage.removeItem('treasureHunt_myPlayerName');
+        localStorage.removeItem('treasureHunt_mySessionId');
     }
 };

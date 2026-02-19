@@ -308,16 +308,13 @@
         </div>
     </div>
 
-    <!-- Player Handoff Overlay (2P mode) -->
-    <div class="complete-overlay" id="handoffOverlay">
-        <div class="complete-card scale-in" style="max-width:360px;">
-            <div class="c-icon" style="font-size:72px;">🔄</div>
-            <div class="c-title" style="font-size:1.2rem; color:var(--theme-text-sub); margin-bottom:4px;" id="handoffSubtitle">핸드폰을 넘겨주세요!</div>
-            <div style="font-size:1.8rem; font-weight:700; color:var(--theme-accent); margin:12px 0;" id="handoffPlayerName"></div>
-            <div class="c-message" id="handoffMessage">다음 미션을 수행할 차례입니다</div>
-            <div class="modal-buttons">
-                <button class="btn btn-primary btn-large" id="handoffReadyBtn">🚀 준비 완료!</button>
-            </div>
+    <!-- Waiting Overlay (Co-op: waiting for other players) -->
+    <div class="complete-overlay" id="waitingOverlay">
+        <div class="complete-card scale-in" style="max-width:380px;">
+            <div class="c-icon" style="font-size:60px;">⏳</div>
+            <div class="c-title" style="font-size:1.1rem;">다른 플레이어를 기다리는 중...</div>
+            <div id="waitingPlayerList" style="text-align:left; margin:16px 0; font-size:0.95rem; line-height:2;"></div>
+            <div class="c-message" style="font-size:0.85rem;">모든 플레이어가 완료하면<br>자동으로 다음 미션으로 이동합니다</div>
         </div>
     </div>
 
@@ -330,20 +327,25 @@
     <script src="js/game-engine.js"></script>
     <script src="js/app.js"></script>
     <script>
-        /* ===== play.html - Mission Play Logic (Server Version) ===== */
+        /* ===== play.html - Mission Play Logic (Co-op Server Version) ===== */
         (async function () {
             const type = App.getQueryParam('type');  // 'mini' or 'find'
             const missionIdx = parseInt(App.getQueryParam('idx')) || 0;
+            const pidParam = App.getQueryParam('pid');
 
             let attempts = 0;
             let revealedHints = 1;
             let timer = null;
             let missionStartTime = Date.now();
             let missionCompleted = false;
+            let myPlayerId = null;
 
             // Init
             await App.init();
             await GameEngine.init();
+
+            // Resolve playerId
+            myPlayerId = pidParam || Storage.getMyPlayerId();
 
             const config = Storage.getCachedConfig();
             if (config && config.theme) {
@@ -416,11 +418,22 @@
                     window.removeEventListener('message', handleGameMessage);
 
                     var elapsed = Math.floor((Date.now() - missionStartTime) / 1000);
-                    await GameEngine.completeMission({
-                        attempts: attempts + 1,
-                        time: elapsed
-                    });
-                    await showMissionComplete(mission);
+
+                    // Co-op mode: report to server with playerId
+                    if (myPlayerId && GameEngine.getPlayerCount() >= 2) {
+                        var response = await GameEngine.completeMission(myPlayerId, {
+                            attempts: attempts + 1,
+                            time: elapsed
+                        });
+                        await showMissionComplete(mission, response);
+                    } else {
+                        // Solo mode: legacy behavior
+                        await GameEngine.completeMission(myPlayerId, {
+                            attempts: attempts + 1,
+                            time: elapsed
+                        });
+                        await showMissionComplete(mission, null);
+                    }
                 }
             }
 
@@ -527,19 +540,20 @@
 
                 if (answers.indexOf(normalized) !== -1) {
                     // Correct!
+                    missionCompleted = true;
                     Effects.playSound('success');
                     Effects.vibrateSuccess();
                     feedback.textContent = '정답입니다!';
                     feedback.className = 'answer-feedback success';
 
                     const elapsed = Math.floor((Date.now() - missionStartTime) / 1000);
-                    await GameEngine.completeMission({
+                    var response = await GameEngine.completeMission(myPlayerId, {
                         attempts: attempts,
                         time: elapsed
                     });
 
                     setTimeout(async function () {
-                        await showMissionComplete(mission);
+                        await showMissionComplete(mission, response);
                     }, 800);
                 } else {
                     // Wrong
@@ -570,7 +584,7 @@
             }
 
             /* ===== Mission Complete ===== */
-            async function showMissionComplete(m) {
+            async function showMissionComplete(m, serverResponse) {
                 Effects.createConfetti(3000);
                 Effects.playSound('success');
                 Effects.vibrateSuccess();
@@ -582,14 +596,10 @@
                 const overlay = document.getElementById('completeOverlay');
                 document.getElementById('completeIcon').textContent = '🎉';
 
-                // Show player name in title for 2P mode
-                if (GameEngine.getPlayerCount() === 2) {
-                    if (GameEngine.isCoopMission(m)) {
-                        document.getElementById('completeTitle').textContent = '함께 미션 완료!';
-                    } else {
-                        var completedPlayerName = GameEngine.getNextPlayerName();
-                        document.getElementById('completeTitle').textContent = completedPlayerName + ' 미션 완료!';
-                    }
+                // Show player name in co-op mode
+                if (GameEngine.getPlayerCount() >= 2 && myPlayerId) {
+                    var myName = GameEngine.getPlayerNameById(myPlayerId) || Storage.getMyPlayerName() || '';
+                    document.getElementById('completeTitle').textContent = myName + ' 미션 완료!';
                 } else {
                     document.getElementById('completeTitle').textContent = '미션 완료!';
                 }
@@ -601,55 +611,91 @@
                     document.getElementById('completeClueValue').textContent = m.clue.content;
                 }
 
-                // Check if all missions done - re-init to get latest state
-                await GameEngine.init();
-                if (GameEngine.isAllCompleted()) {
-                    document.getElementById('nextMissionBtn').style.display = 'none';
-                    document.getElementById('goTreasureFromPlay').style.display = '';
+                // Co-op mode: check if we need to wait or auto-advance
+                var isCoopMode = GameEngine.getPlayerCount() >= 2;
+
+                if (isCoopMode) {
+                    // In co-op, check server response for advancement info
+                    if (serverResponse && serverResponse.allComplete) {
+                        // All players done for this mission
+                        if (serverResponse.gameComplete) {
+                            // All missions done!
+                            document.getElementById('nextMissionBtn').style.display = 'none';
+                            document.getElementById('goTreasureFromPlay').style.display = '';
+                        } else {
+                            // Next mission available
+                            document.getElementById('nextMissionBtn').style.display = '';
+                            document.getElementById('goTreasureFromPlay').style.display = 'none';
+                        }
+                    } else {
+                        // Not all done yet → show waiting overlay after a brief delay
+                        document.getElementById('nextMissionBtn').style.display = 'none';
+                        document.getElementById('goTreasureFromPlay').style.display = 'none';
+
+                        // Show complete overlay briefly, then switch to waiting
+                        overlay.classList.add('active');
+                        setTimeout(function () {
+                            overlay.classList.remove('active');
+                            showWaitingOverlay();
+                        }, 2000);
+                        return;
+                    }
                 } else {
-                    document.getElementById('nextMissionBtn').style.display = '';
-                    document.getElementById('goTreasureFromPlay').style.display = 'none';
+                    // Solo mode: check normally
+                    await GameEngine.init();
+                    if (GameEngine.isAllCompleted()) {
+                        document.getElementById('nextMissionBtn').style.display = 'none';
+                        document.getElementById('goTreasureFromPlay').style.display = '';
+                    } else {
+                        document.getElementById('nextMissionBtn').style.display = '';
+                        document.getElementById('goTreasureFromPlay').style.display = 'none';
+                    }
                 }
 
                 overlay.classList.add('active');
             }
 
+            /* ===== Waiting Overlay (Co-op) ===== */
+            function showWaitingOverlay() {
+                var waitingOverlay = document.getElementById('waitingOverlay');
+                updateWaitingList();
+                waitingOverlay.classList.add('active');
+            }
+
+            function updateWaitingList() {
+                var listEl = document.getElementById('waitingPlayerList');
+                if (!listEl) return;
+                listEl.innerHTML = '';
+
+                var statuses = GameEngine.getMissionPlayerStatuses(missionIdx);
+                Object.keys(statuses).forEach(function (pid) {
+                    var s = statuses[pid];
+                    var isMe = (pid === myPlayerId);
+                    var icon = '🎮';
+                    var text = '플레이 중...';
+
+                    if (s.status === 'cleared') {
+                        icon = '✅';
+                        text = '완료!';
+                    } else if (!s.connected) {
+                        icon = '⚪';
+                        text = '미접속';
+                    }
+
+                    var item = document.createElement('div');
+                    item.style.cssText = 'display:flex; align-items:center; gap:8px;';
+                    item.innerHTML =
+                        '<span>' + icon + '</span>' +
+                        '<span style="font-weight:600;' + (isMe ? 'color:var(--theme-accent);' : '') + '">' +
+                        App.escapeHtml(s.name) + (isMe ? ' (나)' : '') + '</span>' +
+                        '<span style="margin-left:auto; font-size:0.8rem; color:var(--theme-text-sub);">' + text + '</span>';
+                    listEl.appendChild(item);
+                });
+            }
+
             // Next Mission
             App.addUnifiedEvent(document.getElementById('nextMissionBtn'), function () {
                 Effects.playSound('click');
-
-                if (GameEngine.getPlayerCount() === 2 && !GameEngine.isAllCompleted() && mission.type === 'minigame') {
-                    showHandoff();
-                } else {
-                    App.navigate('index.html#hub');
-                }
-            });
-
-            // Handoff overlay
-            function showHandoff() {
-                document.getElementById('completeOverlay').classList.remove('active');
-
-                var nextMission = GameEngine.getCurrentMission();
-                if (nextMission && GameEngine.isCoopMission(nextMission)) {
-                    var players = GameEngine.getPlayers();
-                    var nameA = players[0] ? players[0].name : '플레이어1';
-                    var nameB = players[1] ? players[1].name : '플레이어2';
-                    document.getElementById('handoffSubtitle').textContent = '다음은 함께 하는 미션!';
-                    document.getElementById('handoffPlayerName').textContent = nameA + ' & ' + nameB;
-                    document.getElementById('handoffMessage').textContent = '둘이 함께 도전하세요!';
-                } else {
-                    var nextName = GameEngine.getCurrentPlayerName();
-                    document.getElementById('handoffSubtitle').textContent = '핸드폰을 넘겨주세요!';
-                    document.getElementById('handoffPlayerName').textContent = nextName + '의 차례!';
-                    document.getElementById('handoffMessage').textContent = '다음 미션을 수행할 준비가 되었나요?';
-                }
-
-                document.getElementById('handoffOverlay').classList.add('active');
-            }
-
-            App.addUnifiedEvent(document.getElementById('handoffReadyBtn'), function () {
-                Effects.playSound('click');
-                Effects.vibrateClick();
                 App.navigate('index.html#hub');
             });
 
@@ -657,6 +703,60 @@
             App.addUnifiedEvent(document.getElementById('goTreasureFromPlay'), function () {
                 Effects.playSound('click');
                 App.navigate('treasure.html');
+            });
+
+            /* ===== SSE: Co-op Events on play.html ===== */
+
+            // Another player completed the same mission
+            SSEClient.on('player_mission_complete', function (data) {
+                if (data.state) GameEngine.updateState(data.state);
+                // Update waiting list if visible
+                if (document.getElementById('waitingOverlay').classList.contains('active')) {
+                    updateWaitingList();
+                }
+            });
+
+            // All players completed → advance to next mission
+            SSEClient.on('mission_advance', function (data) {
+                if (data.state) GameEngine.updateState(data.state);
+
+                // Hide waiting overlay and go to hub
+                document.getElementById('waitingOverlay').classList.remove('active');
+                Effects.playSound('success');
+                Effects.showToast('모든 플레이어 완료! 다음 미션으로 이동합니다.');
+
+                setTimeout(function () {
+                    App.navigate('index.html#hub');
+                }, 1500);
+            });
+
+            // All missions complete → go to treasure
+            SSEClient.on('all_missions_complete', function (data) {
+                if (data.state) GameEngine.updateState(data.state);
+
+                document.getElementById('waitingOverlay').classList.remove('active');
+                Effects.playSound('success');
+                Effects.showToast('모든 미션 완료! 보물 상자로 이동합니다!');
+
+                setTimeout(function () {
+                    App.navigate('treasure.html');
+                }, 1500);
+            });
+
+            // Game reset by admin
+            SSEClient.on('game_reset', function () {
+                App.navigate('index.html');
+            });
+
+            // New game started by admin while player is on play page
+            // → stop heartbeat, clear stale session, redirect to player select
+            SSEClient.on('game_started', function () {
+                App.stopHeartbeat();
+                Storage.clearMyPlayer();
+                Effects.showToast('새 게임이 시작되었습니다. 플레이어를 다시 선택해주세요.');
+                setTimeout(function () {
+                    App.navigate('index.html');
+                }, 1500);
             });
 
         })();
