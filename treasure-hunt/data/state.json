@@ -1,1 +1,243 @@
-null
+{
+  "sessionId": "mlupz795uvvagoc6",
+  "status": "completed",
+  "currentMissionIndex": 17,
+  "startedAt": "2026-02-20T10:00:57.209Z",
+  "players": {
+    "player0": {
+      "name": "서아",
+      "joinedAt": "2026-02-20T10:00:59.825Z",
+      "connected": true,
+      "lastSeen": "2026-02-20T12:20:04.642Z",
+      "missionResults": {
+        "0": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 80
+        },
+        "1": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 8
+        },
+        "2": {
+          "status": "cleared",
+          "grade": "C",
+          "attempts": 4,
+          "time": 69
+        },
+        "3": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 15
+        },
+        "4": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 21
+        },
+        "5": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 117
+        },
+        "6": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 40
+        },
+        "7": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 9
+        },
+        "8": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 80
+        },
+        "9": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 19
+        },
+        "10": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 40
+        },
+        "11": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 67
+        },
+        "12": {
+          "status": "cleared",
+          "grade": "B",
+          "attempts": 3,
+          "time": 97
+        },
+        "13": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 72
+        },
+        "14": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 18
+        },
+        "15": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 24
+        },
+        "16": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 25
+        }
+      }
+    },
+    "player1": {
+      "name": "하은",
+      "joinedAt": "2026-02-20T10:11:55.823Z",
+      "connected": true,
+      "lastSeen": "2026-02-20T10:44:03.957Z",
+      "missionResults": {
+        "0": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 82
+        },
+        "1": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 6
+        },
+        "2": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 55
+        },
+        "3": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 25
+        },
+        "4": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 124
+        },
+        "5": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 273
+        },
+        "6": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 85
+        },
+        "7": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 68
+        },
+        "8": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 81
+        },
+        "9": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 19
+        },
+        "10": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 52
+        },
+        "11": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 135
+        },
+        "12": {
+          "status": "cleared",
+          "grade": "A",
+          "attempts": 2,
+          "time": 149
+        },
+        "13": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 120
+        },
+        "14": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 64
+        },
+        "15": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 21
+        },
+        "16": {
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 55
+        }
+      }
+    }
+  },
+  "collectedClues": [
+    "보석",
+    "감정",
+    "사",
+    "의",
+    "눈",
+    "물",
+    "방울"
+  ],
+  "hintsUsed": {
+    "m2": 4,
+    "m6": 2,
+    "m12": 2
+  },
+  "completedAt": "2026-02-20T10:43:25.986Z"
+}

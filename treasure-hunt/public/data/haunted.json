@@ -1,0 +1,484 @@
+{
+  "scenarios": [
+    {
+      "id": "haunted-01",
+      "name": "유령 저택 탈출",
+      "description": "으스스한 유령 저택에 갇혔다! 17개의 수수께끼를 풀고 날이 밝기 전에 탈출하라!",
+      "introText": "큰일이다! 호기심에 들어간 유령 저택의 문이 닫혀버렸다!\n\n저택을 떠도는 유령들이 남긴 수수께끼를 풀어야만 탈출할 수 있다.\n\n저택 곳곳에 숨겨진 17개의 열쇠 조각을 모아\n현관문의 봉인을 풀어야 한다.\n\n용기를 내라! 날이 밝기 전에 탈출해야 한다!",
+      "treasurePassword": "유령탈출성공",
+      "missions": [
+        {
+          "type": "minigame",
+          "gameId": "game03",
+          "clue": { "type": "text", "content": "유령" },
+          "storyText": "벽에 걸린 초상화들이 뒤집혀 있다! 짝을 맞춰 유령의 메시지를 읽어라!",
+          "hintMessage": "초상화 뒷면에 유령의 단서가 있다",
+          "secretCode": "🕯️",
+          "successMessage": "초상화 해독 성공! 첫 번째 단서 '유령'을 획득했다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game19",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "유령의 목소리가 거꾸로 들린다! 역재생 메시지를 해독해 다음 방의 단서를 찾아라!",
+          "hintMessage": "거꾸로 된 소리를 잘 들어봐라",
+          "secretCode": "👁️",
+          "successMessage": "유령 메시지 해독! 서재로 가야 한다는 것을 알았다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game02",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "어두운 저택 복도는 미로처럼 복잡하다! 서재를 찾아 출구를 향해 나아가라!",
+          "hintMessage": "막다른 길이 나오면 돌아가야 한다",
+          "secretCode": "🌑",
+          "successMessage": "서재 발견! 오래된 서적들 속에 단서가 숨겨져 있다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game20",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "서재 벽에 이상한 이모지 기호들이 나타났다! 100년 전 유령의 암호를 풀어라!",
+          "hintMessage": "이모지 조합을 논리적으로 추론해라",
+          "secretCode": "💀",
+          "successMessage": "이모지 암호 해독! 지하실에 비밀이 있다는 것을 알았다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game11",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "지하실로 가는 계단에 함정이 있다! 유령이 표시한 순서대로 안전한 계단만 밟아라!",
+          "hintMessage": "깜빡이는 계단을 순서대로 기억해라",
+          "secretCode": "🦴",
+          "successMessage": "지하실 계단 통과! 아래에서 빛이 새어 나오고 있다!"
+        },
+        {
+          "type": "findObject",
+          "hints": ["거실 어딘가에 유령이 남긴 물건이 있다", "쿠션 사이를 확인해봐", "테이블 아래를 살펴봐"],
+          "answers": ["열쇠", "키", "작은열쇠"],
+          "clue": { "type": "text", "content": "" },
+          "storyText": "유령 하인이 거실 어딘가에 열쇠를 숨겨두었다고 한다! 찾아야 지하실 문을 열 수 있다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game07",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "지하실 금고에 수식 암호가 걸려있다! 유령이 남긴 수식을 계산해 금고를 열어라!",
+          "hintMessage": "빠르게 계산하면 금고가 열린다",
+          "secretCode": "🔢",
+          "successMessage": "금고 개방! 두 번째 열쇠 조각을 찾았다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game22",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "저택의 경보 시스템이 작동하고 있다! 보안망을 해킹해 경보를 끄고 탈출로를 확보하라!",
+          "hintMessage": "보안 시스템을 해킹해야 경보가 꺼진다",
+          "secretCode": "🚨",
+          "successMessage": "경보 해킹 성공! 탈출로가 조용해졌다!"
+        },
+        {
+          "type": "findObject",
+          "hints": ["침실 어딘가에 탈출 단서가 숨겨져 있다", "베개 밑을 확인해봐", "침대 아래를 살펴봐"],
+          "answers": ["열쇠", "쪽지", "종이"],
+          "clue": { "type": "text", "content": "탈출" },
+          "storyText": "저택 원래 주인의 유령이 침실에 탈출 단서를 남겼다! 단서를 찾아 '탈출'의 비밀을 밝혀라!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game15",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "화가 난 유령이 앞을 가로막고 있다! 큰 소리를 내서 유령을 놀래켜 쫓아버려라!",
+          "hintMessage": "크게 소리를 내면 유령이 도망간다",
+          "secretCode": "😱",
+          "successMessage": "유령 격퇴! 무서운 유령이 사라졌다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game08",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "탈출 주문서가 발견됐다! 뒤섞인 글자들 속에서 주문 단어들을 찾아내라!",
+          "hintMessage": "격자에서 주문 단어를 모두 찾아라",
+          "secretCode": "📜",
+          "successMessage": "탈출 주문 완성! 현관문의 봉인이 약해지고 있다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game25",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "먼지로 뒤덮인 현관문 봉인! 먼지를 긁어내고 그 아래 숨겨진 탈출구 지도를 찾아라!",
+          "hintMessage": "긁어내면 아래에 무언가 있다",
+          "secretCode": "🚪",
+          "successMessage": "지도 발견! 비밀 탈출구의 위치를 알았다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game16",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "지도에 따르면 나침반으로 방향을 따라가야 비밀 탈출구를 찾을 수 있다!",
+          "hintMessage": "나침반을 기울여 방향을 맞춰라",
+          "secretCode": "🧭",
+          "successMessage": "탈출구 방향 확인! 거의 다 왔다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game23",
+          "clue": { "type": "text", "content": "성공" },
+          "storyText": "비밀 탈출구가 금고 안에 있다! 금고를 열면 탈출에 성공하는 것이다!",
+          "hintMessage": "금고 암호를 풀어 탈출구를 열어라",
+          "secretCode": "🔓",
+          "successMessage": "'성공'! 탈출구가 열렸다! 이제 나갈 수 있다!"
+        },
+        {
+          "type": "findObject",
+          "hints": ["부엌 어딘가에 탈출에 필요한 도구가 있다", "냉장고 위를 확인해봐", "찬장 속을 살펴봐"],
+          "answers": ["손전등", "랜턴", "후레쉬"],
+          "clue": { "type": "text", "content": "" },
+          "storyText": "탈출구는 어두운 지하 통로로 연결되어 있다! 어둠을 밝힐 손전등을 찾아라!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game13",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "마지막 관문! 탈출구까지 뛰어가려면 에너지가 필요하다. 마지막 힘을 충전하라!",
+          "hintMessage": "에너지를 최대로 충전해야 탈출할 수 있다",
+          "secretCode": "💪",
+          "successMessage": "에너지 완충! 달릴 준비가 됐다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game21",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "탈출구의 마지막 문! 혼자서는 열 수 없다. 동료와 함께 동시에 문을 밀어야 한다!",
+          "hintMessage": "두 손으로 동시에 화면을 눌러라",
+          "secretCode": "🌟",
+          "successMessage": "탈출 완료! 저택 밖으로 무사히 빠져나왔다! 동이 트고 있다!"
+        }
+      ],
+      "finalReward": {
+        "message": "축하한다! 17개의 수수께끼를 모두 풀고 유령 저택에서 탈출했다!\n용감한 모험가여, 날이 밝기 전에 탈출하는 데 성공했다!\n유령들도 그대의 용기에 박수를 보내고 있다!",
+        "secretCode": "666"
+      }
+    },
+    {
+      "id": "haunted-02",
+      "name": "저주받은 인형",
+      "description": "밤마다 움직이는 저주받은 인형! 17개의 봉인을 해제하고 저주를 풀어라!",
+      "introText": "으스스한 일이 벌어지고 있다!\n\n다락방에서 발견된 100년 된 인형이 밤마다 움직이고 있다.\n인형에는 오래된 저주가 걸려있어 주변 물건을 마음대로 조종한다.\n\n인형의 저주를 풀려면 저택 곳곳에 숨겨진 17개의 봉인석을 모아야 한다.\n\n두려워하지 마라! 저주를 풀면 인형의 영혼도 해방된다!",
+      "treasurePassword": "인형의저주",
+      "missions": [
+        {
+          "type": "minigame",
+          "gameId": "game11",
+          "clue": { "type": "text", "content": "인형" },
+          "storyText": "인형이 바닥에 순서대로 발자국을 남겼다! 발자국 순서를 정확히 따라가야 봉인석이 나타난다!",
+          "hintMessage": "발자국 순서를 기억하고 정확히 밟아라",
+          "secretCode": "🎎",
+          "successMessage": "발자국 추적 성공! 첫 번째 봉인석과 단서 '인형'을 발견했다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game03",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "인형의 기억 조각이 카드 형태로 흩어져 있다! 짝을 맞춰 인형의 저주 원인을 파악하라!",
+          "hintMessage": "카드를 뒤집어 짝을 찾아라",
+          "secretCode": "🃏",
+          "successMessage": "기억 복원! 100년 전 인형 주인의 비밀을 알게 됐다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game19",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "인형이 거꾸로 된 목소리로 말하고 있다! 역재생 메시지에서 봉인 해제 주문을 찾아라!",
+          "hintMessage": "거꾸로 된 소리를 잘 들어봐라",
+          "secretCode": "👻",
+          "successMessage": "인형 목소리 해독! 두 번째 봉인석의 위치를 알았다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game18",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "저주의 색을 가진 보석이 인형 안에 있다! 카메라로 특정 색깔의 저주 보석을 찾아내라!",
+          "hintMessage": "특정 색깔의 물체를 카메라로 찾아라",
+          "secretCode": "💜",
+          "successMessage": "저주 보석 식별! 세 번째 봉인석을 획득했다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game15",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "인형의 울음소리가 점점 커진다! 더 큰 소리로 봉인 주문을 외쳐 인형을 잠재워라!",
+          "hintMessage": "크게 소리를 내야 인형이 반응한다",
+          "secretCode": "😱",
+          "successMessage": "인형이 잠시 멈췄다! 네 번째 봉인석을 획득했다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game07",
+          "clue": { "type": "text", "content": "의" },
+          "storyText": "봉인 암호 자물쇠! 인형 주인이 남긴 수식을 계산해야 자물쇠가 풀린다.",
+          "hintMessage": "수식을 빠르게 계산해라",
+          "secretCode": "🔐",
+          "successMessage": "봉인 자물쇠 해제! '의'라는 봉인 문자를 발견했다!"
+        },
+        {
+          "type": "findObject",
+          "hints": ["다락방이나 침실 어딘가에 저주의 근원이 있다", "인형이나 장난감 근처를 살펴봐", "옷장 안을 확인해봐"],
+          "answers": ["인형", "곰인형", "봉제인형"],
+          "clue": { "type": "text", "content": "" },
+          "storyText": "저주의 근원이 되는 두 번째 인형이 어딘가에 숨겨져 있다! 찾아내야 봉인 의식을 시작할 수 있다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game20",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "인형이 이모지로 된 봉인 해제 힌트를 남겼다! 이모지 암호를 풀어 봉인석의 배치를 파악하라!",
+          "hintMessage": "이모지 조합을 추론해라",
+          "secretCode": "🤔",
+          "successMessage": "이모지 암호 해독! 봉인석 배치도를 완성했다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game02",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "저주의 기운이 가득한 다락방 미로! 인형의 방해를 뚫고 봉인석이 있는 곳까지 이동하라!",
+          "hintMessage": "미로를 통과해 봉인석에 도달해라",
+          "secretCode": "🌀",
+          "successMessage": "다락방 미로 통과! 다섯 번째 봉인석 발견!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game25",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "봉인된 봉인석이 먼지 아래 숨겨져 있다! 긁어내면 봉인의 비밀이 드러난다!",
+          "hintMessage": "긁어내면 아래에 봉인석이 있다",
+          "secretCode": "✨",
+          "successMessage": "봉인석 발굴! 여섯 번째 봉인석을 획득했다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game08",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "봉인 해제 주문서! 뒤섞인 글자들 속에서 저주 해제 주문을 찾아내야 한다!",
+          "hintMessage": "격자에서 주문 단어를 모두 찾아라",
+          "secretCode": "📖",
+          "successMessage": "주문서 완성! 저주 해제 준비가 다가오고 있다!"
+        },
+        {
+          "type": "findObject",
+          "hints": ["거실 어딘가에 봉인 의식 도구가 있다", "서랍 안을 살펴봐", "책장 사이를 확인해봐"],
+          "answers": ["초", "양초", "캔들"],
+          "clue": { "type": "text", "content": "저주" },
+          "storyText": "봉인 의식에는 특별한 초가 필요하다! '저주' 해제 의식의 핵심 도구를 찾아라!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game13",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "봉인 에너지 집결! 모든 봉인석의 에너지를 한데 모아야 저주 해제 의식을 진행할 수 있다!",
+          "hintMessage": "에너지를 최대로 모아야 의식을 진행할 수 있다",
+          "secretCode": "⚡",
+          "successMessage": "봉인 에너지 집결 완료! 의식 준비가 됐다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game16",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "봉인 중심점 찾기! 나침반을 따라 저주 에너지가 가장 강한 곳을 찾아야 의식을 시작할 수 있다!",
+          "hintMessage": "나침반을 기울여 중심점을 찾아라",
+          "secretCode": "🧭",
+          "successMessage": "봉인 중심점 발견! 이곳에서 의식을 거행해야 한다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game05",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "봉인 해제 퍼즐! 봉인석들을 정확한 위치에 배치해야 저주의 핵심이 드러난다!",
+          "hintMessage": "퍼즐을 올바르게 완성해라",
+          "secretCode": "🧩",
+          "successMessage": "봉인 퍼즐 완성! 저주의 핵심이 드러났다!"
+        },
+        {
+          "type": "findObject",
+          "hints": ["부엌 어딘가에 봉인 재료가 있다", "냉장고 위를 확인해봐", "찬장 속을 살펴봐"],
+          "answers": ["소금", "설탕", "가루"],
+          "clue": { "type": "text", "content": "" },
+          "storyText": "봉인 의식 마지막 재료인 정화 소금이 부엌에 있다! 찾아야 최종 봉인 의식을 완성할 수 있다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game23",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "최종 봉인 금고! 저주의 근원이 금고 안에 갇혀있다. 금고를 열어 인형의 영혼을 해방시켜라!",
+          "hintMessage": "금고 암호를 풀어 저주를 해제해라",
+          "secretCode": "🔮",
+          "successMessage": "금고 개방! 저주가 완전히 풀렸다! 인형의 영혼이 평화를 찾았다!"
+        }
+      ],
+      "finalReward": {
+        "message": "축하한다! 17개의 봉인 시험을 모두 통과했다!\n저주받은 인형의 영혼이 마침내 해방됐다!\n100년 동안 저주에 갇혀있던 인형 주인의 영혼이 감사의 눈물을 흘리고 있다!",
+        "secretCode": "313"
+      }
+    },
+    {
+      "id": "haunted-03",
+      "name": "잊혀진 무도회",
+      "description": "100년 전 멈춘 유령 무도회! 17개의 비밀을 풀고 영혼들에게 마지막 왈츠를 선물하라!",
+      "introText": "저택 대홀에서 기이한 음악이 들려온다...\n\n100년 전, 한 무도회에서 비극적인 사고가 일어나\n모든 참석자가 유령이 되어 무도회에 갇혔다.\n\n그들의 영혼을 해방시키려면 17개의 비밀을 풀고\n멈춰있던 마지막 왈츠를 완성해야 한다.\n\n유령들에게 안식을 선물하라!",
+      "treasurePassword": "마지막왈츠",
+      "missions": [
+        {
+          "type": "minigame",
+          "gameId": "game08",
+          "clue": { "type": "text", "content": "마지막" },
+          "storyText": "100년 된 무도회 초대장에 단어들이 숨겨져 있다! 첫 번째 비밀을 찾아내라!",
+          "hintMessage": "격자에서 초대장의 숨겨진 단어를 찾아라",
+          "secretCode": "💃",
+          "successMessage": "초대장 해독! '마지막' 왈츠의 비밀이 풀리기 시작한다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game12",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "대홀의 샹들리에가 알록달록 빛나며 유령들의 신호를 보낸다! 색깔 패턴을 읽어 유령 이름을 밝혀라!",
+          "hintMessage": "색깔이 변하는 순간 빠르게 반응해라",
+          "secretCode": "🕯️",
+          "successMessage": "샹들리에 해독! 첫 번째 유령 귀족의 이름이 밝혀졌다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game03",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "무도회 커플 유령 짝 맞추기! 100년 전 춤 파트너를 올바르게 연결해야 영혼들이 기뻐한다!",
+          "hintMessage": "카드를 뒤집어 커플 짝을 찾아라",
+          "secretCode": "👫",
+          "successMessage": "커플 매칭 완성! 유령들이 반갑게 손을 잡았다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game11",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "무도회 스텝 연습! 왈츠 스텝 순서를 정확히 기억해야 유령들과 함께 춤을 출 수 있다!",
+          "hintMessage": "스텝 순서를 기억하고 정확히 밟아라",
+          "secretCode": "👠",
+          "successMessage": "왈츠 스텝 완벽! 유령들이 박수를 치고 있다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game07",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "100년 전 무도회 초대 암호! 당시 귀족들이 쓰던 수식 암호를 계산해 입장권을 획득하라!",
+          "hintMessage": "수식을 빠르게 계산해라",
+          "secretCode": "🎭",
+          "successMessage": "입장권 획득! 무도회 내부 비밀 구역으로 들어갈 수 있다!"
+        },
+        {
+          "type": "findObject",
+          "hints": ["거실 어딘가에 무도회 장식이 숨겨져 있다", "장식품 근처를 살펴봐", "서랍 안을 확인해봐"],
+          "answers": ["리본", "머리끈", "머리띠"],
+          "clue": { "type": "text", "content": "" },
+          "storyText": "무도회에서 쓰이던 장식 리본이 어딘가에 있다! 찾아서 왈츠 의식을 준비하라!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game19",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "100년 전 무도회 왈츠 음악이 거꾸로 재생되고 있다! 원래 선율을 복원해 유령들에게 들려줘라!",
+          "hintMessage": "역재생 소리에서 원래 선율을 찾아라",
+          "secretCode": "🎵",
+          "successMessage": "왈츠 선율 복원! 유령들이 눈물을 흘리며 기뻐하고 있다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game20",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "유령들이 이모지로 된 왈츠 안무 지시를 보내왔다! 이모지 암호를 풀어 안무를 파악하라!",
+          "hintMessage": "이모지 조합을 추론해 안무를 파악해라",
+          "secretCode": "🎶",
+          "successMessage": "안무 해독 완료! 마지막 왈츠 안무를 알게 됐다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game15",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "왈츠 박수 신호! 유령들이 원하는 크기의 박수 소리를 내야 무도회 의식이 시작된다!",
+          "hintMessage": "정확한 크기의 소리를 내야 한다",
+          "secretCode": "👏",
+          "successMessage": "박수 신호 완성! 유령들이 무도회 자리를 잡기 시작한다!"
+        },
+        {
+          "type": "findObject",
+          "hints": ["침실 어딘가에 의식 도구가 있다", "화장대 위를 살펴봐", "거울 뒤를 확인해봐"],
+          "answers": ["장갑", "흰장갑", "무도회장갑"],
+          "clue": { "type": "text", "content": "왈츠" },
+          "storyText": "왈츠 의식에 꼭 필요한 무도회 장갑이 침실에 숨겨져 있다! '왈츠'를 완성할 도구를 찾아라!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game27",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "왈츠 박자 맞추기! 100년 된 왈츠의 정확한 박자에 맞춰 타이밍을 완성해야 한다!",
+          "hintMessage": "정확한 박자에 맞춰 타이밍을 맞춰라",
+          "secretCode": "🕰️",
+          "successMessage": "왈츠 박자 완벽! 유령들이 춤을 추기 시작했다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game02",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "대홀 미로 통과! 유령들의 춤 사이를 뚫고 무도회 중앙 무대까지 나아가라!",
+          "hintMessage": "미로를 통과해 중앙 무대에 도달해라",
+          "secretCode": "🌀",
+          "successMessage": "중앙 무대 도착! 모든 유령들이 주목하고 있다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game24",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "왈츠 균형 시험! 파트너와 균형을 맞추며 왈츠를 추어야 유령들의 봉인이 풀린다!",
+          "hintMessage": "균형을 잃지 않고 춤을 추어라",
+          "secretCode": "🤝",
+          "successMessage": "왈츠 균형 완벽! 유령들의 봉인이 조금씩 풀리고 있다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game25",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "먼지에 묻힌 왈츠 악보 발견! 긁어내면 마지막 왈츠 선율을 복원할 수 있다!",
+          "hintMessage": "긁어내면 악보가 나온다",
+          "secretCode": "🎼",
+          "successMessage": "악보 복원! 마지막 왈츠의 모든 선율이 밝혀졌다!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game13",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "영혼 해방 에너지 충전! 모든 유령들의 에너지를 모아야 마지막 왈츠를 완성할 수 있다!",
+          "hintMessage": "에너지를 최대로 충전해야 한다",
+          "secretCode": "✨",
+          "successMessage": "에너지 완충! 유령들이 빛나기 시작한다!"
+        },
+        {
+          "type": "findObject",
+          "hints": ["현관 근처에 무도회 마지막 장식이 있다", "현관 매트 아래를 확인해봐", "문 근처 선반을 살펴봐"],
+          "answers": ["꽃", "조화", "장미"],
+          "clue": { "type": "text", "content": "" },
+          "storyText": "마지막 왈츠에는 꽃 한 송이가 필요하다! 현관에 숨겨진 마지막 장식 꽃을 찾아라!"
+        },
+        {
+          "type": "minigame",
+          "gameId": "game21",
+          "clue": { "type": "text", "content": "" },
+          "storyText": "마지막 왈츠! 파트너와 함께 동시에 춤의 마무리를 장식하면 모든 유령들이 해방된다!",
+          "hintMessage": "두 손으로 동시에 화면을 눌러 왈츠를 완성해라",
+          "secretCode": "🌟",
+          "successMessage": "마지막 왈츠 완성! 모든 유령들이 빛 속으로 사라진다! 무도회가 끝났다!"
+        }
+      ],
+      "finalReward": {
+        "message": "축하한다! 17개의 비밀을 모두 풀었다!\n100년 동안 무도회에 갇혀있던 유령들에게\n마지막 왈츠를 선물하고 영혼들을 해방시켰다!\n저택에 따뜻한 빛이 내리고, 유령들의 감사 인사가 들려온다!",
+        "secretCode": "100"
+      }
+    }
+  ]
+}

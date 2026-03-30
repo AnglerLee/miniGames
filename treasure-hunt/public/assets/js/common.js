@@ -3,9 +3,9 @@
 
 // ===== localStorage → Server Sync Layer =====
 // 게임의 기존 localStorage 호출을 가로채서 서버와 동기화합니다.
-// 원리: 서버에 게임별 모든 localStorage 키-값을 딕셔너리로 저장하고,
-//       페이지 로드 시 동기 XHR로 가져와 localStorage에 채워넣습니다.
-//       setItem 시 localStorage + 서버 양쪽에 저장합니다.
+// 원리: 서버에 게임별 설정 키-값을 저장하고, 페이지 로드 시 복원합니다.
+//       이번 세션에서 setItem으로 명시적으로 쓴 키만 서버에 저장합니다.
+//       (다른 게임의 localStorage 데이터가 섞이지 않도록 sessionKeys로 추적)
 (function() {
     // URL에서 게임 번호 추출 (예: /games/02-maze/ → 02, /games/game19/ → 19)
     var pathMatch = location.pathname.match(/\/games\/(?:game)?(\d+)/);
@@ -18,6 +18,9 @@
     var _origSetItem = localStorage.setItem.bind(localStorage);
     var _origGetItem = localStorage.getItem.bind(localStorage);
     var _origRemoveItem = localStorage.removeItem.bind(localStorage);
+
+    // 이번 세션에서 이 게임이 setItem한 키만 추적
+    var sessionKeys = new Set();
 
     // 서버에서 설정 로드 → localStorage에 채우기 (동기)
     try {
@@ -32,40 +35,14 @@
                     var val = serverData[key];
                     if (val !== null && val !== undefined) {
                         _origSetItem(key, typeof val === 'string' ? val : JSON.stringify(val));
+                        // 이 게임의 소유 키로 등록 (다음 저장 시 유지)
+                        sessionKeys.add(key);
                     }
                 });
             }
         }
     } catch (e) {
         console.warn('[GameSync] Server load failed for ' + gameId + ':', e.message);
-    }
-
-    // 서버에 저장하는 헬퍼 (현재 localStorage의 게임 관련 키를 모아서 전송)
-    var saveTimer = null;
-    function scheduleServerSave() {
-        if (saveTimer) clearTimeout(saveTimer);
-        saveTimer = setTimeout(function() {
-            saveTimer = null;
-            // localStorage에서 게임 관련 키 수집
-            var data = {};
-            for (var i = 0; i < localStorage.length; i++) {
-                var key = localStorage.key(i);
-                if (key && isGameKey(key)) {
-                    var raw = _origGetItem(key);
-                    try {
-                        data[key] = JSON.parse(raw);
-                    } catch (e) {
-                        data[key] = raw;
-                    }
-                }
-            }
-            // 비동기로 서버에 저장
-            fetch('/api/games/' + gameId + '/settings', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            }).catch(function() {});
-        }, 300); // 300ms 디바운스
     }
 
     // 게임 관련 키인지 확인 (treasure hunt 시스템 키는 제외)
@@ -76,18 +53,52 @@
         return true;
     }
 
-    // setItem 패치
+    // 값 크기 제한 (50KB 초과 값은 저장 제외 - base64 이미지 등 방지)
+    var MAX_VALUE_BYTES = 51200;
+
+    // 서버에 저장하는 헬퍼 (sessionKeys에 등록된 이 게임의 키만 전송)
+    var saveTimer = null;
+    function scheduleServerSave() {
+        if (saveTimer) clearTimeout(saveTimer);
+        saveTimer = setTimeout(function() {
+            saveTimer = null;
+            var data = {};
+            sessionKeys.forEach(function(key) {
+                var raw = _origGetItem(key);
+                if (raw === null) return; // 삭제된 키 제외
+                if (raw.length > MAX_VALUE_BYTES) {
+                    console.warn('[GameSync] Key "' + key + '" skipped: value too large (' + raw.length + ' bytes)');
+                    return;
+                }
+                try {
+                    data[key] = JSON.parse(raw);
+                } catch (e) {
+                    data[key] = raw;
+                }
+            });
+            // 비동기로 서버에 저장
+            fetch('/api/games/' + gameId + '/settings', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).catch(function() {});
+        }, 300); // 300ms 디바운스
+    }
+
+    // setItem 패치: 이 게임이 쓴 키를 sessionKeys에 등록
     localStorage.setItem = function(key, value) {
         _origSetItem(key, value);
         if (isGameKey(key)) {
+            sessionKeys.add(key);
             scheduleServerSave();
         }
     };
 
-    // removeItem 패치
+    // removeItem 패치: sessionKeys에서도 제거
     localStorage.removeItem = function(key) {
         _origRemoveItem(key);
         if (isGameKey(key)) {
+            sessionKeys.delete(key);
             scheduleServerSave();
         }
     };

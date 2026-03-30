@@ -216,23 +216,30 @@ html, body {
 .progress-indicator {
     display: flex;
     align-items: center;
-    justify-content: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     gap: 4px;
-    flex-wrap: wrap;
-    padding: 8px 0;
+    padding: 8px 16px;
     width: 100%;
     max-width: 480px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.progress-indicator::-webkit-scrollbar {
+    display: none;
 }
 
 .progress-dot {
-    width: 28px;
-    height: 28px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
     flex-shrink: 0;
 }
 

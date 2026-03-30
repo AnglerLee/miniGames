@@ -1,0 +1,15 @@
+{
+  "game16_settings": {
+    "difficultyLevel": 0,
+    "tolerance": 20,
+    "holdTime": 1,
+    "missionCount": 1,
+    "compassNoise": {
+      "amplitude": 5,
+      "frequency": 0.5,
+      "complexity": 3
+    },
+    "lastUpdated": "2026-02-19T07:28:15.876Z"
+  },
+  "magic_compass_best_easy": 30
+}

@@ -445,7 +445,8 @@
                         <div class="mission-number" id="missionNumber">미션 1 / 5</div>
                         <div class="mission-icon" id="missionIcon">🃏</div>
                         <div class="mission-name" id="missionName">짝 맞추기</div>
-                        <div class="mission-story" id="missionStory">카드 매칭으로 단서를 찾아라!</div>
+                        <div class="mission-story" id="missionStory"></div>
+                        <span class="intro-cursor cursor-blink" id="missionCursor" style="display:none;"></span>
                         <button class="btn btn-primary btn-large" id="goMissionBtn">🎮 시작!</button>
                     </div>
 
@@ -474,15 +475,6 @@
     <script src="js/storage.js"></script>
     <script src="js/theme-manager.js"></script>
     <script src="js/preset-data.js"></script>
-    <script src="data/mystery.js"></script>
-    <script src="data/pirate.js"></script>
-    <script src="data/space.js"></script>
-    <script src="data/magic.js"></script>
-    <script src="data/dino.js"></script>
-    <script src="data/jungle.js"></script>
-    <script src="data/ocean.js"></script>
-    <script src="data/ninja.js"></script>
-    <script src="data/haunted.js"></script>
     <script src="js/effects.js"></script>
     <script src="js/game-engine.js"></script>
     <script src="js/app.js"></script>
@@ -490,6 +482,8 @@
         /* ===== index.html - Main / Intro / Hub Logic (Server Version) ===== */
 
         (async function () {
+            await loadAllThemeData();
+
             const screens = {
                 main: document.getElementById('mainScreen'),
                 playerSelect: document.getElementById('playerSelectScreen'),
@@ -498,6 +492,7 @@
             };
 
             let typingInterval = null;
+            let hubTypingInterval = null;
 
             function showScreen(name) {
                 Object.values(screens).forEach(s => s.classList.remove('active'));
@@ -731,6 +726,12 @@
 
             /* ===== S05: Mission Hub ===== */
             function renderHub() {
+                // Clear any hub typing in progress
+                if (hubTypingInterval) {
+                    clearInterval(hubTypingInterval);
+                    hubTypingInterval = null;
+                }
+
                 // Use cached data since GameEngine.init() was called before
                 const config = Storage.getCachedConfig();
                 if (!config) return;
@@ -778,6 +779,8 @@
                 const bar = document.getElementById('progressBar');
                 bar.innerHTML = '';
 
+                let currentDot = null;
+
                 for (let i = 0; i < progress.total; i++) {
                     if (i > 0) {
                         const line = document.createElement('div');
@@ -792,11 +795,20 @@
                     } else if (i === progress.current) {
                         dot.className = 'progress-dot current';
                         dot.textContent = (i + 1);
+                        currentDot = dot;
                     } else {
                         dot.className = 'progress-dot pending';
                         dot.textContent = (i + 1);
                     }
                     bar.appendChild(dot);
+                }
+
+                // 현재 스테이지 도트를 가운데로 스크롤
+                if (currentDot) {
+                    requestAnimationFrame(function () {
+                        var dotCenter = currentDot.offsetLeft + currentDot.offsetWidth / 2;
+                        bar.scrollLeft = dotCenter - bar.offsetWidth / 2;
+                    });
                 }
             }
 
@@ -816,7 +828,29 @@
                     document.getElementById('missionName').textContent = '물건 찾기';
                 }
 
-                document.getElementById('missionStory').textContent = mission.storyText || '';
+                // Typewriter effect for story text
+                const storyEl = document.getElementById('missionStory');
+                const cursorEl = document.getElementById('missionCursor');
+                const storyText = mission.storyText || '';
+
+                storyEl.textContent = '';
+                cursorEl.style.display = 'inline-block';
+
+                if (hubTypingInterval) {
+                    clearInterval(hubTypingInterval);
+                }
+
+                let i = 0;
+                hubTypingInterval = setInterval(function () {
+                    if (i < storyText.length) {
+                        storyEl.textContent += storyText[i];
+                        i++;
+                    } else {
+                        clearInterval(hubTypingInterval);
+                        hubTypingInterval = null;
+                        cursorEl.style.display = 'none';
+                    }
+                }, 40);
             }
 
             function renderClues() {

@@ -1,0 +1,9 @@
+{
+  "mazeGameSettings": {
+    "activeDifficulty": "normal",
+    "gameTheme": "unicorn",
+    "timeEasy": 30,
+    "timeNormal": 60,
+    "timeHard": 90
+  }
+}

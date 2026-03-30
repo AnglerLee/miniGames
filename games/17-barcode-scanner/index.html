@@ -270,6 +270,49 @@
             font-weight: bold;
         }
 
+        /* 힌트 목록 */
+        .hint-list-section {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin: 10px 0;
+        }
+        .hint-list-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+        .hint-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            font-size: 14px;
+            color: #374151;
+            border-bottom: 1px solid #fde68a;
+        }
+        .hint-item:last-child { border-bottom: none; }
+        .hint-item.found {
+            color: #9ca3af;
+            text-decoration: line-through;
+        }
+        .hint-num {
+            min-width: 22px;
+            height: 22px;
+            background: #fbbf24;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .hint-item.found .hint-num { background: #10b981; }
+
         /* 타이머 중앙 표시 */
         .timer-display {
             text-align: center;
@@ -320,6 +363,12 @@
             <!-- 미션 표시 (간소화) -->
             <div class="mission-compact" id="missionCompact">
                 <div class="mission-compact-text" id="missionText">📱 바코드를 찾으세요</div>
+            </div>
+
+            <!-- 힌트 목록 -->
+            <div class="hint-list-section" id="hintListSection" style="display:none;">
+                <div class="hint-list-title">💡 힌트 목록</div>
+                <div id="hintList"></div>
             </div>
 
             <!-- 카메라 뷰 -->

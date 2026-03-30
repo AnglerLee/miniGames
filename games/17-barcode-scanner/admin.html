@@ -8,192 +8,247 @@
     <link rel="stylesheet" href="../../assets/css/admin-theme.css">
     <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.8.4/dist/quagga.min.js"></script>
     <style>
-        /* 바코드 스캔 UI */
-        .scan-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
+        /* ── 모바일 보정 ── */
+        @media (max-width: 640px) {
+            body { padding: 1rem; }
+            .admin-header { margin-bottom: 1.5rem; padding: 1rem 0; }
+            .admin-header h1 { font-size: 1.6rem; }
+            .admin-form-card { padding: 1rem; }
         }
 
+        /* ── 난이도 라벨 ── */
+        .difficulty-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        /* ── 섹션 카드 ── */
+        .section-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .section-card h3 {
+            margin: 0 0 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #374151;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        /* ── 설정 그리드: 2열 → 모바일 1열 ── */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        @media (max-width: 500px) {
+            .settings-grid { grid-template-columns: 1fr; gap: 8px; }
+        }
+
+        /* ── 바코드 목록 헤더 ── */
+        .list-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .list-header h3 {
+            margin: 0;
+            padding: 0;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        /* ── 바코드 목록 ── */
+        .barcode-list {
+            display: grid;
+            gap: 8px;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+        .barcode-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        .barcode-code {
+            font-family: monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            word-break: break-all;
+        }
+        .barcode-remove {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-left: 8px;
+            transition: opacity 0.2s;
+        }
+        .barcode-remove:hover { opacity: 0.8; }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        /* ── 바코드 추가 컨트롤 ── */
         .scan-controls {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
         }
-
         .scan-controls input {
             flex: 1;
+            min-width: 0;
+        }
+        .scan-controls .btn {
+            white-space: nowrap;
         }
 
+        /* ── 카메라 뷰 ── */
         .barcode-camera {
             position: relative;
             width: 100%;
             max-width: 400px;
-            margin: 15px auto;
+            margin: 12px auto 0;
             background: #000;
             border-radius: 8px;
             overflow: hidden;
             display: none;
         }
-
-        .barcode-camera.active {
-            display: block;
-        }
+        .barcode-camera.active { display: block; }
 
         #barcode-scanner {
             width: 100%;
-            height: 300px;
+            height: 260px;
         }
-
         #barcode-scanner video {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
         .scan-guide-box {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 80%;
-            height: 100px;
-            border: 2px solid #2ecc71;
+            height: 90px;
+            border: 2px solid #10b981;
             border-radius: 8px;
             pointer-events: none;
         }
-
-        .barcode-list {
-            display: grid;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .barcode-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 15px;
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-        }
-
-        .barcode-code {
-            font-family: monospace;
-            font-size: 16px;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .barcode-remove {
-            background: var(--danger-color);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .barcode-remove:hover {
-            opacity: 0.8;
-        }
-
-        .empty-state {
+        .scan-stop-bar {
             text-align: center;
-            padding: 20px;
-            color: var(--text-light);
-            font-style: italic;
+            padding: 8px;
+            background: rgba(0,0,0,0.7);
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <a href="../../admin.html" class="main-link">
-            ← 전체 게임 목록
-        </a>
+        <a href="../../admin.html" class="main-link">← 전체 게임 목록</a>
 
         <header class="admin-header">
-            <h1>🔧 17 Barcode Scanner 설정</h1>
-            <div class="subtitle">게임 설정 관리</div>
+            <h1>🔧 Barcode Scanner 설정</h1>
+            <div class="subtitle">난이도 및 목표 바코드 관리</div>
         </header>
 
         <div class="admin-form-card">
             <form id="settingsForm">
 
-                <h2>⚙️ 난이도 설정</h2>
-                <p style="font-size: 14px; color: var(--text-light); margin-bottom: 20px;">
-                    슬라이더로 난이도를 선택하면 기본값이 자동으로 적용됩니다. 원하는 경우 세부 값을 조정할 수 있습니다.
-                </p>
-
-                <!-- 난이도 슬라이더 -->
+                <!-- ① 난이도 선택 -->
+                <h2 style="font-size:1rem; font-weight:700; color:#111827; margin:0 0 12px;">🎮 난이도 선택</h2>
                 <div class="form-group">
-                    <label for="difficultySlider">
-                        🎚️ 난이도 선택: <strong id="difficultyLabel">쉬움</strong>
-                    </label>
-                    <input type="range" id="difficultySlider" min="0" max="2" step="1" value="0"
-                        style="width: 100%; height: 8px; border-radius: 4px; margin: 10px 0;">
-                    <div
-                        style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); margin-top: -5px;">
+                    <input type="range" id="difficultySlider" min="0" max="2" step="1" value="0" class="form-input">
+                    <div class="difficulty-labels">
                         <span>🟢 쉬움</span>
                         <span>🟡 보통</span>
                         <span>🔴 어려움</span>
                     </div>
                 </div>
 
-                <hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">
-
-                <!-- 통합된 설정 입력 -->
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
-                    <h3 style="margin-top: 0;">🎯 세부 설정</h3>
-
-                    <div class="form-group">
-                        <label for="targetCount">📊 목표 바코드 수</label>
-                        <input type="number" id="targetCount" class="form-input" min="1" max="10" value="1">
-                        <small style="color: var(--text-light);">찾아야 할 바코드 개수</small>
+                <!-- ② 세부 설정 + 저장 -->
+                <div class="section-card">
+                    <h3 id="difficultyLabel">🟢 쉬움 난이도 설정</h3>
+                    <div class="settings-grid">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="targetCount">목표 바코드 수</label>
+                            <input type="number" id="targetCount" class="form-input" min="1" max="10" value="1">
+                            <small style="color:#6b7280;">찾아야 할 바코드 개수</small>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="timeLimit">시간 제한 (초)</label>
+                            <input type="number" id="timeLimit" class="form-input" min="0" value="0">
+                            <small style="color:#6b7280;">0 = 무제한</small>
+                        </div>
                     </div>
+                    <button type="submit" class="btn btn-save" style="width:100%;">💾 설정 저장</button>
+                </div>
 
-                    <div class="form-group">
-                        <label for="timeLimit">⏱️ 시간 제한 (초)</label>
-                        <input type="number" id="timeLimit" class="form-input" min="0" value="0">
-                        <small style="color: var(--text-light);">0으로 설정하면 무제한입니다</small>
+                <!-- ③ 등록된 바코드 목록 -->
+                <div class="section-card">
+                    <div class="list-header">
+                        <h3>📋 등록된 바코드 (<span id="barcodeCount">0</span>개)</h3>
+                    </div>
+                    <div class="barcode-list" id="barcodeList">
+                        <div class="empty-state">등록된 바코드가 없습니다.<br>아래에서 추가해주세요.</div>
                     </div>
                 </div>
 
-                <h2>📱 목표 바코드 등록</h2>
-                <div class="scan-section">
-                    <h3 style="margin-top: 0;">🎯 찾아야 할 바코드</h3>
-
+                <!-- ④ 바코드 추가 -->
+                <div class="section-card">
+                    <h3>➕ 바코드 추가</h3>
                     <div class="scan-controls">
-                        <input type="text" id="barcodeInput" class="form-input" placeholder="바코드 번호 입력" maxlength="13">
-                        <button type="button" class="btn btn-secondary" id="addBarcodeBtn">추가</button>
-                        <button type="button" class="btn btn-primary" id="scanBarcodeBtn">📷 스캔</button>
+                        <input type="text" id="barcodeInput" class="form-input" placeholder="바코드 번호 직접 입력" maxlength="13">
+                        <button type="button" class="btn btn-save" id="addBarcodeBtn">추가</button>
+                        <button type="button" class="btn btn-home" id="scanBarcodeBtn">📷 스캔</button>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0; margin-top: 8px;">
+                        <input type="text" id="barcodeHint" class="form-input" placeholder="힌트 텍스트 (예: 음료수 코너에 있어요)" maxlength="60">
+                        <small style="color:#6b7280;">게임 화면에 표시되는 힌트 (선택)</small>
                     </div>
 
                     <div class="barcode-camera" id="barcodeCamera">
                         <div id="barcode-scanner">
                             <div class="scan-guide-box"></div>
                         </div>
-                        <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.7);">
-                            <button type="button" class="btn btn-danger" id="stopScanBtn" style="margin: 0;">⏹️
-                                정지</button>
+                        <div class="scan-stop-bar">
+                            <button type="button" class="btn btn-reset" id="stopScanBtn" style="margin:0;">⏹️ 정지</button>
                         </div>
-                    </div>
-
-                    <div class="barcode-list" id="barcodeList">
-                        <div class="empty-state">등록된 바코드가 없습니다</div>
                     </div>
                 </div>
 
-
-
+                <!-- 하단 네비게이션 -->
                 <div class="btn-group">
-                    <button type="button" class="btn btn-home" onclick="location.href='index.html'">게임으로</button>
-                    <button type="button" class="btn btn-reset" id="resetBtn">초기화</button>
-                    <button type="submit" class="btn btn-save">저장하기</button>
+                    <button type="button" class="btn btn-home" onclick="location.href='index.html'">▶️ 게임으로</button>
+                    <button type="button" class="btn btn-reset" id="resetBtn">🔄 초기화</button>
                 </div>
 
             </form>

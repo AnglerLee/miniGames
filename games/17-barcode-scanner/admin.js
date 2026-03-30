@@ -1,6 +1,5 @@
 // 관리자 설정 스크립트 (17 Barcode Scanner)
 const GAME_ID = 'game17';
-const STORAGE_KEY = 'barcodeScannerSettings';
 
 // 난이도 프리셋
 const difficultyPresets = {
@@ -8,6 +7,30 @@ const difficultyPresets = {
     1: { name: '🟡 보통', targetCount: 3, timeLimit: 120 },
     2: { name: '🔴 어려움', targetCount: 5, timeLimit: 90 }
 };
+
+// ===== 서버 API 헬퍼 =====
+
+async function fetchSettings() {
+    try {
+        const res = await fetch(`/api/games/${GAME_ID}/settings`);
+        if (!res.ok) return {};
+        return (await res.json()) || {};
+    } catch (e) {
+        console.error('설정 로드 오류:', e);
+        return {};
+    }
+}
+
+async function saveToServer(data) {
+    const res = await fetch(`/api/games/${GAME_ID}/settings`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error('서버 저장 실패');
+}
+
+let serverSettings = {};
 
 // DOM 요소
 const form = document.getElementById('settingsForm');
@@ -18,11 +41,13 @@ const targetCountInput = document.getElementById('targetCount');
 const timeLimitInput = document.getElementById('timeLimit');
 
 const barcodeInput = document.getElementById('barcodeInput');
+const barcodeHintInput = document.getElementById('barcodeHint');
 const addBarcodeBtn = document.getElementById('addBarcodeBtn');
 const scanBarcodeBtn = document.getElementById('scanBarcodeBtn');
 const stopScanBtn = document.getElementById('stopScanBtn');
 const barcodeCamera = document.getElementById('barcodeCamera');
 const barcodeList = document.getElementById('barcodeList');
+const barcodeCountEl = document.getElementById('barcodeCount');
 
 // 게임 설정 상태
 let targetBarcodes = [];
@@ -33,7 +58,7 @@ difficultySlider.addEventListener('input', () => {
     const level = parseInt(difficultySlider.value);
     const preset = difficultyPresets[level];
 
-    difficultyLabel.textContent = preset.name;
+    difficultyLabel.textContent = preset.name + ' 난이도 설정';
     targetCountInput.value = preset.targetCount;
     timeLimitInput.value = preset.timeLimit;
 });
@@ -41,6 +66,7 @@ difficultySlider.addEventListener('input', () => {
 // 바코드 직접 추가
 addBarcodeBtn.addEventListener('click', () => {
     const code = barcodeInput.value.trim();
+    const hint = barcodeHintInput.value.trim();
 
     if (!code) {
         alert('바코드 번호를 입력해주세요.');
@@ -52,8 +78,9 @@ addBarcodeBtn.addEventListener('click', () => {
         return;
     }
 
-    addBarcode(code);
+    addBarcode(code, hint);
     barcodeInput.value = '';
+    barcodeHintInput.value = '';
 });
 
 // 바코드 입력 엔터키 처리
@@ -67,7 +94,6 @@ barcodeInput.addEventListener('keypress', (e) => {
 // 바코드 스캔 시작
 scanBarcodeBtn.addEventListener('click', () => {
     if (isScannerActive) return;
-
     startBarcodeScanner();
 });
 
@@ -145,8 +171,9 @@ function onBarcodeDetected(result) {
         return;
     }
 
-    // 바코드 추가
-    addBarcode(code);
+    // 입력 필드에 감지된 바코드 채우기 (힌트 입력 후 추가 버튼 클릭)
+    barcodeInput.value = code;
+    barcodeHintInput.focus();
 
     // 스캐너 자동 정지
     setTimeout(() => {
@@ -167,64 +194,64 @@ function stopBarcodeScanner() {
 }
 
 // 바코드 추가
-function addBarcode(code) {
+function addBarcode(code, hint = '') {
     // 중복 체크
-    if (targetBarcodes.includes(code)) {
+    if (targetBarcodes.some(b => b.code === code)) {
         alert('이미 등록된 바코드입니다: ' + code);
         return;
     }
 
-    targetBarcodes.push(code);
+    targetBarcodes.push({ code, hint });
     renderBarcodeList();
 }
 
 // 바코드 삭제
 function removeBarcode(code) {
-    targetBarcodes = targetBarcodes.filter(b => b !== code);
+    targetBarcodes = targetBarcodes.filter(b => b.code !== code);
     renderBarcodeList();
 }
 
 // 바코드 목록 렌더링
 function renderBarcodeList() {
+    barcodeCountEl.textContent = targetBarcodes.length;
+
     if (targetBarcodes.length === 0) {
         barcodeList.innerHTML = '<div class="empty-state">등록된 바코드가 없습니다</div>';
         return;
     }
 
-    barcodeList.innerHTML = targetBarcodes.map(code => `
+    barcodeList.innerHTML = targetBarcodes.map(item => `
         <div class="barcode-item">
-            <span class="barcode-code">${code}</span>
-            <button type="button" class="barcode-remove" onclick="removeBarcode('${code}')">삭제</button>
+            <div style="flex:1; min-width:0;">
+                <div class="barcode-code">${item.code}</div>
+                ${item.hint ? `<div style="font-size:0.8rem; color:#6b7280; margin-top:2px;">💡 ${item.hint}</div>` : ''}
+            </div>
+            <button type="button" class="barcode-remove" onclick="removeBarcode('${item.code}')">삭제</button>
         </div>
     `).join('');
 }
 
-// 설정 로드
-function loadSettings() {
-    // 게임별 설정 로드
-    const settings = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+// 설정 로드 (서버에서)
+async function loadSettings() {
+    serverSettings = await fetchSettings();
 
-    // 난이도 설정
-    const difficulty = settings.difficulty || 0;
+    const difficulty = serverSettings.difficulty || 0;
     difficultySlider.value = difficulty;
-    difficultyLabel.textContent = difficultyPresets[difficulty].name;
+    difficultyLabel.textContent = difficultyPresets[difficulty].name + ' 난이도 설정';
 
-    targetCountInput.value = settings.targetCount || difficultyPresets[difficulty].targetCount;
-    timeLimitInput.value = settings.timeLimit || difficultyPresets[difficulty].timeLimit;
+    targetCountInput.value = serverSettings.targetCount || difficultyPresets[difficulty].targetCount;
+    timeLimitInput.value = serverSettings.timeLimit !== undefined ? serverSettings.timeLimit : difficultyPresets[difficulty].timeLimit;
 
-    // 목표 바코드 로드
-    targetBarcodes = settings.targetBarcodes || [];
+    const raw = serverSettings.targetBarcodes || [];
+    targetBarcodes = raw.map(b => typeof b === 'string' ? { code: b, hint: '' } : b);
     renderBarcodeList();
-
-
 }
 
-// 설정 저장
-function saveSettings(e) {
+// 설정 저장 (서버로)
+async function saveSettings(e) {
     e.preventDefault();
 
-    // 게임별 설정 저장
-    const settings = {
+    serverSettings = {
         difficulty: parseInt(difficultySlider.value),
         targetCount: parseInt(targetCountInput.value),
         timeLimit: parseInt(timeLimitInput.value),
@@ -232,23 +259,26 @@ function saveSettings(e) {
         lastUpdated: new Date().toISOString()
     };
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-
-    alert('설정이 저장되었습니다!');
+    try {
+        await saveToServer(serverSettings);
+        alert('설정이 저장되었습니다!');
+    } catch (err) {
+        alert('저장 실패: ' + err.message);
+    }
 }
 
 // 설정 초기화
-function resetSettings() {
+async function resetSettings() {
     if (confirm('모든 설정을 초기화하시겠습니까?')) {
-        // 게임별 설정 삭제
-        localStorage.removeItem(STORAGE_KEY);
+        serverSettings = {};
+        try {
+            await saveToServer({});
+        } catch (e) {
+            console.error('초기화 저장 실패:', e);
+        }
 
-
-
-        // 상태 초기화
         targetBarcodes = [];
-
-        loadSettings();
+        await loadSettings();
         alert('초기화되었습니다.');
     }
 }
@@ -261,4 +291,4 @@ resetBtn.addEventListener('click', resetSettings);
 window.removeBarcode = removeBarcode;
 
 // 페이지 로드 시 설정 로드
-loadSettings();
+window.addEventListener('load', loadSettings);

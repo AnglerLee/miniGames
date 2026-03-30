@@ -18,7 +18,9 @@ let currentQuestionIndex = 0;
 let correctCount = 0;
 let attemptCount = 0;
 let streakCount = 0;
-let hintsUsed = 0;
+let hintsUsed = 0;          // 게임 전체 사용 힌트 수
+let currentQuestionHintUsed = false; // 현재 문제 힌트 사용 여부
+let gameQuestions = [];
 
 // DOM 요소
 const visualizerContainer = document.getElementById('visualizerContainer');
@@ -38,65 +40,66 @@ const speedValue = document.getElementById('speedValue');
 const answerInput = document.getElementById('answerInput');
 const submitAnswerBtn = document.getElementById('submitAnswerBtn');
 const hintBtn = document.getElementById('hintBtn');
-const skipBtn = document.getElementById('skipBtn');
 const restartBtn = document.getElementById('restartBtn');
 
 // 난이도 설정
 const difficulties = {
     easy: {
         name: '쉬움',
-        wordLength: [2, 4],
-        speedRange: [-1.5, 1.5],
         questions: 3,
-        maxHints: 3
+        maxHints: 3,
+        direction: 'reverse',
+        speed: 0.25
     },
     medium: {
         name: '보통',
-        wordLength: [5, 8],
-        speedRange: [-2.0, 2.0],
         questions: 5,
-        maxHints: 2
+        maxHints: 2,
+        direction: 'reverse',
+        speed: 0.25
     },
     hard: {
         name: '어려움',
-        wordLength: [9, 15],
-        speedRange: [-2.0, 2.0],
         questions: 7,
-        maxHints: 1
+        maxHints: 1,
+        direction: 'reverse',
+        speed: 0.25
     }
 };
 
-// localStorage에서 난이도 설정 로드
-function loadDifficultySettings() {
-    const saved = localStorage.getItem('reverseAudio_settings');
-    if (saved) {
-        const settings = JSON.parse(saved);
+// 서버에서 난이도 설정 로드
+async function loadDifficultySettings() {
+    try {
+        const res = await fetch(`/api/games/${GAME_ID}/settings`);
+        if (!res.ok) return;
+        const settings = await res.json();
+        if (!settings) return;
+        // 난이도별 설정 로드
         Object.keys(settings).forEach(level => {
-            const diffKey = ['easy', 'medium', 'hard'][level];
-            if (difficulties[diffKey]) {
-                difficulties[diffKey].questions = settings[level].questions;
-                difficulties[diffKey].maxHints = settings[level].maxHints;
+            const diffKey = ['easy', 'medium', 'hard'][parseInt(level)];
+            if (difficulties[diffKey] && settings[level]) {
+                if (settings[level].questions) difficulties[diffKey].questions = settings[level].questions;
+                if (settings[level].maxHints) difficulties[diffKey].maxHints = settings[level].maxHints;
+                if (settings[level].direction) difficulties[diffKey].direction = settings[level].direction;
+                if (settings[level].speed) difficulties[diffKey].speed = settings[level].speed;
             }
         });
+
+        // 문제 목록은 난이도 공통으로 공유
+        const sharedList = settings.questionList || [];
+        Object.keys(difficulties).forEach(key => {
+            difficulties[key].questionList = sharedList;
+        });
+    } catch (e) {
+        console.error('Settings load error:', e);
     }
 }
 
-// localStorage에서 오디오 로드
-async function loadAudioFromLocalStorage(questionId) {
-    const audioData = localStorage.getItem(`reverseAudio_${questionId}`);
-    if (!audioData) {
-        throw new Error('저장된 오디오가 없습니다.');
-    }
-
-    // Base64 디코딩
-    const binaryString = atob(audioData.split(',')[1]);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
-
-    // AudioBuffer로 변환
-    const arrayBuffer = bytes.buffer;
+// 서버에서 오디오 로드
+async function loadAudioFromServer(audioUrl) {
+    const res = await fetch(audioUrl);
+    if (!res.ok) throw new Error('오디오 파일을 불러올 수 없습니다.');
+    const arrayBuffer = await res.arrayBuffer();
     return await audioCtx.decodeAudioData(arrayBuffer);
 }
 
@@ -113,10 +116,10 @@ async function initGame() {
         analyser.fftSize = 2048;
     } catch (e) {
         console.error("Audio Context Init Failed", e);
-        alert("오디오 기능을 사용할 수 없습니다.");
+        missionText.textContent = '오디오 기능을 사용할 수 없습니다.';
     }
 
-    loadDifficultySettings(); // 난이도 설정 로드
+    await loadDifficultySettings(); // 난이도 설정 로드 (서버에서)
     setupEventListeners();
     loadStats();
 }
@@ -126,10 +129,8 @@ function setupEventListeners() {
     // 게임 플레이
     playBtn.addEventListener('click', playAudio);
     stopPlayBtn.addEventListener('click', stopAudio);
-    speedRange.addEventListener('input', updateSpeedLabel);
     submitAnswerBtn.addEventListener('click', checkAnswer);
     hintBtn.addEventListener('click', showHint);
-    skipBtn.addEventListener('click', skipQuestion);
     restartBtn.addEventListener('click', restartGame);
 
     // Enter 키로 제출
@@ -138,11 +139,26 @@ function setupEventListeners() {
     });
 }
 
+// 배열 셔플 (Fisher-Yates)
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
 // 게임 시작
 async function startGame() {
     currentQuestionIndex = 0;
     hintsUsed = 0;
+    currentQuestionHintUsed = false;
 
+    const config = difficulties[currentDifficulty];
+    const allQuestions = config.questionList || [];
+    gameQuestions = shuffleArray([...allQuestions]).slice(0, config.questions);
+
+    updateHintBtn();
     await loadNextQuestion();
 }
 
@@ -160,46 +176,48 @@ async function restartGame() {
 async function loadNextQuestion() {
     const config = difficulties[currentDifficulty];
 
-    if (currentQuestionIndex >= config.questions) {
+    if (currentQuestionIndex >= gameQuestions.length) {
         // 게임 완료
         completeGame();
         return;
     }
 
-    // localStorage에서 문제 목록 로드
-    const difficultyIndex = { easy: 0, medium: 1, hard: 2 }[currentDifficulty];
-    const questionList = JSON.parse(
-        localStorage.getItem(`reverseAudio_questions_${difficultyIndex}`) || '[]'
-    );
-
-    if (questionList.length === 0) {
-        alert('등록된 문제가 없습니다. 관리자 페이지에서 문제를 등록해주세요.');
+    if (gameQuestions.length === 0) {
+        missionText.textContent = '등록된 문제가 없습니다. 관리자 페이지에서 문제를 등록해주세요.';
         return;
     }
 
-    // 랜덤 문제 선택
-    const question = questionList[Math.floor(Math.random() * questionList.length)];
+    // 순서대로 문제 선택 (셔플된 배열에서)
+    const question = gameQuestions[currentQuestionIndex];
     secretAnswer = question.answer;
 
-    // localStorage에서 오디오 로드
+    // 로딩 중 UI (버튼 비활성화로 조기 재생 방지)
+    originalBuffer = null;
+    playBtn.disabled = true;
+    playBtn.textContent = '⏳ 로딩 중...';
+    missionText.textContent = '음성 로딩 중...';
+    questionInfo.textContent = `문제 ${currentQuestionIndex + 1}/${gameQuestions.length}`;
+
+    // 서버에서 오디오 로드
     try {
-        originalBuffer = await loadAudioFromLocalStorage(question.id);
+        originalBuffer = await loadAudioFromServer(question.audioUrl);
     } catch (error) {
         console.error('Audio load error:', error);
-        alert('오디오를 불러올 수 없습니다: ' + error.message);
+        missionText.textContent = '오디오를 불러올 수 없습니다: ' + error.message;
+        playBtn.disabled = false;
+        playBtn.textContent = '🔊 소리 재생';
         return;
     }
 
-    // UI 업데이트
-    missionText.textContent = `외계인 언어를 해독하세요!`;
-    questionInfo.textContent = `문제 ${currentQuestionIndex + 1}/${config.questions}`;
+    playBtn.disabled = false;
+    playBtn.textContent = '🔊 소리 재생';
+    missionText.textContent = '외계인 언어를 해독하세요!';
 
     answerInput.value = '';
-    hintsUsed = 0;
-
-    // 속도 초기화
-    speedRange.value = -1.0;
-    updateSpeedLabel();
+    answerInput.disabled = false;
+    submitAnswerBtn.disabled = false;
+    currentQuestionHintUsed = false;
+    updateHintBtn();
 }
 
 
@@ -226,11 +244,8 @@ function updateSpeedLabel() {
 function playAudio() {
     if (!originalBuffer) return;
 
-    const rate = parseFloat(speedRange.value);
-    if (Math.abs(rate) < 0.1) {
-        alert('속도를 조절해주세요!');
-        return;
-    }
+    const config = difficulties[currentDifficulty];
+    const rate = config.direction === 'reverse' ? -config.speed : config.speed;
 
     playBuffer(originalBuffer, rate);
 
@@ -270,6 +285,7 @@ function playBuffer(buffer, rate) {
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
 
+    if (audioCtx.state === 'suspended') audioCtx.resume();
     source.start();
     currentSource = source;
 
@@ -304,6 +320,34 @@ function reverseBuffer(buffer) {
     return newBuffer;
 }
 
+// 정답 공개 재생 (1배속 정방향, 끝나면 콜백)
+function playAnswerReveal(onEnd) {
+    if (!originalBuffer) { onEnd(); return; }
+
+    stopAudio();
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = originalBuffer; // 정방향 원본
+    source.playbackRate.value = 1.0;
+
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    source.start();
+    currentSource = source;
+    isVisualizing = true;
+    playStatus.textContent = '✅ 정답 공개 중';
+    drawVisualizer();
+
+    source.onended = () => {
+        isVisualizing = false;
+        currentSource = null;
+        playStatus.textContent = '⏸️ 정지';
+        setTimeout(onEnd, 2000);
+    };
+}
+
 // 정답 확인
 function checkAnswer() {
     const guess = answerInput.value.trim();
@@ -327,17 +371,15 @@ function checkAnswer() {
             navigator.vibrate([100, 50, 100]);
         }
 
-        alert(`✅ 정답입니다! "${secretAnswer}"`);
+        // 입력 비활성화 (오디오 재생 중 조작 방지)
+        answerInput.disabled = true;
+        submitAnswerBtn.disabled = true;
+        hintBtn.disabled = true;
 
-        if (currentMode === 'quiz') {
-            currentQuestionIndex++;
-            setTimeout(() => loadNextQuestion(), 500);
-        } else {
-            setTimeout(() => {
-                // showSuccessScreen(GAME_ID);
-                window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
-            }, 1000);
-        }
+        missionText.textContent = `✅ 정답! 실제 음성을 들어보세요 → "${secretAnswer}"`;
+
+        currentQuestionIndex++;
+        playAnswerReveal(() => loadNextQuestion());
     } else {
         // 오답
         streakCount = 0;
@@ -349,9 +391,32 @@ function checkAnswer() {
             navigator.vibrate(200);
         }
 
-        alert("❌ 틀렸어요! 다시 들어보세요");
+        missionText.textContent = '❌ 틀렸어요! 다시 들어보세요.';
         answerInput.value = '';
         answerInput.focus();
+    }
+}
+
+// 초성 추출
+function getChosung(text) {
+    const CHOSUNG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+    return [...text].map(ch => {
+        const code = ch.charCodeAt(0) - 0xAC00;
+        if (code < 0 || code > 11171) return ch;
+        return CHOSUNG[Math.floor(code / (21 * 28))];
+    }).join('');
+}
+
+// 힌트 버튼 상태 업데이트
+function updateHintBtn() {
+    const config = difficulties[currentDifficulty];
+    const remaining = config.maxHints - hintsUsed;
+    if (currentQuestionHintUsed || remaining <= 0) {
+        hintBtn.disabled = true;
+        hintBtn.textContent = remaining <= 0 ? '💡 힌트 소진' : '💡 힌트 사용됨';
+    } else {
+        hintBtn.disabled = false;
+        hintBtn.textContent = `💡 힌트 (${remaining}회 남음)`;
     }
 }
 
@@ -359,31 +424,19 @@ function checkAnswer() {
 function showHint() {
     const config = difficulties[currentDifficulty];
 
-    if (hintsUsed >= config.maxHints) {
-        alert(`힌트를 모두 사용했습니다! (최대 ${config.maxHints}개)`);
+    if (currentQuestionHintUsed || hintsUsed >= config.maxHints) {
         return;
     }
 
     hintsUsed++;
-    const hintLength = Math.ceil(secretAnswer.length / 2);
-    const hint = secretAnswer.substring(0, hintLength);
+    currentQuestionHintUsed = true;
+    const hint = getChosung(secretAnswer);
 
-    // 미션 텍스트에 힌트 표시
-    missionText.innerHTML = `💡 힌트: <span style="color: #ffd700; font-weight: bold;">${hint}</span>... (힌트 ${hintsUsed}/${config.maxHints})`;
+    // 미션 텍스트에 초성 힌트 표시
+    missionText.innerHTML = `💡 힌트: <span style="color: #ffd700; font-weight: bold; letter-spacing: 4px;">${hint}</span> (남은 힌트 ${config.maxHints - hintsUsed}개)`;
 
+    updateHintBtn();
     playSound('click');
-}
-
-// 문제 건너뛰기
-function skipQuestion() {
-    if (!confirm('이 문제를 건너뛰시겠습니까?')) {
-        return;
-    }
-
-    streakCount = 0;
-    updateStats();
-    currentQuestionIndex++;
-    loadNextQuestion();
 }
 
 // 메뉴로 돌아가기
@@ -393,23 +446,15 @@ function skipQuestion() {
 function completeGame() {
     stopAudio();
 
-    const accuracy = attemptCount > 0 ? Math.round((correctCount / attemptCount) * 100) : 0;
-
     playSound('success');
 
     if (navigator.vibrate) {
         navigator.vibrate([200, 100, 200, 100, 300]);
     }
 
-    alert(`🎉 게임 완료!\n\n정답: ${correctCount}개\n정답률: ${accuracy}%\n최고 연속: ${streakCount}개`);
-
     saveStats();
 
-    setTimeout(() => {
-        setTimeout(() => {
-            window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
-        }, 1000);
-    }, 1000);
+    window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
 }
 
 // 통계 업데이트

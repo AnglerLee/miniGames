@@ -1,0 +1,63 @@
+{
+  "0": {
+    "name": "🟢 쉬움",
+    "questions": 3,
+    "maxHints": 3,
+    "direction": "forward",
+    "speed": 0.4,
+    "questionList": [
+      {
+        "id": "file_1771480752619.webm",
+        "answer": "사과",
+        "audioUrl": "/uploads/game19/file_1771480752619.webm"
+      },
+      {
+        "id": "file_1771480807314.webm",
+        "answer": "냉장고",
+        "audioUrl": "/uploads/game19/file_1771480807314.webm"
+      },
+      {
+        "id": "file_1771480838446.webm",
+        "answer": "오징어",
+        "audioUrl": "/uploads/game19/file_1771480838446.webm"
+      }
+    ]
+  },
+  "reverseAudio_settings": {
+    "0": {
+      "questions": 3,
+      "maxHints": 3
+    }
+  },
+  "reverse_audio_stats": {
+    "correct": 3,
+    "attempts": 4
+  },
+  "questionList": [
+    {
+      "id": "audio_1771482073162.webm",
+      "answer": "사과",
+      "audioUrl": "/uploads/game19/audio_1771482073162.webm"
+    },
+    {
+      "id": "audio_1771482102378.webm",
+      "answer": "냉장고",
+      "audioUrl": "/uploads/game19/audio_1771482102378.webm"
+    },
+    {
+      "id": "audio_1771482127618.webm",
+      "answer": "오징어",
+      "audioUrl": "/uploads/game19/audio_1771482127618.webm"
+    },
+    {
+      "id": "audio_1771482153366.webm",
+      "answer": "바보",
+      "audioUrl": "/uploads/game19/audio_1771482153366.webm"
+    },
+    {
+      "id": "audio_1771482187072.webm",
+      "answer": "장원영",
+      "audioUrl": "/uploads/game19/audio_1771482187072.webm"
+    }
+  ]
+}

@@ -1,7 +1,6 @@
 // 바코드 스캐너 게임 - 관리자 설정 기반
 
 const GAME_ID = 'game17';
-const STORAGE_KEY = 'barcodeScannerSettings';
 
 // DOM 요소
 const cameraView = document.getElementById('cameraView');
@@ -36,6 +35,7 @@ let settings = {
 
 // 게임 상태
 let isCameraActive = false;
+let activeTargets = []; // 이번 게임에서 찾아야 할 바코드 (셔플+슬라이스)
 let scannedCodes = [];
 let attemptCount = 0;
 let successCount = 0;
@@ -46,11 +46,13 @@ let lastScanTime = 0;
 let scanCooldown = 1000;
 
 // 게임 초기화
-function initGame() {
-    loadSettings();
+async function initGame() {
+    await loadSettings();
 
     // 목표 바코드가 없으면 디폴트 모드 (아무 바코드나 허용)
     const isDefaultMode = settings.targetBarcodes.length === 0;
+
+    const displayCount = isDefaultMode ? 1 : Math.min(settings.targetCount, settings.targetBarcodes.length);
 
     showInstructions(
         '📱 바코드 스캐너',
@@ -60,7 +62,7 @@ function initGame() {
             '직접 번호를 입력할 수 있어요',
             '💡 어떤 바코드든 OK!'
         ] : [
-            `목표: ${settings.targetBarcodes.length}개의 바코드를 찾으세요`,
+            `목표: ${displayCount}개의 바코드를 찾으세요`,
             '카메라로 바코드를 스캔하거나',
             '직접 번호를 입력할 수 있어요',
             settings.timeLimit > 0 ? `⏱️ 제한시간: ${settings.timeLimit}초` : '⏱️ 시간 제한 없음'
@@ -69,22 +71,47 @@ function initGame() {
     );
 }
 
-// 설정 로드
-function loadSettings() {
-    const loaded = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-    settings = {
-        targetCount: loaded.targetCount || 1,
-        timeLimit: loaded.timeLimit || 0,
-        targetBarcodes: loaded.targetBarcodes || []
-    };
+// 설정 로드 (서버에서)
+async function loadSettings() {
+    try {
+        const res = await fetch(`/api/games/${GAME_ID}/settings`);
+        const loaded = res.ok ? ((await res.json()) || {}) : {};
+        const raw = loaded.targetBarcodes || [];
+        settings = {
+            targetCount: loaded.targetCount || 1,
+            timeLimit: loaded.timeLimit || 0,
+            // 구버전 문자열 배열도 지원
+            targetBarcodes: raw.map(b => typeof b === 'string' ? { code: b, hint: '' } : b)
+        };
+    } catch (e) {
+        console.error('설정 로드 오류:', e);
+    }
 
     updateMissionDisplay();
+    updateHintList();
+}
+
+// 배열 셔플 (Fisher-Yates)
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
 }
 
 // 게임 설정
 function setupGame() {
+    // targetCount만큼 셔플해서 이번 게임 대상 결정
+    if (settings.targetBarcodes.length > 0) {
+        activeTargets = shuffleArray([...settings.targetBarcodes]).slice(0, settings.targetCount);
+    } else {
+        activeTargets = [];
+    }
+
     setupActionButtons();
     updateMissionDisplay();
+    updateHintList();
 
     // 시간 제한이 있으면 타이머 시작
     if (settings.timeLimit > 0) {
@@ -116,8 +143,8 @@ function setupActionButtons() {
 // 미션 표시 업데이트
 function updateMissionDisplay() {
     const found = scannedCodes.length;
-    const isDefaultMode = settings.targetBarcodes.length === 0;
-    const total = isDefaultMode ? 1 : settings.targetBarcodes.length;
+    const isDefaultMode = activeTargets.length === 0;
+    const total = isDefaultMode ? 1 : activeTargets.length;
 
     missionProgress.textContent = `${found}/${total}`;
     remaining.textContent = total - found;
@@ -131,6 +158,29 @@ function updateMissionDisplay() {
     } else {
         missionText.textContent = `🎉 모두 찾았습니다!`;
     }
+}
+
+// 힌트 목록 업데이트
+function updateHintList() {
+    const section = document.getElementById('hintListSection');
+    const listEl = document.getElementById('hintList');
+    const hints = activeTargets.filter(b => b.hint);
+
+    if (hints.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+    listEl.innerHTML = hints.map((b, i) => {
+        const found = scannedCodes.includes(b.code);
+        return `
+            <div class="hint-item ${found ? 'found' : ''}">
+                <span class="hint-num">${i + 1}</span>
+                <span>${b.hint}</span>
+            </div>
+        `;
+    }).join('');
 }
 
 // 타이머 시작
@@ -331,9 +381,9 @@ function processBarcode(code) {
     }
 
     // 목표 바코드 검증 (디폴트 모드일 때는 모든 바코드 허용)
-    const isDefaultMode = settings.targetBarcodes.length === 0;
+    const isDefaultMode = activeTargets.length === 0;
 
-    if (!isDefaultMode && !settings.targetBarcodes.includes(code)) {
+    if (!isDefaultMode && !activeTargets.some(b => b.code === code)) {
         statusMessage.textContent = '올바르지 않은 바코드입니다';
         statusMessage.className = 'status-message error';
         playSound('fail');
@@ -370,10 +420,11 @@ function missionSuccess(code) {
     statusMessage.className = 'status-message success';
 
     updateMissionDisplay();
+    updateHintList();
 
     // 모든 바코드를 찾았는지 확인 (디폴트 모드는 1개만)
-    const isDefaultMode = settings.targetBarcodes.length === 0;
-    const targetCount = isDefaultMode ? 1 : settings.targetBarcodes.length;
+    const isDefaultMode = activeTargets.length === 0;
+    const targetCount = isDefaultMode ? 1 : activeTargets.length;
 
     if (scannedCodes.length >= targetCount) {
         setTimeout(() => {
@@ -448,6 +499,7 @@ function stopCamera() {
 
 // 게임 상태 리셋
 function resetGameState() {
+    activeTargets = [];
     scannedCodes = [];
     attemptCount = 0;
     successCount = 0;
@@ -473,10 +525,10 @@ function resetGame() {
             {
                 text: '재시작',
                 primary: true,
-                onclick: () => {
+                onclick: async () => {
                     stopCamera();
                     resetGameState();
-                    loadSettings();
+                    await loadSettings(); // updateHintList 포함
                     setupGame();
 
                     statusMessage.textContent = '게임이 초기화되었습니다';

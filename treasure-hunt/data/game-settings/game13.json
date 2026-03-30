@@ -1,0 +1,10 @@
+{
+  "energy_charge_settings": {
+    "threshold": 20,
+    "increment": 0.7,
+    "timeLimit": 30,
+    "decayRate": 0.5,
+    "theme": "default"
+  },
+  "energy_charge_best": 15
+}

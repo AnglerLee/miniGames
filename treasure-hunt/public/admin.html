@@ -755,15 +755,6 @@
     <script src="js/storage.js"></script>
     <script src="js/theme-manager.js"></script>
     <script src="js/preset-data.js"></script>
-    <script src="data/mystery.js"></script>
-    <script src="data/pirate.js"></script>
-    <script src="data/space.js"></script>
-    <script src="data/magic.js"></script>
-    <script src="data/dino.js"></script>
-    <script src="data/jungle.js"></script>
-    <script src="data/ocean.js"></script>
-    <script src="data/ninja.js"></script>
-    <script src="data/haunted.js"></script>
     <script src="js/effects.js"></script>
     <script src="js/game-engine.js"></script>
     <script src="js/app.js"></script>
@@ -868,6 +859,7 @@
 
             /* ===== S03: Dashboard ===== */
             async function initDashboard() {
+                await loadAllThemeData();
                 renderThemeCards();
                 await loadExistingConfig();
                 renderMissionList();

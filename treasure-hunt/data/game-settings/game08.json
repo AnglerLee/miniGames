@@ -1,0 +1,8 @@
+{
+  "word_search_settings": {
+    "difficulty": "hard",
+    "gridSize": 10,
+    "timeLimit": 120,
+    "theme": "random"
+  }
+}

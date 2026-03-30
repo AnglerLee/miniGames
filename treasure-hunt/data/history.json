@@ -896,5 +896,630 @@
       "totalAttempts": 12,
       "missions": []
     }
+  },
+  {
+    "theme": "mystery",
+    "preset": "mystery",
+    "scenarioId": "mystery-02",
+    "completedAt": "2026-02-19T12:27:42.776Z",
+    "results": {
+      "totalTime": 1048,
+      "cleared": 18,
+      "total": 18,
+      "grade": "S",
+      "teamGrade": "S",
+      "totalAttempts": 18,
+      "missions": [
+        {
+          "id": "m1",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 47
+        },
+        {
+          "id": "m2",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 11
+        },
+        {
+          "id": "m3",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 65
+        },
+        {
+          "id": "m4",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 7
+        },
+        {
+          "id": "m5",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 17
+        },
+        {
+          "id": "m6",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 53
+        },
+        {
+          "id": "m7",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 129
+        },
+        {
+          "id": "m8",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 16
+        },
+        {
+          "id": "m9",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 20
+        },
+        {
+          "id": "m10",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 76
+        },
+        {
+          "id": "m11",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 20
+        },
+        {
+          "id": "m12",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 8
+        },
+        {
+          "id": "m13",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 104
+        },
+        {
+          "id": "m14",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 27
+        },
+        {
+          "id": "m15",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 79
+        },
+        {
+          "id": "m16",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 88
+        },
+        {
+          "id": "m17",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 76
+        },
+        {
+          "id": "m18",
+          "status": "cleared",
+          "grade": "S",
+          "attempts": 1,
+          "time": 24
+        }
+      ],
+      "playerResults": {}
+    }
+  },
+  {
+    "theme": "mystery",
+    "preset": "mystery",
+    "scenarioId": "mystery-02",
+    "completedAt": "2026-02-20T10:42:40.198Z",
+    "results": {
+      "totalTime": 2503,
+      "total": 17,
+      "teamGrade": "A",
+      "playerResults": {
+        "player0": {
+          "name": "서아",
+          "cleared": 17,
+          "total": 17,
+          "grade": "A",
+          "totalAttempts": 22,
+          "totalTime": 801,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 80
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 8
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "C",
+              "attempts": 4,
+              "time": 69
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 15
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 21
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 117
+            },
+            "6": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 40
+            },
+            "7": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 9
+            },
+            "8": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 80
+            },
+            "9": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 19
+            },
+            "10": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 40
+            },
+            "11": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 67
+            },
+            "12": {
+              "status": "cleared",
+              "grade": "B",
+              "attempts": 3,
+              "time": 97
+            },
+            "13": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 72
+            },
+            "14": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 18
+            },
+            "15": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 24
+            },
+            "16": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 25
+            }
+          }
+        },
+        "player1": {
+          "name": "하은",
+          "cleared": 17,
+          "total": 17,
+          "grade": "A",
+          "totalAttempts": 18,
+          "totalTime": 1414,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 82
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 6
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 55
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 25
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 124
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 273
+            },
+            "6": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 85
+            },
+            "7": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 68
+            },
+            "8": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 81
+            },
+            "9": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 19
+            },
+            "10": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 52
+            },
+            "11": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 135
+            },
+            "12": {
+              "status": "cleared",
+              "grade": "A",
+              "attempts": 2,
+              "time": 149
+            },
+            "13": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 120
+            },
+            "14": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 64
+            },
+            "15": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 21
+            },
+            "16": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 55
+            }
+          }
+        }
+      },
+      "cleared": 17,
+      "grade": "A",
+      "totalAttempts": 40,
+      "missions": []
+    }
+  },
+  {
+    "theme": "mystery",
+    "preset": "mystery",
+    "scenarioId": "mystery-02",
+    "completedAt": "2026-02-20T10:43:25.986Z",
+    "results": {
+      "totalTime": 2548,
+      "total": 17,
+      "teamGrade": "A",
+      "playerResults": {
+        "player0": {
+          "name": "서아",
+          "cleared": 17,
+          "total": 17,
+          "grade": "A",
+          "totalAttempts": 22,
+          "totalTime": 801,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 80
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 8
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "C",
+              "attempts": 4,
+              "time": 69
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 15
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 21
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 117
+            },
+            "6": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 40
+            },
+            "7": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 9
+            },
+            "8": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 80
+            },
+            "9": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 19
+            },
+            "10": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 40
+            },
+            "11": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 67
+            },
+            "12": {
+              "status": "cleared",
+              "grade": "B",
+              "attempts": 3,
+              "time": 97
+            },
+            "13": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 72
+            },
+            "14": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 18
+            },
+            "15": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 24
+            },
+            "16": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 25
+            }
+          }
+        },
+        "player1": {
+          "name": "하은",
+          "cleared": 17,
+          "total": 17,
+          "grade": "A",
+          "totalAttempts": 18,
+          "totalTime": 1414,
+          "missions": {
+            "0": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 82
+            },
+            "1": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 6
+            },
+            "2": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 55
+            },
+            "3": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 25
+            },
+            "4": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 124
+            },
+            "5": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 273
+            },
+            "6": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 85
+            },
+            "7": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 68
+            },
+            "8": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 81
+            },
+            "9": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 19
+            },
+            "10": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 52
+            },
+            "11": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 135
+            },
+            "12": {
+              "status": "cleared",
+              "grade": "A",
+              "attempts": 2,
+              "time": 149
+            },
+            "13": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 120
+            },
+            "14": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 64
+            },
+            "15": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 21
+            },
+            "16": {
+              "status": "cleared",
+              "grade": "S",
+              "attempts": 1,
+              "time": 55
+            }
+          }
+        }
+      },
+      "cleared": 17,
+      "grade": "A",
+      "totalAttempts": 40,
+      "missions": []
+    }
   }
 ]

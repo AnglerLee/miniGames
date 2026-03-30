@@ -190,13 +190,43 @@ function placeWords() {
     });
 }
 
+// 자주 쓰이는 한글 음절 풀 생성
+// 초성(11) × 중성(12) × 받침(5) = 약 660자
+function buildCommonSyllables() {
+    const HANGUL_START = 0xAC00;
+    // 흔한 초성: ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅎ
+    const cho  = [0, 2, 3, 5, 6, 7, 8, 11, 12, 14, 18];
+    // 흔한 중성: ㅏㅐㅑㅓㅔㅕㅗㅛㅜㅠㅡㅣ
+    const jung = [0, 1, 2, 4, 5, 6, 8, 9, 13, 14, 18, 20];
+    // 받침: 없음, ㄴ, ㄹ, ㅁ, ㅇ
+    const jong = [0, 4, 8, 16, 21];
+
+    const syllables = [];
+    for (const c of cho) {
+        for (const v of jung) {
+            for (const f of jong) {
+                syllables.push(String.fromCharCode(HANGUL_START + (c * 21 + v) * 28 + f));
+            }
+        }
+    }
+    return syllables;
+}
+
 // 빈 공간 채우기
 function fillEmptySpaces() {
-    const hangul = 'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㅏㅓㅗㅜㅡㅣ';
+    // 정답 단어에 사용된 글자 수집 (더미와 중복 방지)
+    const usedChars = new Set();
+    currentWords.forEach(word => {
+        for (const ch of word) usedChars.add(ch);
+    });
+
+    // 자주 쓰이는 글자 풀에서 정답 글자 제외
+    const pool = buildCommonSyllables().filter(ch => !usedChars.has(ch));
+
     for (let i = 0; i < currentGridSize; i++) {
         for (let j = 0; j < currentGridSize; j++) {
             if (grid[i][j].letter === '') {
-                grid[i][j].letter = hangul[randomInt(0, hangul.length - 1)];
+                grid[i][j].letter = pool[randomInt(0, pool.length - 1)];
             }
         }
     }

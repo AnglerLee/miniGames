@@ -1,0 +1,16 @@
+{
+  "difficulty": 0,
+  "targetCount": 1,
+  "timeLimit": 0,
+  "targetBarcodes": [
+    {
+      "code": "8886467100017",
+      "hint": "빨간 콧수염"
+    },
+    {
+      "code": "8886467100024",
+      "hint": "초록 콧수염"
+    }
+  ],
+  "lastUpdated": "2026-02-19T06:54:44.675Z"
+}

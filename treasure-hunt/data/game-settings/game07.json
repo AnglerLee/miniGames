@@ -1,0 +1,9 @@
+{
+  "math_race_settings": {
+    "timeLimit": 120,
+    "difficulty": "level2",
+    "theme": "default"
+  },
+  "math_race_best_level2": 9,
+  "math_race_best_level2_streak": 8
+}

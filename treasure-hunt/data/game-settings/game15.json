@@ -1,0 +1,26 @@
+{
+  "game15_config": {
+    "difficulties": {
+      "easy": {
+        "target": 40,
+        "maxLimit": 100,
+        "timeLimit": 0,
+        "sustainTime": 2
+      },
+      "medium": {
+        "target": 70,
+        "maxLimit": 95,
+        "timeLimit": 30,
+        "sustainTime": 3
+      },
+      "hard": {
+        "target": 85,
+        "maxLimit": 90,
+        "timeLimit": 20,
+        "sustainTime": 4
+      }
+    },
+    "currentDifficulty": "easy"
+  },
+  "decibel_meter_best_easy": 77
+}

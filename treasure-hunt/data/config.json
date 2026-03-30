@@ -2,9 +2,9 @@
   "preset": "mystery",
   "theme": "mystery",
   "scenarioId": "mystery-02",
-  "totalMissions": 6,
+  "totalMissions": 17,
   "globalTimeLimit": 0,
-  "treasurePassword": "보석감정사의눈물",
+  "treasurePassword": "보석감정사의눈물방울",
   "showClues": true,
   "playerCount": 2,
   "gameMode": "coop",
@@ -13,7 +13,7 @@
       "name": "서아"
     },
     {
-      "name": "지연"
+      "name": "하은"
     }
   ],
   "missions": [
@@ -25,9 +25,9 @@
         "content": "보석"
       },
       "storyText": "범인이 남긴 암호 편지가 발견되었다! 숨겨진 단어를 찾아내라!",
-      "hintMessage": "",
+      "hintMessage": "편지 속에 숨어있는 단어를 찾아봐!",
       "secretCode": "💎",
-      "successMessage": "암호 편지 해독! 범인의 첫 번째 흔적을 발견했다!"
+      "successMessage": "암호 편지 해독! '보석...' 단서를 확보했다!"
     },
     {
       "type": "minigame",
@@ -36,10 +36,38 @@
         "type": "text",
         "content": ""
       },
-      "storyText": "암호 편지에 숨겨진 장소의 사진이 있다, 스크래치를 긁어 장소를 확인하라.",
-      "hintMessage": "",
-      "secretCode": "🔍",
-      "successMessage": "장소를 확인했다! 다음 단서를 찾아라!"
+      "storyText": "범인이 현장에 복권처럼 생긴 비밀 메시지를 남겼다! 긁어서 내용을 확인하라!",
+      "hintMessage": "천천히 문질러서 숨겨진 내용을 드러내봐!",
+      "secretCode": "🎫",
+      "successMessage": "숨겨진 장소 사진을 확인했다! 다음 추적지를 파악했다!"
+    },
+    {
+      "type": "findObject",
+      "hints": [
+        "지도가 어딘가에 있다",
+        "방문을 살펴봐",
+        "지도에 범인이 가려고 하는 위치가 적혀있다."
+      ],
+      "answers": [
+        "수원"
+      ],
+      "clue": {
+        "type": "text",
+        "content": ""
+      },
+      "storyText": "박물관 관계자가 전시실 지도를 남겨뒀다. 범인의 동선을 파악하라!"
+    },
+    {
+      "type": "minigame",
+      "gameId": "game02",
+      "clue": {
+        "type": "text",
+        "content": ""
+      },
+      "storyText": "범인이 복잡한 박물관 복도를 통해 도주했다! 탈출 경로를 추적하라!",
+      "hintMessage": "막힌 길을 피해서 출구를 찾아봐!",
+      "secretCode": "🗺️",
+      "successMessage": "도주 경로 파악! 범인이 어디로 갔는지 알아냈다!"
     },
     {
       "type": "minigame",
@@ -48,56 +76,168 @@
         "type": "text",
         "content": "감정"
       },
-      "storyText": "현장에 남은 바코드가 수상하다! 스캔해서 증거를 확보하라!",
-      "hintMessage": "",
+      "storyText": "전시품마다 붙어있는 바코드를 스캔해야 한다! 진품 다이아몬드의 코드를 찾아라!",
+      "hintMessage": "카메라로 바코드를 비춰봐!",
       "secretCode": "📱",
-      "successMessage": "바코드 분석 완료! 범인의 동선이 드러나고 있다!"
+      "successMessage": "감정 코드 확인! 진품과 가품을 구별할 수 있게 됐다!"
+    },
+    {
+      "type": "minigame",
+      "gameId": "game20",
+      "clue": {
+        "type": "text",
+        "content": ""
+      },
+      "storyText": "보석 감정사가 이모지로 암호화된 메모를 남겼다! 해독해서 단서를 확보하라!",
+      "hintMessage": "이모지가 무엇을 뜻하는지 생각해봐!",
+      "secretCode": "💬",
+      "successMessage": "감정사의 메모 해독! 숨겨진 제2의 다이아몬드 보관처를 알아냈다!"
     },
     {
       "type": "findObject",
       "hints": [
         "방 어딘가에 감정 도구가 숨겨져 있다",
         "장난감 선반 위를 살펴봐",
-        "물건을 확대해서 보는 도구이다."
+        "물건을 확대해서 보는 도구이다"
       ],
       "answers": [
         "돋보기"
       ],
       "clue": {
         "type": "text",
-        "content": "사"
+        "content": ""
       },
-      "storyText": "보석 감정에 사용된 돋보기다, 돋보기를 이용해서 다음 미션을 진행하라."
+      "storyText": "보석 감정에 사용된 물건이 어딘가에 있다! 찾아서 다음 단서를 확인하라!"
     },
     {
       "type": "minigame",
-      "gameId": "game12",
+      "gameId": "game15",
+      "clue": {
+        "type": "text",
+        "content": ""
+      },
+      "storyText": "도난 당시 특이한 소리가 들렸다는 목격자 진술! 소리 크기를 분석해 범인의 위치를 추적하라!",
+      "hintMessage": "마이크에 소리를 내서 목표 데시벨에 맞춰봐!",
+      "secretCode": "🔊",
+      "successMessage": "음향 분석 완료! 범인이 사용한 장비의 종류를 파악했다!"
+    },
+    {
+      "type": "minigame",
+      "gameId": "game03",
+      "clue": {
+        "type": "text",
+        "content": ""
+      },
+      "storyText": "파쇄된 보석 도면 카드들이 발견됐다! 짝을 맞춰 원래 도면을 복원하라!",
+      "hintMessage": "같은 도면 조각의 위치를 기억해둬!",
+      "secretCode": "🃏",
+      "successMessage": "도면 복원 완료! 다이아몬드의 보관 방법이 드러났다!"
+    },
+    {
+      "type": "minigame",
+      "gameId": "game13",
+      "clue": {
+        "type": "text",
+        "content": "사"
+      },
+      "storyText": "감정 장비의 배터리가 방전됐다! 에너지를 충전해야 보석을 분석할 수 있다!",
+      "hintMessage": "폰을 흔들어서 에너지를 빠르게 충전해봐!",
+      "secretCode": "⚡",
+      "successMessage": "충전 완료! 전문 감정사가 분석을 시작했다!"
+    },
+    {
+      "type": "minigame",
+      "gameId": "game21",
+      "clue": {
+        "type": "text",
+        "content": ""
+      },
+      "storyText": "보안 금고실 문에 이중 잠금 장치가 있다! 두 곳을 동시에 눌러 해제하라!",
+      "hintMessage": "두 지점을 동시에 눌러야 해!",
+      "secretCode": "🤝",
+      "successMessage": "이중 잠금 해제! 금고실 안으로 진입 성공!"
+    },
+    {
+      "type": "minigame",
+      "gameId": "game19",
+      "clue": {
+        "type": "text",
+        "content": ""
+      },
+      "storyText": "금고실 내부에서 역재생된 음성 메시지가 흘러나온다! 원래 내용을 복원하라!",
+      "hintMessage": "소리를 집중해서 들어봐!",
+      "secretCode": "🔄",
+      "successMessage": "음성 복원! 보석이 숨겨진 비밀 장소의 힌트를 얻었다!"
+    },
+    {
+      "type": "findObject",
+      "hints": [
+        "책장 어딘가에 감정서 서류가 있다",
+        "두꺼운 책들 사이를 확인해봐",
+        "책장 맨 오른쪽 책 사이에 끼워져 있어"
+      ],
+      "answers": [
+        "장원이형"
+      ],
       "clue": {
         "type": "text",
         "content": "의"
       },
-      "storyText": "다이아몬드의 진위를 판별해야 한다! 빛의 색깔 패턴을 분석하라!",
+      "storyText": "공식 감정서가 책장 어딘가에 숨겨져 있다! 찾아서 진품 여부를 확인하라!"
+    },
+    {
+      "type": "minigame",
+      "gameId": "game11",
+      "clue": {
+        "type": "text",
+        "content": ""
+      },
+      "storyText": "전시실 보안 코드가 활성화됐다! 순서에 맞게 빠르게 입력해서 해제하라!",
+      "hintMessage": "숫자 순서를 잘 기억하고 빠르게 눌러봐!",
+      "secretCode": "🔒",
+      "successMessage": "보안 코드 해제! 마지막 전시실에 접근 가능해졌다!"
+    },
+    {
+      "type": "minigame",
+      "gameId": "game05",
+      "clue": {
+        "type": "text",
+        "content": "눈"
+      },
+      "storyText": "범인이 파쇄한 비밀 메모를 복원해야 한다! 조각을 맞춰 원래 내용을 복원하라!",
       "hintMessage": "",
-      "secretCode": "🌈",
-      "successMessage": "진품 감별 완료! 가짜 다이아몬드 사이에서 단서를 발견!"
+      "secretCode": "🧩",
+      "successMessage": "메모 복원 완료! 다이아몬드의 최종 보관 위치를 알아냈다!"
+    },
+    {
+      "type": "minigame",
+      "gameId": "game18",
+      "clue": {
+        "type": "text",
+        "content": "물"
+      },
+      "storyText": "자외선 장비로 숨겨진 지문을 찾아야 한다! 형광 색상을 추적하라!",
+      "hintMessage": "",
+      "secretCode": "🔦",
+      "successMessage": "지문 채취 완료! 범인의 신원이 확인됐다!"
     },
     {
       "type": "minigame",
       "gameId": "game23",
       "clue": {
         "type": "text",
-        "content": "눈물"
+        "content": "방울"
       },
-      "storyText": "범인의 비밀 금고를 찾았다! 안에 '별의 눈물'이 있을 것이다!",
+      "storyText": "범인의 비밀 금고를 발견했다! 안에 '별의 눈물'이 있을 것이다! 열어라!",
       "hintMessage": "",
       "secretCode": "🔓",
-      "successMessage": "금고 오픈! 사라진 다이아몬드를 되찾았다!"
+      "successMessage": "금고 오픈! 사라진 '별의 눈물' 다이아몬드를 되찾았다!"
     }
   ],
-  "introText": "긴급 속보!\n\n시립 박물관 보석 전시회에서 세계 최대 다이아몬드 '별의 눈물'이 사라졌다!\n\n범인은 전시장 곳곳에 교묘한 흔적을 남겼다.\n\n보석감정사의 도움을 받아 단서를 추적하고 다이아몬드를 되찾아라!",
+  "introText": "긴급 속보!\n\n시립 박물관 보석 전시회에서 세계 최대 다이아몬드 '별의 눈물'이 사라졌다!\n\n범인은 전시장 곳곳에 교묘한 흔적을 남겼다.\n보안 CCTV도 해킹당했고, 경비원도 제압당했다.\n\n우리 탐정팀이 직접 나서야 한다!\n18개의 임무를 완수해 다이아몬드를 되찾아라!",
   "finalReward": {
     "message": "축하한다! 전설의 다이아몬드 '별의 눈물'을 되찾았다! 최고의 보석 탐정이다!",
     "secretCode": "408"
   },
-  "createdAt": "2026-02-18T09:17:42.486Z"
+  "createdAt": "2026-02-20T10:00:56.894Z"
 }

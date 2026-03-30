@@ -23,8 +23,24 @@ const GAME_INFO = {
     'game27': { name: '절대음감 스톱워치', icon: '⏱️', path: '27-stopwatch', category: 'action' }
 };
 
-/* Theme data is loaded via <script> tags from data/*.js files */
+/* Theme data is loaded dynamically from data/*.json files */
 var PRESET_DATA = {};
+
+/* ===== JSON Data Loader ===== */
+
+async function loadAllThemeData() {
+    var themes = ['mystery', 'pirate', 'space', 'magic', 'dino', 'jungle', 'ocean', 'ninja', 'haunted'];
+    await Promise.all(themes.map(async function (themeId) {
+        try {
+            var res = await fetch('data/' + themeId + '.json');
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            PRESET_DATA[themeId] = await res.json();
+        } catch (e) {
+            console.warn('Failed to load theme data:', themeId, e);
+            PRESET_DATA[themeId] = { scenarios: [] };
+        }
+    }));
+}
 
 /* ===== API Functions ===== */
 

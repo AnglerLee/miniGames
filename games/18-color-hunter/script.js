@@ -17,22 +17,20 @@ const TARGET_COLORS = [
 let currentTarget = null;
 let stream = null;
 let isCameraActive = false;
-let remainingPasses = 0;
-let colorThreshold = 130; // 기본값, Admin에서 로드됨
+let colorThreshold = 130;
+let questionCount = 2;  // 총 문제 수
+let solvedCount = 0;    // 맞춘 문제 수
 
 // DOM Elements
 const videoEl = document.getElementById('cameraFeed');
 const canvasEl = document.getElementById('cameraCanvas');
 const targetNameEl = document.getElementById('targetColorName');
-const missionBoxEl = document.querySelector('.mission-box');
 const captureBtn = document.getElementById('captureBtn');
-const passBtn = document.getElementById('passBtn');
 const cameraSection = document.getElementById('cameraSection');
 const cameraErrorSection = document.getElementById('cameraErrorSection');
-const colorComparison = document.getElementById('colorComparison');
-const targetColorSample = document.getElementById('targetColorSample');
 const capturedColorSample = document.getElementById('capturedColorSample');
 const comparisonResult = document.getElementById('comparisonResult');
+const progressText = document.getElementById('progressText');
 const ctx = canvasEl.getContext('2d', { willReadFrequently: true });
 
 // Admin 설정 로드
@@ -40,25 +38,29 @@ function loadAdminSettings() {
     const settings = JSON.parse(localStorage.getItem('game18_settings')) || {};
     const difficulty = settings.difficulty !== undefined ? settings.difficulty : 0;
 
-    // 프리셋 기본값
-    const passPresets = [5, 3, 1];
-    const thresholdPresets = [150, 130, 100];
+    const questionPresets = [2, 3, 5];
+    const thresholdPresets = [45, 30, 20]; // 색조 허용 오차 (도)
 
-    remainingPasses = settings.passCount !== undefined ? settings.passCount : passPresets[difficulty];
+    questionCount = settings.questionCount !== undefined ? settings.questionCount : questionPresets[difficulty];
     colorThreshold = settings.colorThreshold !== undefined ? settings.colorThreshold : thresholdPresets[difficulty];
+}
 
-    updatePassButton();
+// 진행도 업데이트
+function updateProgress() {
+    if (progressText) {
+        progressText.textContent = `(${solvedCount}/${questionCount})`;
+    }
 }
 
 // Initialize Game
 function initGame() {
     loadAdminSettings();
+    solvedCount = 0;
+    updateProgress();
     pickNewTarget();
     startCamera();
 
-    // Add Event Listeners
     captureBtn.addEventListener('click', captureFrame);
-    passBtn.addEventListener('click', handlePass);
     document.getElementById('retryCameraBtn').addEventListener('click', startCamera);
 }
 
@@ -74,45 +76,10 @@ function pickNewTarget() {
     const brightness = (currentTarget.rgb.r * 299 + currentTarget.rgb.g * 587 + currentTarget.rgb.b * 114) / 1000;
     targetNameEl.style.color = brightness > 125 ? 'black' : 'white';
 
-    // 목표 색상 샘플 업데이트
-    if (targetColorSample) {
-        targetColorSample.style.backgroundColor = currentTarget.code;
-    }
-}
-
-// 패스 버튼 상태 업데이트
-function updatePassButton() {
-    if (!passBtn) return;
-
-    passBtn.textContent = `패스 (${remainingPasses}회)`;
-    passBtn.disabled = remainingPasses <= 0;
-}
-
-// 패스 처리
-function handlePass() {
-    if (remainingPasses <= 0) return;
-
-    remainingPasses--;
-    playSound('click');
-    pickNewTarget();
-    updatePassButton();
-
-    // 피드백 표시
-    const toast = document.createElement('div');
-    toast.style.position = 'fixed';
-    toast.style.top = '50%';
-    toast.style.left = '50%';
-    toast.style.transform = 'translate(-50%, -50%)';
-    toast.style.backgroundColor = 'rgba(0,0,0,0.8)';
-    toast.style.color = 'white';
-    toast.style.padding = '15px 30px';
-    toast.style.borderRadius = '8px';
-    toast.style.fontSize = '1.1rem';
-    toast.style.zIndex = '1000';
-    toast.textContent = `패스! 남은 횟수: ${remainingPasses}회`;
-    document.body.appendChild(toast);
-
-    setTimeout(() => toast.remove(), 1500);
+    // 비교 결과 초기화
+    comparisonResult.textContent = '촬영 대기 중';
+    comparisonResult.className = 'comparison-result';
+    if (capturedColorSample) capturedColorSample.style.backgroundColor = '';
 }
 
 // Camera Handling
@@ -124,7 +91,7 @@ async function startCamera() {
 
         const constraints = {
             video: {
-                facingMode: 'environment', // Use rear camera if available
+                facingMode: 'environment',
                 width: { ideal: 1280 },
                 height: { ideal: 720 }
             }
@@ -141,7 +108,6 @@ async function startCamera() {
 
     } catch (err) {
         console.error("Camera Error:", err);
-        // If camera fails, show error message
         showCameraError();
     }
 }
@@ -160,22 +126,17 @@ function stopCamera() {
     isCameraActive = false;
 }
 
-
-
 // Image Processing & Capture
 function captureFrame() {
     if (!isCameraActive) return;
 
-    playSound('click'); // Using common.js sound
+    playSound('click');
 
-    // Set canvas dimensions to match video
     canvasEl.width = videoEl.videoWidth;
     canvasEl.height = videoEl.videoHeight;
 
-    // Draw current frame
     ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
 
-    // Get center pixel data (10x10 area average for stability)
     const centerX = Math.floor(canvasEl.width / 2);
     const centerY = Math.floor(canvasEl.height / 2);
     const sampleSize = 10;
@@ -200,29 +161,58 @@ function captureFrame() {
     checkColorMatch(r, g, b);
 }
 
+// RGB → HSL 변환
+function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h = 0, s = 0;
+    const l = (max + min) / 2;
 
+    if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+            case g: h = ((b - r) / d + 2) / 6; break;
+            case b: h = ((r - g) / d + 4) / 6; break;
+        }
+    }
+    return { h: h * 360, s: s * 100, l: l * 100 };
+}
+
+// HSL 색조 기반 색상 거리 (단위: 도, 0~180)
+function calcHueDistance(capR, capG, capB, target) {
+    const cap = rgbToHsl(capR, capG, capB);
+    const tar = rgbToHsl(target.r, target.g, target.b);
+
+    // 채도가 너무 낮으면(회색/흰색/검정) 채도 높은 색상과 불일치
+    if (cap.s < 20 && tar.s > 40) return 999;
+
+    // 명도가 너무 낮으면(거의 검정) 불일치
+    if (cap.l < 8) return 999;
+
+    // 색조 원형 거리 (0~180)
+    const raw = Math.abs(cap.h - tar.h);
+    const hueDiff = Math.min(raw, 360 - raw);
+
+    // 채도 부족 패널티: 촬영 채도가 목표보다 낮을수록 가산
+    const satPenalty = Math.max(0, tar.s - cap.s) * 0.2;
+
+    return hueDiff + satPenalty;
+}
 
 // Color Comparison Logic
 function checkColorMatch(r, g, b) {
-    // Convert both to HSL for better perception matching -> or utilize existing RGB logic but with wider tolerance
-    // Let's stick to RGB distance for simplicity but normalize it? 
-    // Actually, simple RGB distance is often not enough for "Yellow" vs "Orange".
-    // Let's use RGB distance with a generous threshold.
-
     const target = currentTarget.rgb;
+    const distance = calcHueDistance(r, g, b, target);
 
-    // Simple Euclidian distance
-    const distance = Math.sqrt(
-        Math.pow(target.r - r, 2) +
-        Math.pow(target.g - g, 2) +
-        Math.pow(target.b - b, 2)
-    );
+    const capHsl = rgbToHsl(r, g, b);
+    const tarHsl = rgbToHsl(target.r, target.g, target.b);
 
-    console.log(`Target: ${currentTarget.name} (${target.r},${target.g},${target.b})`);
-    console.log(`Captured: (${r},${g},${b}), Distance: ${distance.toFixed(2)}`);
-    console.log(`Threshold: ${colorThreshold}`);
+    console.log(`Target: ${currentTarget.name} H=${tarHsl.h.toFixed(1)}° S=${tarHsl.s.toFixed(1)}%`);
+    console.log(`Captured: H=${capHsl.h.toFixed(1)}° S=${capHsl.s.toFixed(1)}% L=${capHsl.l.toFixed(1)}%`);
+    console.log(`Hue distance: ${distance.toFixed(1)}° / Threshold: ${colorThreshold}°`);
 
-    // 색상 비교 UI 표시
     showColorComparison(r, g, b, distance);
 
     if (distance < colorThreshold) {
@@ -234,32 +224,44 @@ function checkColorMatch(r, g, b) {
 
 // 색상 비교 UI 표시
 function showColorComparison(r, g, b, distance) {
-    const capturedColor = `rgb(${r}, ${g}, ${b})`;
+    capturedColorSample.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 
-    // 촬영한 색상 표시
-    capturedColorSample.style.backgroundColor = capturedColor;
-
-    // 결과 표시
     const isMatch = distance < colorThreshold;
+    const distDisplay = distance >= 999 ? '무채색' : `${distance.toFixed(0)}°`;
     comparisonResult.textContent = isMatch
-        ? `✅ 일치! (차이: ${distance.toFixed(0)})`
-        : `❌ 불일치 (차이: ${distance.toFixed(0)} / 허용: ${colorThreshold})`;
+        ? `✅ 일치! (색조 차이: ${distDisplay})`
+        : `❌ 불일치 (색조 차이: ${distDisplay} / 허용: ${colorThreshold}°)`;
 
     comparisonResult.className = 'comparison-result ' + (isMatch ? 'success' : 'fail');
-
-    // 비교 UI 표시
 }
 
 function handleSuccess() {
     playSound('success');
-    // showSuccessScreen(GAME_ID);
-    window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
+
+    solvedCount++;
+    updateProgress();
+
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+    if (solvedCount >= questionCount) {
+        // 모든 문제 완료 → 게임 클리어
+        captureBtn.disabled = true;
+        setTimeout(() => {
+            window.parent.postMessage({ type: 'GAME_CLEAR', gameId: GAME_ID }, '*');
+        }, 800);
+    } else {
+        // 다음 문제로
+        setTimeout(() => {
+            pickNewTarget();
+        }, 1200);
+    }
 }
 
 function handleFail() {
     playSound('fail');
 
-    // 빨간색 플래시 효과
+    if (navigator.vibrate) navigator.vibrate(200);
+
     const flash = document.createElement('div');
     flash.style.position = 'fixed';
     flash.style.top = '0';

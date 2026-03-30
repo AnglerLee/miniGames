@@ -1,0 +1,484 @@
+{
+    "scenarios": [
+        {
+            "id": "dino-01",
+            "name": "공룡 타임캡슐",
+            "description": "쥐라기 탐험대로서 17개의 화석을 발굴해 타임캡슐의 암호를 해독하라!",
+            "introText": "고고학 연구소에서 놀라운 발견!\n\n수천만 년 전 공룡시대의 타임캡슐이 발견되었다.\n\n캡슐을 열기 위해서는 공룡 탐험 임무를 완수하며 단서를 모아야 한다.\n\n총 17개의 임무가 기다린다!\n발굴단원이여, 빠르게 탐사를 시작하라!",
+            "treasurePassword": "티라노",
+            "missions": [
+                {
+                    "type": "minigame",
+                    "gameId": "game05",
+                    "clue": { "type": "text", "content": "티" },
+                    "storyText": "발굴된 화석 조각들이 뒤섞여 있다! 퍼즐을 맞춰 화석을 복원하라!",
+                    "hintMessage": "퍼즐 조각을 제자리로 맞춰봐!",
+                    "secretCode": "🦴",
+                    "successMessage": "화석 복원 성공! '티...' 단서와 함께 티라노사우루스의 이빨 화석이다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game08",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "발굴 일지에서 공룡의 서식지 좌표를 찾아내라!",
+                    "hintMessage": "상하좌우 방향으로 단어를 찾아봐!",
+                    "secretCode": "📖",
+                    "successMessage": "발굴 일지 해독! 주요 화석 매장지를 파악했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game22",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "발굴 현장 보안 시스템에 접근해야 한다! 해킹해서 내부 지도를 확보하라!",
+                    "hintMessage": "보안망을 하나씩 뚫어봐!",
+                    "secretCode": "📡",
+                    "successMessage": "보안 해킹 성공! 발굴 현장 전체 지도를 확보했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["주방 어딘가에 화석 표본이 숨겨져 있다", "서랍 안을 확인해봐", "수저통 근처를 살펴봐"],
+                    "answers": ["돌", "돌멩이", "조약돌"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "주방에서 특별한 공룡 발자국 화석을 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game20",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "공룡 연구소 AI가 이모지로 발굴 위치를 알려주고 있다! 해독하라!",
+                    "hintMessage": "이모지 그림의 의미를 생각해봐!",
+                    "secretCode": "🤖",
+                    "successMessage": "발굴 위치 해독! 새로운 화석 매장지를 발견했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game11",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "발굴 장비 활성화 코드를 입력해야 한다! 순서에 맞게 빠르게 눌러라!",
+                    "hintMessage": "순서를 잘 기억하고 빠르게 눌러봐!",
+                    "secretCode": "🔢",
+                    "successMessage": "장비 활성화! 고성능 발굴 장비가 작동을 시작했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game07",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "화석 연대 측정을 위한 방사성 탄소 계산이 필요하다! 빠르게 풀어라!",
+                    "hintMessage": "빠른 계산이 핵심이야!",
+                    "secretCode": "🧬",
+                    "successMessage": "연대 계산 완료! 화석이 7천만 년 전 것으로 확인됐다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game13",
+                    "clue": { "type": "text", "content": "라" },
+                    "storyText": "발굴 장비 배터리가 방전됐다! 태양열 에너지를 충전하라!",
+                    "hintMessage": "폰을 힘차게 흔들어봐!",
+                    "secretCode": "⚡",
+                    "successMessage": "에너지 충전 완료! '라...' 단서를 발굴 현장에서 확보했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["침실 어딘가에 공룡 모형이 숨겨져 있다", "장난감 상자를 확인해봐", "선반 위를 살펴봐"],
+                    "answers": ["공룡", "공룡모형", "피규어", "장난감"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "발굴된 공룡 복원 모형이 침실에 있다! 찾아서 확인하라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game16",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "지하 발굴 방향을 나침반으로 정확히 잡아야 한다!",
+                    "hintMessage": "화살표 방향으로 폰을 돌려봐!",
+                    "secretCode": "🧭",
+                    "successMessage": "방향 탐지 완료! 화석이 묻혀있는 정확한 방향을 찾아냈다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game19",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "공룡 울음소리 녹음이 역재생되고 있다! 원래 소리를 복원하라!",
+                    "hintMessage": "소리를 집중해서 들어봐!",
+                    "secretCode": "🦕",
+                    "successMessage": "공룡 소리 복원! 공룡의 서식 패턴을 파악했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game03",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "공룡 DNA 조각들을 짝을 맞춰 완전한 유전자를 복원하라!",
+                    "hintMessage": "같은 DNA 카드 짝의 위치를 기억해둬!",
+                    "secretCode": "🧬",
+                    "successMessage": "DNA 복원 완료! 공룡의 유전자 정보를 확보했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game17",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "발굴된 화석에 붙은 식별 태그를 스캔하라!",
+                    "hintMessage": "카메라로 바코드를 비춰봐!",
+                    "secretCode": "🏷️",
+                    "successMessage": "화석 스캔 완료! 새로운 종류의 공룡 화석임을 확인했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["거실 어딘가에 타임캡슐 단서가 있다", "책상 위를 살펴봐", "지도나 종이를 찾아봐"],
+                    "answers": ["지도", "종이", "메모", "편지"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "타임캡슐을 열기 위한 최후의 단서가 거실에 있다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game24",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "공룡 알을 조심스럽게 운반해야 한다! 흔들리지 않도록 균형을 잡아라!",
+                    "hintMessage": "폰을 천천히 기울여서 균형을 맞춰봐!",
+                    "secretCode": "🥚",
+                    "successMessage": "안전 운반 성공! 공룡 알이 연구소에 도착했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game21",
+                    "clue": { "type": "text", "content": "노" },
+                    "storyText": "거대한 화석을 들어올리려면 둘이 힘을 합쳐야 한다! 동시에 터치하라!",
+                    "hintMessage": "두 지점을 동시에 눌러야 해!",
+                    "secretCode": "🤲",
+                    "successMessage": "협동 발굴 성공! '노' 단서 확보! 완전한 공룡 화석을 발견했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game12",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "타임캡슐 해제 색상 코드를 빠르게 입력하라!",
+                    "hintMessage": "색깔을 빠르게 구분해봐!",
+                    "secretCode": "🌈",
+                    "successMessage": "색상 코드 입력 완료! 타임캡슐이 열리고 있다!"
+                }
+            ],
+            "finalReward": {
+                "message": "축하한다, 위대한 발굴단원! 타임캡슐이 열렸다! 공룡시대의 비밀이 밝혀졌다!",
+                "secretCode": "165"
+            }
+        },
+        {
+            "id": "dino-02",
+            "name": "공룡 알 수송 작전",
+            "description": "화산 폭발 전에 17개의 임무를 완수하고 공룡 알을 안전하게 수송하라!",
+            "introText": "비상! 비상! 화산이 곧 폭발한다!\n\n발굴 현장에서 살아있는 공룡 알들이 발견되었다.\n\n용암이 흘러내리기 전에 알을 안전한 보호소로 수송해야 한다.\n\n총 17개의 임무를 완수하라!\n시간이 없다, 발굴단원! 공룡 알을 지켜라!",
+            "treasurePassword": "공룡알보호",
+            "missions": [
+                {
+                    "type": "minigame",
+                    "gameId": "game24",
+                    "clue": { "type": "text", "content": "공룡" },
+                    "storyText": "공룡 알은 매우 약하다! 흔들리지 않게 균형을 잡으며 운반하라!",
+                    "hintMessage": "폰을 천천히 기울여서 균형을 맞춰봐!",
+                    "secretCode": "🥚",
+                    "successMessage": "첫 번째 공룡 알 수송 성공! '공룡...' 단서 확보! 알이 안전하다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game22",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "화산 관측 시스템에 접근해야 한다! 해킹해서 분화 예측 데이터를 확보하라!",
+                    "hintMessage": "보안망을 하나씩 뚫어봐!",
+                    "secretCode": "📡",
+                    "successMessage": "시스템 해킹 완료! 화산 분화까지 30분 남은 것을 확인했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game07",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "대피 경로를 최적화하려면 계산이 필요하다! 빠르게 풀어라!",
+                    "hintMessage": "빠른 계산이 핵심이야!",
+                    "secretCode": "🔢",
+                    "successMessage": "최적 경로 계산 완료! 가장 안전한 탈출 루트를 확보했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["거실 어딘가에 공룡 알이 숨겨져 있다", "쿠션 사이를 뒤져봐", "담요 아래를 확인해봐"],
+                    "answers": ["공", "탱탱볼", "야구공"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "공룡 알이 거실 어딘가에 있다! 서둘러 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game13",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "대피 차량의 배터리가 방전됐다! 비상 에너지를 충전하라!",
+                    "hintMessage": "폰을 힘차게 흔들어봐!",
+                    "secretCode": "⚡",
+                    "successMessage": "에너지 충전 완료! 대피 차량이 출발 준비를 마쳤다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game12",
+                    "clue": { "type": "text", "content": "알" },
+                    "storyText": "화산재로 앞이 안 보인다! 색깔 신호등을 따라 안전한 경로를 찾아라!",
+                    "hintMessage": "색깔을 빠르게 구분해봐!",
+                    "secretCode": "🌋",
+                    "successMessage": "경로 확보! '알...' 단서와 함께 공룡 알도 안전하게 이동!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game11",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "대피 시설 잠금 장치를 열어야 한다! 순서 코드를 빠르게 입력하라!",
+                    "hintMessage": "순서를 잘 기억하고 빠르게 눌러봐!",
+                    "secretCode": "🔓",
+                    "successMessage": "시설 개방! 공룡 알을 임시 보호 시설에 넣었다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game16",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "화산 폭발로 GPS가 고장났다! 나침반으로 보호소 방향을 찾아라!",
+                    "hintMessage": "화살표 방향으로 폰을 돌려봐!",
+                    "secretCode": "🧭",
+                    "successMessage": "방향 탐지 완료! 보호소가 동쪽에 있다는 것을 확인했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["침실 어딘가에 공룡 알 보호 도구가 있다", "베개나 이불을 확인해봐", "쿠션을 살펴봐"],
+                    "answers": ["베개", "쿠션", "이불"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "공룡 알을 안전하게 감쌀 부드러운 재료가 침실에 있다! 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game20",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "구조대가 이모지로 대피 신호를 보내고 있다! 해독해서 경로를 확인하라!",
+                    "hintMessage": "이모지 그림의 의미를 생각해봐!",
+                    "secretCode": "📻",
+                    "successMessage": "구조 신호 해독! 구조대와 합류 지점을 알아냈다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game08",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "보호소 매뉴얼에서 공룡 알 보호법을 찾아내라!",
+                    "hintMessage": "상하좌우 방향으로 단어를 찾아봐!",
+                    "secretCode": "📖",
+                    "successMessage": "보호법 발견! 공룡 알을 완벽하게 보호할 수 있게 됐다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game02",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "용암이 흘러내린다! 미로처럼 얽힌 동굴을 빠져나가라!",
+                    "hintMessage": "막힌 길을 피해서 출구를 찾아봐!",
+                    "secretCode": "🏃",
+                    "successMessage": "동굴 탈출 성공! 용암에서 벗어났다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game21",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "공룡 알이 너무 크다! 두 사람이 함께 잡아야 한다! 동시에 터치하라!",
+                    "hintMessage": "두 지점을 동시에 눌러야 해!",
+                    "secretCode": "🤝",
+                    "successMessage": "협동 운반 성공! 거대한 공룡 알을 보호소로 이동시켰다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["주방 어딘가에 보호소 열쇠가 있다", "냉장고 위를 확인해봐", "선반을 살펴봐"],
+                    "answers": ["열쇠", "키"],
+                    "clue": { "type": "text", "content": "보호" },
+                    "storyText": "공룡 보호소 마스터 열쇠가 주방에 있다! 찾아서 문을 열어라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game19",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "보호소 음성 잠금 장치에서 역재생된 암호가 흘러나온다! 복원하라!",
+                    "hintMessage": "소리를 집중해서 들어봐!",
+                    "secretCode": "🔄",
+                    "successMessage": "음성 암호 복원! 보호소 잠금이 해제됐다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game15",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "화산 폭발 소리로 얼마나 가까운지 분석해야 한다! 데시벨을 측정하라!",
+                    "hintMessage": "마이크로 소리를 측정해봐!",
+                    "secretCode": "🌋",
+                    "successMessage": "데시벨 분석 완료! 화산이 500m 이내로 접근했다! 서둘러라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game27",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "보호소 문이 타이머로 잠겨있다! 정확한 시간에 문을 열어라!",
+                    "hintMessage": "카운트다운을 잘 보고 정확한 순간에 눌러!",
+                    "secretCode": "🏠",
+                    "successMessage": "보호소 도착! 모든 공룡 알이 안전하다!"
+                }
+            ],
+            "finalReward": {
+                "message": "축하한다! 세 개의 공룡 알을 모두 보호했다! 위대한 공룡 수호자다!",
+                "secretCode": "456"
+            }
+        },
+        {
+            "id": "dino-03",
+            "name": "얼음 속 비밀",
+            "description": "빙하에서 발견된 냉동 공룡의 DNA를 복원하라! 17개의 임무가 기다린다!",
+            "introText": "북극 탐사대에서 놀라운 소식!\n\n수만 년 전 빙하에 갇힌 완벽한 공룡 표본이 발견되었다.\n\nDNA를 복원하면 공룡을 되살릴 수 있다!\n\n총 17개의 임무를 완수하라!\n빙하 발굴단원이여, 조심스럽게 DNA 조각을 수집하라!",
+            "treasurePassword": "빙하공룡",
+            "missions": [
+                {
+                    "type": "minigame",
+                    "gameId": "game08",
+                    "clue": { "type": "text", "content": "빙하" },
+                    "storyText": "빙하 속에 새겨진 고대 문자를 해독해야 한다! 숨겨진 단어를 찾아라!",
+                    "hintMessage": "상하좌우 방향으로 단어를 찾아봐!",
+                    "secretCode": "🧊",
+                    "successMessage": "문자 해독! '빙하...' 단서와 함께 화석의 위치를 알아냈다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game22",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "북극 연구 시설 시스템에 접근해야 한다! 해킹해서 빙하 데이터를 확보하라!",
+                    "hintMessage": "보안망을 하나씩 뚫어봐!",
+                    "secretCode": "📡",
+                    "successMessage": "시스템 해킹 완료! 빙하 내 공룡 위치 좌표를 확보했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game20",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "극지 탐험대가 이모지로 발견 내용을 전달하고 있다! 해독하라!",
+                    "hintMessage": "이모지 그림의 의미를 생각해봐!",
+                    "secretCode": "🐧",
+                    "successMessage": "탐험대 메시지 해독! 추가 화석 매장지를 발견했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["냉장고 근처에 냉동 표본이 있다", "냉동실을 확인해봐", "아이스크림 근처를 살펴봐"],
+                    "answers": ["숟가락", "스푼", "수저"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "빙하 표본을 채취할 발굴 도구가 필요하다! 주방에서 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game16",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "빙하 속 공룡의 정확한 방향을 나침반으로 추적하라!",
+                    "hintMessage": "화살표 방향으로 폰을 돌려봐!",
+                    "secretCode": "🧭",
+                    "successMessage": "방향 추적 완료! 빙하 속 공룡의 정확한 위치를 파악했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game13",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "발굴 장비를 작동시키려면 에너지가 필요하다! 충전하라!",
+                    "hintMessage": "폰을 힘차게 흔들어봐!",
+                    "secretCode": "⚡",
+                    "successMessage": "에너지 충전 완료! 고출력 레이저 발굴 장비가 작동한다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game07",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "DNA 서열을 분석하려면 복잡한 계산이 필요하다! 빠르게 풀어라!",
+                    "hintMessage": "빠른 계산이 핵심이야!",
+                    "secretCode": "🧬",
+                    "successMessage": "DNA 분석 완료! 서열 복원에 성공하고 있다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game11",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "DNA 복원 장비 활성화 코드를 순서대로 입력하라!",
+                    "hintMessage": "순서를 잘 기억하고 빠르게 눌러봐!",
+                    "secretCode": "🔢",
+                    "successMessage": "장비 활성화! DNA 복원 작업이 시작됐다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["거실 어딘가에 DNA 분석 도구가 있다", "유리컵이나 용기를 찾아봐", "부엌 선반을 확인해봐"],
+                    "answers": ["컵", "유리", "용기"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "DNA 샘플을 담을 특수 용기가 필요하다! 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game24",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "DNA 샘플 운반 중 균형을 잃으면 안 된다! 조심스럽게 운반하라!",
+                    "hintMessage": "폰을 천천히 기울여서 균형을 맞춰봐!",
+                    "secretCode": "⚗️",
+                    "successMessage": "안전 운반 성공! DNA 샘플이 연구소에 도착했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game03",
+                    "clue": { "type": "text", "content": "공룡" },
+                    "storyText": "DNA 조각들을 짝을 맞춰 완전한 유전자를 복원하라!",
+                    "hintMessage": "같은 DNA 카드 짝의 위치를 기억해둬!",
+                    "secretCode": "🔬",
+                    "successMessage": "DNA 복원 완료! '공룡...' 단서 확보! 빙하 공룡의 완전한 유전자를 얻었다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game15",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "초음파로 빙하 두께를 측정해야 한다! 정확한 데시벨을 맞춰라!",
+                    "hintMessage": "마이크에 소리를 내봐!",
+                    "secretCode": "🔊",
+                    "successMessage": "초음파 측정 완료! 빙하 두께를 정확히 파악했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game18",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "빙하 속 공룡의 피부 색상을 분석해야 한다! 색상을 탐지하라!",
+                    "hintMessage": "지정된 색상을 빠르게 찾아봐!",
+                    "secretCode": "🎨",
+                    "successMessage": "피부 색상 분석 완료! 공룡의 외모를 복원할 수 있게 됐다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["침실 어딘가에 화석 보관함 열쇠가 있다", "서랍이나 책상을 확인해봐", "작은 열쇠를 찾아봐"],
+                    "answers": ["열쇠", "키"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "DNA 보관함 열쇠가 침실에 있다! 찾아서 보관함을 열어라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game27",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "DNA 부활 반응로의 타이밍을 정확히 맞춰야 한다!",
+                    "hintMessage": "카운트다운을 잘 보고 정확한 순간에 눌러!",
+                    "secretCode": "⏱️",
+                    "successMessage": "완벽한 타이밍! DNA 부활 반응이 성공적으로 시작됐다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game19",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "부활한 공룡이 역재생처럼 기억을 떠올리고 있다! 소리를 복원하라!",
+                    "hintMessage": "소리를 집중해서 들어봐!",
+                    "secretCode": "🦕",
+                    "successMessage": "공룡 기억 복원! 수만 년 전 지구의 모습을 들었다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game23",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "최종 DNA 보관함의 잠금을 풀어라! 정밀한 다이얼 조작이 필요하다!",
+                    "hintMessage": "천천히 다이얼을 돌려봐!",
+                    "secretCode": "🔒",
+                    "successMessage": "보관함 오픈! 완벽한 공룡 DNA가 복원되었다!"
+                }
+            ],
+            "finalReward": {
+                "message": "축하한다! 빙하 속 공룡의 DNA를 완벽하게 복원했다! 세기의 발견이다!",
+                "secretCode": "953"
+            }
+        }
+    ]
+}

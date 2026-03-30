@@ -1,0 +1,478 @@
+{
+    "scenarios": [
+        {
+            "id": "pirate-01",
+            "name": "블랙비어드의 보물 지도",
+            "description": "전설의 해적 블랙비어드의 보물 지도를 따라 최종 보물 상자를 열자!",
+            "introText": "어느 날, 낡은 다락방에서 해적 선장 블랙비어드의 보물 지도를 발견했다!\n\n하지만 지도는 여러 조각으로 찢겨져 집 곳곳에 숨겨져 있었다.\n\n모든 지도 조각을 모아 보물 상자의 암호를 알아내야 한다.\n\n총 17개의 임무가 기다리고 있다!\n용감한 해적이여, 보물을 찾아 모험을 떠나자!",
+            "treasurePassword": "해적왕의검",
+            "missions": [
+                {
+                    "type": "minigame",
+                    "gameId": "game02",
+                    "clue": { "type": "text", "content": "해적" },
+                    "storyText": "난파선 내부 미로를 통과해야 첫 번째 지도 조각을 얻을 수 있다!",
+                    "hintMessage": "막힌 길을 피해서 출구를 찾아봐!",
+                    "secretCode": "🏴‍☠️",
+                    "successMessage": "미로를 탈출했다! 난파선에서 '해적...' 단서와 함께 지도 조각 획득!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game22",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "해적단 비밀 통신망을 해킹해서 다음 보물 위치 정보를 탈취하라!",
+                    "hintMessage": "와이파이 신호를 하나씩 뚫어봐!",
+                    "secretCode": "📡",
+                    "successMessage": "통신 해킹 성공! 보물의 대략적인 위치를 파악했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game20",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "해적들이 이모지로 암호화된 비밀 메시지를 주고받고 있다! 해독하라!",
+                    "hintMessage": "이모지 그림의 의미를 생각해봐!",
+                    "secretCode": "⚓",
+                    "successMessage": "해적 암호 해독 성공! 새로운 지도 조각의 위치를 알아냈다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["침실 어딘가에 금화가 숨겨져 있다", "베개 아래를 뒤져봐", "이불 속에 있을지도?"],
+                    "answers": ["동전", "금화", "코인"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "블랙비어드가 침실에 금화와 함께 지도 조각을 숨겨뒀다! 금화를 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game08",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "해적의 항해 일지에 보물 위치가 단어로 숨겨져 있다! 찾아내라!",
+                    "hintMessage": "상하좌우 대각선으로 단어를 찾아봐!",
+                    "secretCode": "📜",
+                    "successMessage": "항해 일지 해독! 보물 섬의 좌표를 발견했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game03",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "찢겨진 보물 지도를 카드 게임으로 복원해야 한다! 짝을 맞춰 지도를 완성하라!",
+                    "hintMessage": "같은 지도 조각의 위치를 기억해둬!",
+                    "secretCode": "🗺️",
+                    "successMessage": "지도 복원 완료! 보물이 있는 섬의 모습이 드러났다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game13",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "폭풍이 몰아친다! 온 힘을 다해 돛을 올려라! 폭풍을 뚫어야 한다!",
+                    "hintMessage": "폰을 힘차게 흔들어봐!",
+                    "secretCode": "⛵",
+                    "successMessage": "폭풍을 뚫고 나아갔다! 돛에 지도 조각이 붙어있었다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game11",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "보물 섬 입구 암호 장치! 해적의 순서 코드를 빠르게 입력하라!",
+                    "hintMessage": "숫자 순서를 잘 기억하고 빠르게 눌러봐!",
+                    "secretCode": "🔢",
+                    "successMessage": "암호 해제! 보물 섬 내부로 진입했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["화장실 어딘가에 해적의 보물이 있다", "수건 사이를 뒤져봐", "세면대 아래를 확인해봐"],
+                    "answers": ["반지", "링"],
+                    "clue": { "type": "text", "content": "왕의" },
+                    "storyText": "전설에 의하면 해적 왕의 반지가 화장실에 숨겨져 있다고 한다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game17",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "보물 상자마다 특수 바코드가 붙어있다! 진짜 보물을 찾아 스캔하라!",
+                    "hintMessage": "카메라로 바코드를 비춰봐!",
+                    "secretCode": "📦",
+                    "successMessage": "진품 바코드 확인! 진짜 보물 상자를 찾아냈다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game19",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "해적 선장이 남긴 역재생 음성 유언장이 있다! 내용을 복원하라!",
+                    "hintMessage": "소리를 잘 들어봐!",
+                    "secretCode": "🎧",
+                    "successMessage": "유언장 복원! 선장이 숨겨둔 비밀 장소를 알아냈다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game27",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "적 해적선이 공격해온다! 정확한 타이밍에 함포를 발사하라!",
+                    "hintMessage": "카운트다운을 잘 보고 정확한 순간에 눌러!",
+                    "secretCode": "💥",
+                    "successMessage": "함포 명중! 적 해적선을 격퇴했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game15",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "유령 해적들이 소리로 보물을 지키고 있다! 함성으로 유령을 물리쳐라!",
+                    "hintMessage": "마이크에 큰 소리를 내봐!",
+                    "secretCode": "👻",
+                    "successMessage": "유령 퇴치 성공! 보물 창고 앞에 도달했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["거실 어딘가에 선장의 열쇠가 숨겨져 있다", "쿠션 아래를 확인해봐", "소파 틈새를 뒤져봐"],
+                    "answers": ["열쇠", "키"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "보물 창고 자물쇠를 열 선장의 열쇠가 거실에 있다! 찾아내라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game18",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "보물 창고 안에서 진짜 보석을 골라야 한다! 지정된 색상을 추적하라!",
+                    "hintMessage": "지정된 색상을 빠르게 찾아봐!",
+                    "secretCode": "💎",
+                    "successMessage": "진짜 보석 발견! 블랙비어드의 검이 담긴 상자를 찾아냈다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game25",
+                    "clue": { "type": "text", "content": "검" },
+                    "storyText": "낡은 보물 지도의 마지막 봉인을 긁어내라! 최종 보물의 위치가 드러날 것이다!",
+                    "hintMessage": "천천히 문질러서 내용을 드러내봐!",
+                    "secretCode": "🗡️",
+                    "successMessage": "지도 완성! 전설의 검이 숨겨진 최종 위치를 확인했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["마지막 보물이 방 안에 숨겨져 있다", "큰 물건 뒤쪽을 확인해봐", "장롱이나 옷장 뒤를 살펴봐"],
+                    "answers": ["상자", "박스", "보물"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "마지막 임무! 전설의 보물 상자를 찾아내라!"
+                }
+            ],
+            "finalReward": {
+                "message": "축하한다, 용감한 해적이여! 전설의 블랙비어드 보물을 찾았다! 해적왕의 검을 손에 넣었다!",
+                "secretCode": "358"
+            }
+        },
+        {
+            "id": "pirate-02",
+            "name": "유령선의 저주",
+            "description": "바다 위 유령선에 올라 저주를 풀고 보물을 탈취하라!",
+            "introText": "안개 낀 바다 한가운데, 전설의 유령선이 나타났다!\n\n이 배에는 저주에 걸린 해적들의 보물이 가득하다고 한다.\n\n저주를 풀기 위해서는 배 곳곳에 숨겨진 봉인 조각을 모아야 한다.\n\n총 17개의 봉인을 해제하라!\n두려움을 떨쳐내고, 유령선에 올라타라!",
+            "treasurePassword": "선장의나침반",
+            "missions": [
+                {
+                    "type": "minigame",
+                    "gameId": "game03",
+                    "clue": { "type": "text", "content": "선장" },
+                    "storyText": "유령선 갑판에 뒤집힌 카드들이 흩어져 있다! 짝을 맞춰 선장의 메시지를 복원하라!",
+                    "hintMessage": "같은 카드 짝의 위치를 기억해둬!",
+                    "secretCode": "👻",
+                    "successMessage": "카드 해독! 유령 선장이 남긴 첫 번째 봉인 조각과 '선장...' 단서 발견!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game20",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "유령 선원들이 이모지로 암호를 주고받는다! 내용을 해독하라!",
+                    "hintMessage": "이모지의 뜻을 조합해봐!",
+                    "secretCode": "💬",
+                    "successMessage": "유령 암호 해독! 봉인 장소를 파악했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game08",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "선장의 항해 일지에 봉인 해제 방법이 숨겨져 있다! 단어를 찾아내라!",
+                    "hintMessage": "상하좌우 방향으로 찾아봐!",
+                    "secretCode": "📜",
+                    "successMessage": "항해 일지 해독! 봉인 해제 방법을 알아냈다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game24",
+                    "clue": { "type": "text", "content": "의" },
+                    "storyText": "배가 심하게 흔들린다! 폭발 직전의 폭탄을 균형 잡아 해제하라!",
+                    "hintMessage": "폰을 천천히 기울여서 균형을 맞춰봐!",
+                    "secretCode": "💣",
+                    "successMessage": "위기 탈출! 폭발 직전 봉인 조각과 '...의...' 단서를 손에 넣었다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["침실 어딘가에 선장의 항해 도구가 있다", "탁자 위를 살펴봐", "서랍 속을 확인해봐"],
+                    "answers": ["시계", "손목시계", "탁상시계"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "선장실에서 항해 시계를 찾아야 한다! 시계 안에 봉인 조각이 숨겨져 있다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game22",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "유령선의 통신 장비를 해킹해서 저주의 원인을 파악하라!",
+                    "hintMessage": "와이파이 망을 하나씩 해킹해봐!",
+                    "secretCode": "🚢",
+                    "successMessage": "해킹 완료! 저주의 원인이 선장의 나침반에 있다는 것을 알아냈다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game02",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "유령선의 복잡한 선실을 통과해야 한다! 미로를 헤쳐나가라!",
+                    "hintMessage": "막힌 길을 피해서 출구를 찾아봐!",
+                    "secretCode": "🌀",
+                    "successMessage": "선실 미로 탈출! 선장의 개인 선실에 도달했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game15",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "유령들이 소리로 봉인을 지키고 있다! 함성으로 유령들을 물리쳐라!",
+                    "hintMessage": "마이크에 큰 소리를 내봐!",
+                    "secretCode": "📢",
+                    "successMessage": "유령 퇴치 성공! 다음 봉인 조각!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game11",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "저주의 봉인함 자물쇠! 순서대로 빠르게 타격해 잠금을 해제하라!",
+                    "hintMessage": "순서를 잘 기억하고 빠르게 눌러봐!",
+                    "secretCode": "🔓",
+                    "successMessage": "봉인함 열기 성공! 나침반에 대한 단서를 발견했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["거실에 선장의 유물이 있다", "책상 위나 선반을 살펴봐", "나침반처럼 생긴 물건을 찾아봐"],
+                    "answers": ["나침반", "지구본", "지도"],
+                    "clue": { "type": "text", "content": "나침반" },
+                    "storyText": "선장의 방에 전설의 나침반이 숨겨져 있다! 찾아내라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game07",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "나침반의 봉인 코드가 수학 암호로 잠겨있다! 빠르게 계산해 열어라!",
+                    "hintMessage": "빠른 계산이 핵심이야!",
+                    "secretCode": "📊",
+                    "successMessage": "봉인 코드 해제! 나침반이 진동하기 시작했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game13",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "나침반을 활성화하려면 에너지가 필요하다! 온 힘을 다해 충전하라!",
+                    "hintMessage": "폰을 힘차게 흔들어봐!",
+                    "secretCode": "⚡",
+                    "successMessage": "에너지 충전 완료! 나침반이 활성화됐다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game16",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "활성화된 나침반으로 저주의 핵심 위치를 추적해야 한다!",
+                    "hintMessage": "화살표 방향으로 폰을 돌려봐!",
+                    "secretCode": "🧭",
+                    "successMessage": "위치 추적 완료! 저주의 원천을 찾아냈다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["욕실 어딘가에 저주의 물건이 있다", "수건 사이를 뒤져봐", "욕조 근처를 확인해봐"],
+                    "answers": ["비누", "비누곽", "고체비누"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "바다에서 떠올라온 저주받은 물건이 욕실에 있다! 찾아내라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game12",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "저주 해제를 위한 마지막 색상 의식! 빠르게 색깔을 맞춰라!",
+                    "hintMessage": "색깔을 빠르게 구분해봐!",
+                    "secretCode": "🌈",
+                    "successMessage": "색상 의식 완료! 저주가 거의 풀렸다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game05",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "저주의 최후 봉인 퍼즐! 타일을 맞춰 봉인을 완전히 해제하라!",
+                    "hintMessage": "퍼즐 조각을 제자리로!",
+                    "secretCode": "🧩",
+                    "successMessage": "봉인 완전 해제! 유령선의 저주가 풀렸다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["보물이 방 안 어딘가에 있다", "큰 가구 뒤쪽을 확인해봐", "침대 밑을 뒤져봐"],
+                    "answers": ["상자", "보물", "박스"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "저주가 풀린 지금, 유령선의 보물이 드러났다! 마지막 보물을 찾아라!"
+                }
+            ],
+            "finalReward": {
+                "message": "축하한다! 유령선의 저주를 풀고 보물을 손에 넣었다! 전설의 해적이 되었다!",
+                "secretCode": "413"
+            }
+        },
+        {
+            "id": "pirate-03",
+            "name": "크라켄의 심장",
+            "description": "전설의 해양 괴물 크라켄을 물리치고 심해 보물을 획득하라!",
+            "introText": "대양의 깊은 곳에서 크라켄이 눈을 떴다!\n\n크라켄의 심장에는 엄청난 보물이 숨겨져 있다고 한다.\n\n괴물을 물리치려면 전설의 무기 조각을 모아야 한다.\n\n총 17개의 임무를 완수하라!\n바다의 용사여, 크라켄에 맞서라!",
+            "treasurePassword": "크라켄보물",
+            "missions": [
+                {
+                    "type": "minigame",
+                    "gameId": "game13",
+                    "clue": { "type": "text", "content": "크라켄" },
+                    "storyText": "크라켄의 촉수가 배를 붙잡았다! 온 힘을 다해 촉수를 떼어내라!",
+                    "hintMessage": "폰을 힘차게 흔들어봐!",
+                    "secretCode": "🐙",
+                    "successMessage": "촉수 격퇴! '크라켄...' 단서와 함께 무기 조각 하나를 건졌다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game16",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄의 위치를 추적해야 한다! 마법 나침반으로 심해 좌표를 잡아라!",
+                    "hintMessage": "화살표 방향으로 폰을 돌려봐!",
+                    "secretCode": "🧭",
+                    "successMessage": "좌표 확보! 크라켄의 정확한 위치를 파악했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game22",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄이 선박 통신 시스템을 방해하고 있다! 해킹해서 복구하라!",
+                    "hintMessage": "신호망을 하나씩 복구해봐!",
+                    "secretCode": "📡",
+                    "successMessage": "통신 복구! 지원 함대와 연락이 닿았다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["거실 어딘가에 크라켄 퇴치 도구가 있다", "TV 근처를 살펴봐", "리모컨 아래를 확인해봐"],
+                    "answers": ["리모컨", "리모콘"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "초음파 발생기의 리모컨이 어딘가에 있다! 이것으로 크라켄을 유인하자!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game11",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄의 약점을 공격하려면 정확한 순서로 타격해야 한다!",
+                    "hintMessage": "순서를 잘 기억하고 빠르게 눌러봐!",
+                    "secretCode": "⚔️",
+                    "successMessage": "정확한 타격! 크라켄이 비명을 지른다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game15",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "초음파로 크라켄에게 피해를 줘야 한다! 목표 데시벨에 맞춰 함성을 질러라!",
+                    "hintMessage": "마이크에 큰 소리를 내봐!",
+                    "secretCode": "🔊",
+                    "successMessage": "초음파 공격 성공! 크라켄이 혼란에 빠졌다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game07",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄 방어막의 취약점 좌표를 계산해야 한다! 빠르게 풀어라!",
+                    "hintMessage": "빠른 계산이 핵심이야!",
+                    "secretCode": "🔢",
+                    "successMessage": "취약점 계산 완료! 크라켄 방어막에 균열이 생겼다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game24",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄이 배를 흔든다! 폭발물이 쓰러지기 전에 균형을 잡아라!",
+                    "hintMessage": "폰을 천천히 기울여서 균형을 맞춰봐!",
+                    "secretCode": "⚖️",
+                    "successMessage": "균형 유지 성공! 폭발물을 크라켄에게 투하할 준비가 됐다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["화장실 어딘가에 바다의 보물이 있다", "선반 위를 살펴봐", "비누 근처를 확인해봐"],
+                    "answers": ["비누", "비누곽", "고체비누"],
+                    "clue": { "type": "text", "content": "보물" },
+                    "storyText": "심해에서 떠올라온 신비한 보석이 화장실에 숨겨져 있다! 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game27",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄 심장부에 폭발물을 투하할 타이밍! 정확한 순간을 포착하라!",
+                    "hintMessage": "카운트다운을 잘 보고 정확한 순간에 눌러!",
+                    "secretCode": "💥",
+                    "successMessage": "정확한 투하! 크라켄이 치명타를 입었다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game08",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄의 심장 내부 암호가 텍스트로 숨겨져 있다! 단어를 찾아라!",
+                    "hintMessage": "상하좌우 대각선으로 단어를 찾아봐!",
+                    "secretCode": "📜",
+                    "successMessage": "심장 암호 해독! 보물의 정확한 위치를 알아냈다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game21",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄의 두 심장을 동시에 타격해야 한다! 두 지점을 동시에 눌러라!",
+                    "hintMessage": "두 지점을 동시에 눌러야 해!",
+                    "secretCode": "🤝",
+                    "successMessage": "동시 타격 성공! 크라켄이 치명상을 입었다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game18",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄 심장에서 흘러나오는 보물 중 진짜를 골라야 한다! 색상을 추적하라!",
+                    "hintMessage": "지정된 색상을 빠르게 찾아봐!",
+                    "secretCode": "🎨",
+                    "successMessage": "진짜 보물 발견! 크라켄의 심장에 도달했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["방 안 어딘가에 크라켄의 약점 정보가 있다", "책 사이를 확인해봐", "책장에서 찾아봐"],
+                    "answers": ["책", "노트", "서류"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄에 관한 고대 전설서가 어딘가에 숨겨져 있다! 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game05",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄의 심장으로 가는 퍼즐 통로! 타일을 맞춰 길을 열어라!",
+                    "hintMessage": "퍼즐 조각을 제자리로 맞춰봐!",
+                    "secretCode": "🧩",
+                    "successMessage": "통로 오픈! 크라켄의 심장에 도달했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game03",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄의 심장 봉인이 카드 게임으로 잠겨있다! 짝을 맞춰 봉인을 해제하라!",
+                    "hintMessage": "같은 카드 짝의 위치를 기억해둬!",
+                    "secretCode": "🔓",
+                    "successMessage": "봉인 해제! 크라켄의 심장이 드러났다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["마지막 보물이 숨겨져 있다", "가장 눈에 띄지 않는 곳을 찾아봐", "바닥이나 카펫 아래를 확인해봐"],
+                    "answers": ["보물", "상자", "박스"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "크라켄을 물리쳤다! 심해의 전설적인 보물을 직접 찾아내라!"
+                }
+            ],
+            "finalReward": {
+                "message": "축하한다! 크라켄을 물리치고 심해의 보물을 차지했다! 전설의 바다 영웅이다!",
+                "secretCode": "582"
+            }
+        }
+    ]
+}

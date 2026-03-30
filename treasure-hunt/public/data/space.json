@@ -1,0 +1,484 @@
+{
+    "scenarios": [
+        {
+            "id": "space-01",
+            "name": "외계 SOS 신호 해독",
+            "description": "외계인이 보낸 SOS 신호를 해독해 지구를 구하라!",
+            "introText": "긴급 통신이 도착했다!\n\n미지의 외계 문명이 보낸 SOS 메시지가 여러 조각으로 나뉘어 흩어졌다.\n\n이 메시지를 해독하지 못하면 지구에 큰 위기가 닥칠 수 있다!\n\n총 17개의 임무를 완수해 메시지를 복원하라!\n우주 탐험대원이여, 신호를 모아 임무를 완성하라!",
+            "treasurePassword": "별빛신호탑",
+            "missions": [
+                {
+                    "type": "minigame",
+                    "gameId": "game16",
+                    "clue": { "type": "text", "content": "별빛" },
+                    "storyText": "외계 신호의 방향을 추적해야 한다! 컴퍼스로 신호 발원지를 찾아라!",
+                    "hintMessage": "화살표가 가리키는 방향으로 폰을 돌려봐!",
+                    "secretCode": "🛸",
+                    "successMessage": "신호 추적 성공! '별빛...' 단서와 함께 첫 번째 메시지 조각 확보!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game20",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "외계인이 이모지 형태로 메시지를 보냈다! 지구어로 해독하라!",
+                    "hintMessage": "이모지 그림의 의미를 생각해봐!",
+                    "secretCode": "👽",
+                    "successMessage": "외계 이모지 해독! 그들의 의도를 파악했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game07",
+                    "clue": { "type": "text", "content": "신호" },
+                    "storyText": "우주선 항법 컴퓨터가 고장났다! 계산 문제를 풀어 수리하라!",
+                    "hintMessage": "빠른 계산이 핵심이야!",
+                    "secretCode": "🌟",
+                    "successMessage": "항법 컴퓨터 수리 완료! '...신호...' 메시지 조각 발견!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["책상 위에 뭔가 특별한 게 있다", "노트나 공책을 살펴봐", "펜 옆에 있을 수도 있어"],
+                    "answers": ["별", "스티커", "별 스티커"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "우주 기지에 숨겨진 별 모양 좌표 칩을 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game22",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "외계 주파수가 지구 통신망을 방해하고 있다! 해킹해서 주파수를 격리하라!",
+                    "hintMessage": "신호망을 하나씩 뚫어봐!",
+                    "secretCode": "📡",
+                    "successMessage": "주파수 격리 완료! 외계 신호를 더 명확히 들을 수 있게 됐다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game08",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "외계어 사전에서 SOS 메시지의 핵심 단어를 찾아내라!",
+                    "hintMessage": "상하좌우 방향으로 단어를 찾아봐!",
+                    "secretCode": "🔤",
+                    "successMessage": "외계어 사전 해독! 메시지의 핵심 내용을 파악했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game05",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "외계 퍼즐 암호를 풀어야 통신 주파수가 맞춰진다!",
+                    "hintMessage": "퍼즐 조각을 제자리로 맞춰봐!",
+                    "secretCode": "🧩",
+                    "successMessage": "퍼즐 해독 완료! 통신 주파수 확보!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game13",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "통신 장비의 배터리가 방전됐다! 태양열 에너지를 충전하라!",
+                    "hintMessage": "폰을 힘차게 흔들어봐!",
+                    "secretCode": "☀️",
+                    "successMessage": "태양열 충전 완료! 통신 장비가 다시 작동한다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["거실 어딘가에 우주 장비 부품이 있다", "전자기기 주변을 살펴봐", "TV 리모컨이나 배터리를 찾아봐"],
+                    "answers": ["리모컨", "배터리", "건전지"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "우주 통신기의 예비 배터리가 거실에 있다! 빨리 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game11",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "외계 방어 시스템이 작동 중이다! 순서대로 코드를 입력해 해제하라!",
+                    "hintMessage": "순서를 잘 기억하고 빠르게 눌러봐!",
+                    "secretCode": "🔢",
+                    "successMessage": "방어 시스템 해제! 외계 기지에 접근 가능해졌다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game24",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "소행성 벨트를 지나야 한다! 우주선의 균형을 유지하라!",
+                    "hintMessage": "폰을 천천히 기울여서 균형을 맞춰봐!",
+                    "secretCode": "☄️",
+                    "successMessage": "소행성 벨트 통과! 외계 기지에 착륙했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game03",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "외계 기지 내부에서 통신 카드 조각을 모아야 한다! 짝을 맞춰라!",
+                    "hintMessage": "같은 카드 짝의 위치를 기억해둬!",
+                    "secretCode": "🃏",
+                    "successMessage": "통신 카드 조합 완료! SOS 메시지의 핵심 내용이 드러났다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game19",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "외계인의 음성 메시지가 역재생되고 있다! 원래 내용을 복원하라!",
+                    "hintMessage": "소리를 집중해서 들어봐!",
+                    "secretCode": "🔄",
+                    "successMessage": "음성 복원 완료! 외계인의 진짜 목적을 알아냈다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["침실 어딘가에 외계 신호 좌표가 있다", "서랍이나 책상을 살펴봐", "별자리 지도 같은 것을 찾아봐"],
+                    "answers": ["지도", "종이", "메모", "별자리"],
+                    "clue": { "type": "text", "content": "탑" },
+                    "storyText": "외계 신호탑의 정확한 좌표가 침실에 숨겨져 있다! 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game18",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "외계 에너지 파장의 색깔을 분석해야 한다! 지정 색상을 추적하라!",
+                    "hintMessage": "지정된 색상을 빠르게 찾아봐!",
+                    "secretCode": "🎨",
+                    "successMessage": "에너지 파장 분석 완료! 신호탑의 위치를 특정했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game12",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "신호탑의 마지막 보안 색상 코드를 해제하라!",
+                    "hintMessage": "색깔을 빠르게 구분해봐!",
+                    "secretCode": "🌈",
+                    "successMessage": "보안 해제! 신호탑에 접근 성공!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game27",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "신호탑 활성화 타이머! 정확한 타이밍에 활성화 버튼을 눌러라!",
+                    "hintMessage": "카운트다운을 잘 보고 정확한 순간에 눌러!",
+                    "secretCode": "🛰️",
+                    "successMessage": "신호탑 활성화! 외계 SOS 메시지 해독에 성공했다!"
+                }
+            ],
+            "finalReward": {
+                "message": "축하한다, 우주 영웅! 외계 SOS 메시지 해독에 성공했다! 지구가 안전해졌다!",
+                "secretCode": "492"
+            }
+        },
+        {
+            "id": "space-02",
+            "name": "화성 기지 탈출",
+            "description": "화성 기지에 고립되었다! 시스템을 복구하고 탈출하라!",
+            "introText": "긴급 상황 발생!\n\n화성 기지에 운석이 충돌해 시스템이 마비되었다.\n\n산소 공급 장치가 멈추기 전에 기지를 복구하고 탈출해야 한다.\n\n총 17개의 시스템을 복구하라!\n시간이 없다! 우주 엔지니어여, 지금 바로 수리를 시작하라!",
+            "treasurePassword": "화성탈출코드",
+            "missions": [
+                {
+                    "type": "minigame",
+                    "gameId": "game22",
+                    "clue": { "type": "text", "content": "화성" },
+                    "storyText": "기지의 메인 컴퓨터가 잠겼다! 보안 시스템을 해킹해 접근 권한을 확보하라!",
+                    "hintMessage": "보안망을 하나씩 뚫어봐!",
+                    "secretCode": "🖥️",
+                    "successMessage": "해킹 성공! '화성...' 단서와 함께 메인 컴퓨터 접근 권한 확보!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game07",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "생명 유지 장치 수리 방정식을 빠르게 계산해야 한다!",
+                    "hintMessage": "빠른 계산이 핵심이야!",
+                    "secretCode": "🔧",
+                    "successMessage": "생명 유지 장치 수리 완료! 산소 공급이 재개됐다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game08",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "기지 매뉴얼에서 비상 탈출 코드를 찾아야 한다! 숨겨진 단어를 찾아라!",
+                    "hintMessage": "상하좌우 방향으로 단어를 찾아봐!",
+                    "secretCode": "📖",
+                    "successMessage": "비상 매뉴얼 해독! 탈출 절차를 파악했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["거실 어딘가에 비상 장비가 있다", "TV 리모컨 근처를 살펴봐", "테이블 위를 확인해봐"],
+                    "answers": ["리모컨", "리모콘", "건전지"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "비상 통신 장치의 전원이 꺼졌다! 배터리를 찾아 장착하라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game13",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "발전기가 멈췄다! 비상 에너지를 충전해 기지에 전력을 공급하라!",
+                    "hintMessage": "폰을 힘차게 흔들어봐!",
+                    "secretCode": "⚡",
+                    "successMessage": "에너지 충전 완료! 기지에 전력이 들어왔다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game11",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "보안 격리 시스템을 해제해야 한다! 순서 코드를 빠르게 입력하라!",
+                    "hintMessage": "순서를 잘 기억하고 빠르게 눌러봐!",
+                    "secretCode": "🔢",
+                    "successMessage": "격리 해제 성공! 다음 구역으로 이동 가능!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game27",
+                    "clue": { "type": "text", "content": "탈출" },
+                    "storyText": "에어록 타이머가 오작동 중이다! 정확한 타이밍에 멈춰 에어록을 열어라!",
+                    "hintMessage": "카운트다운을 잘 보고 정확한 순간에 눌러!",
+                    "secretCode": "⏱️",
+                    "successMessage": "에어록 작동 성공! '...탈출...' 코드 확인! 두 번째 구역으로 이동!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game16",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "화성 폭풍의 방향을 예측해야 안전한 탈출 경로를 잡을 수 있다!",
+                    "hintMessage": "화살표 방향으로 폰을 돌려봐!",
+                    "secretCode": "🌪️",
+                    "successMessage": "폭풍 경로 예측! 안전한 탈출 루트를 확보했다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["주방 어딘가에 비상 식량이 있다", "냉장고를 확인해봐", "선반 위를 살펴봐"],
+                    "answers": ["과자", "식량", "음식"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "장기 탈출에 대비해 비상 식량을 챙겨야 한다! 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game03",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "손상된 회로 카드를 복원해야 한다! 짝을 맞춰 회로를 연결하라!",
+                    "hintMessage": "같은 회로 카드의 위치를 기억해둬!",
+                    "secretCode": "🃏",
+                    "successMessage": "회로 복원 완료! 보조 추진 시스템이 작동한다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game05",
+                    "clue": { "type": "text", "content": "코드" },
+                    "storyText": "환기 시스템의 회로판이 망가졌다! 퍼즐을 풀어 회로를 복구하라!",
+                    "hintMessage": "퍼즐 조각을 제자리로 맞춰봐!",
+                    "secretCode": "🔩",
+                    "successMessage": "회로 복구 완료! 산소 공급 재개! 탈출 코드를 확보했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game20",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "화성 기지 AI가 이모지로 최종 탈출 경로를 알려주고 있다! 해독하라!",
+                    "hintMessage": "이모지 그림의 의미를 생각해봐!",
+                    "secretCode": "🤖",
+                    "successMessage": "AI 메시지 해독! 최종 탈출 경로를 파악했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game24",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "탈출 포드 연결 시 폭발물의 균형을 유지해야 한다! 흔들리지 마라!",
+                    "hintMessage": "폰을 천천히 기울여서 균형을 맞춰봐!",
+                    "secretCode": "💣",
+                    "successMessage": "균형 유지 성공! 탈출 포드 연결 완료!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["침실 어딘가에 탈출 키가 있다", "베개 아래나 서랍을 확인해봐", "침대 프레임 아래를 살펴봐"],
+                    "answers": ["열쇠", "카드", "키"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "탈출 포드 마스터 키가 침실에 있다! 찾아라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game18",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "탈출 포드 연료의 순도를 색상으로 확인해야 한다! 올바른 색상을 골라라!",
+                    "hintMessage": "지정된 색상을 빠르게 찾아봐!",
+                    "secretCode": "🎨",
+                    "successMessage": "연료 순도 확인 완료! 탈출 포드 발사 준비!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game12",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "발사 최종 확인 색상 코드! 모든 지표를 빠르게 확인하라!",
+                    "hintMessage": "색깔을 빠르게 구분해봐!",
+                    "secretCode": "🟢",
+                    "successMessage": "최종 확인 완료! 발사 카운트다운 시작!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game21",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "탈출 포드의 문이 걸렸다! 동시에 양쪽 잠금을 해제하라!",
+                    "hintMessage": "두 지점을 동시에 눌러야 해!",
+                    "secretCode": "🚀",
+                    "successMessage": "탈출 포드 가동! 화성 기지에서 무사히 탈출했다!"
+                }
+            ],
+            "finalReward": {
+                "message": "축하한다! 화성 기지에서 극적으로 탈출했다! 우주 최고의 엔지니어다!",
+                "secretCode": "301"
+            }
+        },
+        {
+            "id": "space-03",
+            "name": "은하수 특급 열차",
+            "description": "은하수를 달리는 우주 열차에서 벌어지는 미스터리를 풀어라!",
+            "introText": "은하수 특급 열차에 오신 것을 환영합니다!\n\n그런데 이상한 일이 벌어지고 있다.\n열차의 승차권이 여러 조각으로 찢겨져 객차 곳곳에 흩어져 있다.\n\n승차권을 완성하지 못하면 종착역에서 내릴 수 없다!\n\n총 17개의 임무를 완수해 승차권을 모아라!",
+            "treasurePassword": "은하수승차권",
+            "missions": [
+                {
+                    "type": "minigame",
+                    "gameId": "game03",
+                    "clue": { "type": "text", "content": "은하수" },
+                    "storyText": "1호 객차에 카드가 뒤집혀 있다! 짝을 맞춰 승차권 조각을 찾아라!",
+                    "hintMessage": "같은 카드 짝의 위치를 기억해둬!",
+                    "secretCode": "🌌",
+                    "successMessage": "카드 매칭 성공! '은하수...' 단서와 함께 첫 번째 승차권 조각 획득!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game20",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "2호 객차의 수수께끼 승객이 이모지 암호를 내놓았다! 풀어야 통과할 수 있다!",
+                    "hintMessage": "이모지 그림의 의미를 생각해봐!",
+                    "secretCode": "🤔",
+                    "successMessage": "수수께끼 해결! 2호 객차를 통과했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game08",
+                    "clue": { "type": "text", "content": "승차" },
+                    "storyText": "식당칸 메뉴판에 숨겨진 단어를 찾아라! 그 안에 승차권 조각이 있다!",
+                    "hintMessage": "상하좌우 방향으로 단어를 찾아봐!",
+                    "secretCode": "🍽️",
+                    "successMessage": "숨겨진 단어 발견! '...승차...' 조각 획득!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["책상 위에 특별한 카드가 있다", "교통카드나 명함을 살펴봐", "카드 지갑 근처를 확인해봐"],
+                    "answers": ["카드", "교통카드", "명함"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "차장이 특별한 카드를 어딘가에 놓고 갔다! 찾아서 확인하라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game22",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "열차 통신 시스템이 외부에 의해 해킹당했다! 역으로 해킹해 복구하라!",
+                    "hintMessage": "신호망을 하나씩 뚫어봐!",
+                    "secretCode": "📡",
+                    "successMessage": "통신 시스템 복구! 다음 정거장 정보를 확보했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game07",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "열차 속도 계산이 틀리면 탈선할 수 있다! 빠르게 계산해서 속도를 조절하라!",
+                    "hintMessage": "빠른 계산이 핵심이야!",
+                    "secretCode": "🚂",
+                    "successMessage": "속도 계산 완료! 열차가 안전하게 달리고 있다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game11",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "비밀 화물칸 잠금 장치를 해제해야 한다! 순서 코드를 입력하라!",
+                    "hintMessage": "순서를 잘 기억하고 빠르게 눌러봐!",
+                    "secretCode": "🔒",
+                    "successMessage": "화물칸 개방! 승차권 조각을 발견했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game13",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "열차 엔진이 힘을 잃었다! 에너지를 충전해 엔진을 재가동하라!",
+                    "hintMessage": "폰을 힘차게 흔들어봐!",
+                    "secretCode": "⚡",
+                    "successMessage": "엔진 재가동! 열차가 다시 전속력으로 달린다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["침실 어딘가에 열차 탑승 서류가 있다", "베개나 이불 아래를 살펴봐", "침대 옆 탁자를 확인해봐"],
+                    "answers": ["서류", "종이", "메모", "편지"],
+                    "clue": { "type": "text", "content": "권" },
+                    "storyText": "차장이 침실에 중요한 서류를 남겨뒀다! 찾아서 확인하라!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game12",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "열차 신호등의 색깔 패턴을 읽어야 다음 객차로 이동할 수 있다!",
+                    "hintMessage": "색깔을 빠르게 구분해봐!",
+                    "secretCode": "🚦",
+                    "successMessage": "신호 해독 완료! 다음 객차로 이동 성공!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game24",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "열차가 심하게 흔들린다! 화물이 넘어지지 않도록 균형을 잡아라!",
+                    "hintMessage": "폰을 천천히 기울여서 균형을 맞춰봐!",
+                    "secretCode": "⚖️",
+                    "successMessage": "화물 균형 유지! 위험한 구간을 무사히 통과했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game16",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "은하수를 항해하려면 별자리 나침반으로 방향을 잡아야 한다!",
+                    "hintMessage": "화살표 방향으로 폰을 돌려봐!",
+                    "secretCode": "🌠",
+                    "successMessage": "별자리 항법 완료! 종착역으로 가는 경로를 확인했다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game19",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "수수께끼 승객이 역재생 메시지를 남겼다! 원래 메시지를 복원하라!",
+                    "hintMessage": "소리를 집중해서 들어봐!",
+                    "secretCode": "🔄",
+                    "successMessage": "메시지 복원! 종착역의 비밀을 알아냈다!"
+                },
+                {
+                    "type": "findObject",
+                    "hints": ["거실 어딘가에 열차 도착 스탬프가 있다", "책상 위나 서랍을 살펴봐", "도장이나 스탬프를 찾아봐"],
+                    "answers": ["도장", "스탬프", "인감"],
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "종착역 도착 스탬프가 필요하다! 어딘가에 숨겨져 있을 것이다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game05",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "찢겨진 승차권 조각들을 이어 붙여야 한다! 퍼즐을 맞춰 완성하라!",
+                    "hintMessage": "퍼즐 조각을 제자리로 맞춰봐!",
+                    "secretCode": "🎫",
+                    "successMessage": "승차권 조각 연결! 거의 완성됐다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game18",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "종착역 게이트의 색상 인식 시스템을 통과해야 한다!",
+                    "hintMessage": "지정된 색상을 빠르게 찾아봐!",
+                    "secretCode": "🎨",
+                    "successMessage": "게이트 통과! 종착역에 거의 다 왔다!"
+                },
+                {
+                    "type": "minigame",
+                    "gameId": "game17",
+                    "clue": { "type": "text", "content": "" },
+                    "storyText": "종착역 게이트의 바코드를 스캔해 최종 승차권을 발급받아라!",
+                    "hintMessage": "카메라로 바코드를 비춰봐!",
+                    "secretCode": "🎫",
+                    "successMessage": "승차권 완성! 은하수 여행을 무사히 마쳤다!"
+                }
+            ],
+            "finalReward": {
+                "message": "축하한다! 은하수 특급 열차의 미스터리를 풀고 종착역에 도착했다! 멋진 우주 여행이었다!",
+                "secretCode": "777"
+            }
+        }
+    ]
+}

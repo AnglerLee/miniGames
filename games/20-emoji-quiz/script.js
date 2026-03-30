@@ -19,10 +19,10 @@ const passBtn = document.getElementById('passBtn');
 
 // 게임 설정 로드
 function loadGameSettings() {
-    const config = getGameConfig(GAME_ID);
-    gameSettings = config.gameSettings || {
-        timePerQuestion: 30,
-        totalQuestions: 20
+    const saved = JSON.parse(localStorage.getItem('game20_settings')) || {};
+    gameSettings = {
+        timePerQuestion: saved.timePerQuestion || 30,
+        totalQuestions: saved.totalQuestions || 20
     };
 
     currentTimeLimit = gameSettings.timePerQuestion;
@@ -245,6 +245,9 @@ function updatePassDisplay() {
         passBtn.disabled = (passesRemaining <= 0);
     }
 }
+
+// 초기 설정 로드 (instructions 텍스트에 반영하기 위해 미리 호출)
+loadGameSettings();
 
 // Start the game when instructions are dismissed
 showInstructions('🤔 이모지 넌센스 Quiz',
