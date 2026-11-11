@@ -3,8 +3,9 @@
   "private": true,
   "description": "보물찾기 미니게임 모음. AnglerBox 게시용 빌드와 테스트를 묶는다 (의존성 없음)",
   "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "preview": "node scripts/build-site.mjs && node scripts/dev-server.mjs --preview",
     "build": "node scripts/build-site.mjs",
-    "test": "npm --prefix home-detective test && npm --prefix home-submarine test && npm --prefix operation-vault test",
-    "serve": "python3 operation-vault/serve.py"
+    "test": "npm --prefix home-detective test && npm --prefix home-submarine test && npm --prefix operation-vault test"
   }
 }

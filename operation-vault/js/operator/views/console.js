@@ -27,7 +27,7 @@ export function renderConsole(view, app) {
 }
 
 function renderTuner(view, app) {
-  const message = h('p', { class: 'center dim', text: '아이 화면 오른쪽 위의 주파수 네 자리를 입력하세요.' });
+  const message = h('p', { class: 'center dim', text: '아이 화면에 나온 주파수 네 자리를 아이가 불러 주면 입력하세요.' });
   const entry = createDigitEntry({
     length: 4,
     onComplete(code) {

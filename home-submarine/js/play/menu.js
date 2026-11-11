@@ -14,8 +14,8 @@ import { audio } from './audio.js';
 
 // ---------- 멈춤 ----------
 
-export function pauseGame() {
-  if (timed() && !G.state.paused) send({ type: 'pause' });
+export function pauseGame(byParent = false) {
+  if (timed() && !G.state.paused) send({ type: 'pause', byParent });
 }
 
 export function resumeGame() {
@@ -120,7 +120,7 @@ export function openMenu() {
 export function openParent() {
   if (findOverlay('parent')) return;
   // 부모가 번호를 누르고 고르는 동안 아이의 시간이 가지 않게 먼저 멈춘다 (멈춤 판이 이 판 아래에 깔린다)
-  pauseGame();
+  pauseGame(true);
   const ov = openOverlay('parent', { host: 'top', cls: 'modal-ov', backdrop: true });
   const box = h('div', { class: 'mbox parent-box', role: 'dialog', 'aria-label': '부모 메뉴' });
   ov.el.append(box);

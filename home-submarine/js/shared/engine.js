@@ -17,7 +17,7 @@
 //   { type:'code', id, input:[…] }   전달할 암호를 입력했다
 //   { type:'next' }                  단계 완료 화면을 넘겼다
 //   { type:'retry' }                 실패한 단계를 다시 한다
-//   { type:'pause' } { type:'resume' }
+//   { type:'pause', byParent? } { type:'resume' }
 //   { type:'rescue' }                부모가 지금 단계를 넘겼다
 //   { type:'peek' }                  크레인 순서를 다시 본다 (시간이 깎인다)
 //   { type:'finish' }                부모가 임무를 끝냈다 (바로 보물 공개로)
@@ -298,7 +298,8 @@ export function reduce(state, event, env) {
     case 'pause':
       if (!s.paused) {
         s.paused = true;
-        s.stats.pauses++;
+        // byParent: 부모 메뉴를 여느라 멈춘 것. 관찰 리포트의 "멈춘 횟수"(아이가 멈춘 것)에 세지 않는다
+        if (!event.byParent) s.stats.pauses++;
         log(s, 'pause');
       }
       break;

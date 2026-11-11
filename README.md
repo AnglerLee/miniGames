@@ -8,6 +8,7 @@
 
 - 게임 목록 (아이): https://pros2.synology.me/minigames/
 - 부모 대시보드: https://pros2.synology.me/minigames/admin.html
+- 게임 설명서 (화면과 함께 보는 준비·진행 안내): https://pros2.synology.me/minigames/guide/
 
 이렇게 씁니다.
 
@@ -40,8 +41,10 @@ miniGames/
 ├── index.html                     # 게임 목록 (별 모으기, 오늘의 도전, 보물찾기 카드)
 ├── admin.html                     # 부모 대시보드 (보물찾기 준비 상태, 아이에게 링크 보내기, 게임별 설정)
 ├── anglerbox.json                 # AnglerBox 게시 설정 (주소 /minigames/)
-├── package.json                   # npm run build (게시용 dist/), npm test
+├── package.json                   # npm run dev (로컬 실행), preview, build (게시용 dist/), test
 ├── scripts/build-site.mjs         # 게시용 빌드: 파일 모으기, assets 주소에 해시, 끊어진 링크 검사
+├── scripts/dev-server.mjs         # 로컬 실행 서버 (npm run dev / preview)
+├── guide/                         # 📖 게임 설명서 (우리 집 탐정, 잠수함 간식호, 작전명 스낵 볼트. 스크린샷 포함)
 ├── docs/arcade-guide.md           # 미니게임 공통 엔진 안내서 (기획 기준, API)
 ├── docs/deploy-anglerbox.md       # NAS(AnglerBox) 게시 안내
 ├── operation-vault/               # 🕶️ 작전명 스낵 볼트 (폰 2대 3D 협력 게임)
@@ -270,10 +273,12 @@ https://pros2.synology.me/minigames/ 를 엽니다. `https://` 라서 카메라�
 ### 방법 1: 로컬 서버
 
 ```bash
-python3 operation-vault/serve.py    # 레포 맨 위를 서빙하고 폰에서 열 주소를 알려 준다
+npm run dev        # 레포 맨 위를 8000번 포트로 연다. 고친 파일은 새로고침하면 바로 보인다
+npm run preview    # 게시용 빌드(dist/)를 NAS 와 같은 주소 /minigames/ 로 연다
+npm run dev -- --port 9000   # 포트 바꾸기 (쓰는 중이면 저절로 다음 번호)
 ```
 
-같은 Wi-Fi 네트워크의 스마트폰에서 `컴퓨터IP:8000`으로 접속
+설치할 것은 없습니다(Node 만 있으면 됩니다). 서버가 알려 주는 "같은 Wi-Fi 폰에서" 주소를 스마트폰에서 엽니다.
 
 카메라(바코드 몬스터, 컬러 헌터)는 `https://` 주소나 `localhost` 에서만 열립니다. 집 Wi-Fi 의 `http://` 주소에서는 각각 번호 입력, 사진 올리기로 바뀌어 그대로 할 수 있습니다. 흔들기·방향 센서도 기기에 따라 `https://` 가 필요할 수 있으며, 그때는 버튼이나 손가락 조작으로 바뀝니다. GitHub Pages(방법 2)는 `https://` 라서 카메라와 센서를 모두 쓸 수 있습니다.
 

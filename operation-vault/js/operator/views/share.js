@@ -6,6 +6,23 @@ import { TIME_PRESETS_MIN, DIFFICULTIES } from '../../shared/mission.js';
 import { rewardType } from '../../shared/reward.js';
 import { qrCanvas } from '../qr.js';
 
+/** 쪽지 번호 줄. 번호는 ●●●● 로 가려 두고 "보기"를 눌러야 보인다 (아이가 QR 을 찍으러 왔다가 보지 않게) */
+function tokenLine(mission, secret) {
+  const num = h('b', { class: 'mono', style: { color: 'var(--gold)', fontSize: '20px' }, text: '●●●●' });
+  return h('li', {}, '쪽지에 번호 ', num, ' ',
+    h('button', {
+      type: 'button',
+      style: { color: 'var(--accent)', fontWeight: '700' },
+      text: '보기',
+      onClick: (e) => {
+        const shown = num.textContent !== '●●●●';
+        num.textContent = shown ? '●●●●' : tokenNumber(mission);
+        e.target.textContent = shown ? '보기' : '숨기기';
+      },
+    }),
+    ' 을 적어 숨깁니다. 힌트: ', h('b', { text: secret.tokenHint }));
+}
+
 export function renderShare(view, app) {
   const { mission, secret } = app;
   const url = new URL('agent.html', location.href);
@@ -50,12 +67,13 @@ export function renderShare(view, app) {
       copied
     ),
 
-    local
-      ? h('div', {
+    // view.append 는 null 을 "null" 글자로 찍으므로 없을 때는 아무것도 넘기지 않는다
+    ...(local
+      ? [h('div', {
           class: 'note red small',
-          text: '지금 주소가 이 기기 전용(localhost)이라 아이 폰에서는 열리지 않습니다. serve.py 가 알려 준 "부모 폰에서 열 주소"로 접속하세요.',
-        })
-      : null,
+          text: '지금 주소가 이 기기 전용(localhost)이라 아이 폰에서는 열리지 않습니다. 서버가 알려 준 "같은 Wi-Fi 폰에서" 주소로 접속하세요.',
+        })]
+      : []),
 
     h(
       'div',
@@ -76,10 +94,7 @@ export function renderShare(view, app) {
             },
           })),
         secret.bonus ? h('li', {}, '보너스 보상을 따로 준비합니다: ', h('b', { text: secret.bonus })) : null,
-        mission.token
-          ? h('li', {}, '쪽지에 번호 ', h('b', { class: 'mono', style: { color: 'var(--gold)', fontSize: '20px' }, text: tokenNumber(mission) }),
-              ' 을 적어 숨깁니다. 힌트: ', h('b', { text: secret.tokenHint }))
-          : null,
+        mission.token ? tokenLine(mission, secret) : null,
         h('li', {}, `난이도 ${DIFFICULTIES[mission.difficulty].name}, 제한 시간 ${TIME_PRESETS_MIN[mission.timePreset]}분.`),
         h('li', { text: '두 폰 모두 화면이 금방 꺼지지 않게 해 두면 좋습니다.' })
       )

@@ -20,7 +20,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'dist');
 
 /** 게시할 것 (사이트 맨 위 기준) */
-const INCLUDE = ['index.html', 'admin.html', 'assets', 'games', 'treasure-hunt3', 'operation-vault', 'home-detective', 'home-submarine'];
+const INCLUDE = ['index.html', 'admin.html', 'assets', 'guide', 'games', 'treasure-hunt3', 'operation-vault', 'home-detective', 'home-submarine'];
 const SKIP_DIRS = new Set(['tests', 'docs', 'node_modules', '.git']);
 const SKIP_FILE = /(^|\/)(package(-lock)?\.json|serve\.py|lab(-ending)?\.(html|js)|[^/]*\.md|\.DS_Store)$/;
 const TEXT = /\.(html|js|mjs|css)$/;
