@@ -107,7 +107,7 @@ function shareCard(ctx) {
         const p = firstProblem();
         if (p) {
           slot.replaceChildren(
-            h('p', { class: 'why', id: 'share-problem', text: (p.step + 1) + '단계 "' + STEPS[p.step] + '"를 먼저 끝내 주세요. ' + p.text }),
+            h('p', { class: 'why', id: 'share-problem', text: p.step + '단계 "' + STEPS[p.step] + '"를 먼저 끝내 주세요. ' + p.text }),
             h('button', { class: 'btn small', type: 'button', onClick: () => ctx.go(p.step) }, '그 단계로 가기')
           );
           return;

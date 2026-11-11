@@ -54,7 +54,7 @@ export function renderWatch(ctx) {
       const p = stepProblem(i);
       if (!p) continue;
       shareSlot.replaceChildren(
-        h('p', { class: 'why', id: 'share-problem', text: (i + 1) + '단계 "' + STEPS[i] + '"를 먼저 끝내 주세요. ' + p.text }),
+        h('p', { class: 'why', id: 'share-problem', text: i + '단계 "' + STEPS[i] + '"를 먼저 끝내 주세요. ' + p.text }),
         h('button', { class: 'btn small', type: 'button', onClick: () => ctx.go(i) }, '그 단계로 가기')
       );
       return;

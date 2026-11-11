@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>게임 설명서</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="guide.css">
+</head>
+
+<body>
+    <header class="g-top">
+        <a href="../admin.html">← 부모 대시보드</a>
+        <a href="../index.html">게임 목록</a>
+    </header>
+
+    <main class="g-wrap">
+        <section class="g-hero">
+            <div class="g-ico" aria-hidden="true">📖</div>
+            <h1>게임 설명서</h1>
+            <p class="g-lead">집 안 전체가 놀이판이 되는 보물찾기 세 가지예요. 처음 하기 전에 한 번 읽어 보세요. 준비하는 법, 아이가 하는 순서, 끝난 뒤 볼 것을 화면과 함께 설명해요.</p>
+        </section>
+
+        <nav class="g-cards" aria-label="설명서">
+            <a class="g-card" href="detective.html" style="--c:#1f6f6a">
+                <div class="g-ico" aria-hidden="true">🕵️</div>
+                <div><b>우리 집 탐정</b><span>인형이 용의자, 집이 사건 현장. 아이가 혼자 쪽지를 찾아 심문하고 증거를 조사해 범인을 고발하는 추리 게임</span></div>
+            </a>
+            <a class="g-card" href="submarine.html" style="--c:#0f6e9c">
+                <div class="g-ico" aria-hidden="true">🚢</div>
+                <div><b>잠수함 간식호</b><span>집이 잠수함. 경보가 뜬 방으로 걸어가 고장을 고치며 바다 밑 보물을 건지는, 아이 혼자 하는 실시간 미션</span></div>
+            </a>
+            <a class="g-card" href="vault.html" style="--c:#4338ca">
+                <div class="g-ico" aria-hidden="true">🕶️</div>
+                <div><b>작전명 스낵 볼트</b><span>폰 두 대로 하는 3D 금고 침투. 아이는 현장 요원, 부모는 본부가 되어 말로 함께 풀어요</span></div>
+            </a>
+        </nav>
+
+        <h2 class="g-part" id="pick"><span>?</span>어떤 게임을 할까</h2>
+        <div class="g-scroll">
+            <table class="g-table" style="overflow-wrap:normal">
+                <thead>
+                    <tr><th></th><th>🕵️ 우리 집 탐정</th><th>🚢 잠수함 간식호</th><th>🕶️ 작전명 스낵 볼트</th></tr>
+                </thead>
+                <tbody>
+                    <tr><th>누가</th><td>아이 혼자, 부모는 지켜보기</td><td>아이 혼자, 부모는 지켜보기</td><td>아이와 부모가 함께</td></tr>
+                    <tr><th>부모 준비</th><td>10분쯤</td><td>5분쯤</td><td>10분쯤</td></tr>
+                    <tr><th>놀이 시간</th><td>20~30분</td><td>15분쯤</td><td>12~18분쯤</td></tr>
+                    <tr><th>준비물</th><td>폰 1대, 포스트잇 7~11장, 인형 4~6개</td><td>폰 1대, 포스트잇 4~6장 (방마다 한 장)</td><td>폰 2대, 쪽지 한 장(고르면)</td></tr>
+                    <tr><th>이럴 때</th><td>차분히 생각하며 푸는 걸 좋아할 때</td><td>몸을 움직이며 서두르는 놀이를 원할 때</td><td>함께 대화하며 협력하고 싶을 때</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="g-tip">💡 세 게임 모두 끝에 진짜 보물(간식, 선물)을 찾게 돼요. 무엇을 어디에 숨겼는지는 준비할 때 부모가 적어 두고, 아이가 성공하면 화면에 나타나요.</p>
+
+        <h2 class="g-part" id="send"><span>✉</span>아이 기기로 보내기</h2>
+        <p class="g-intro">세 게임 모두 준비는 부모 기기에서 해요. 아이가 다른 기기(태블릿, 아이 폰)로 할 때는 링크를 보내면 돼요.</p>
+
+        <section class="g-step">
+            <figure class="g-shot">
+                <img src="img/common/01-dashboard.webp" width="390" height="844" alt="부모 대시보드의 보물찾기 칸. 우리 집 탐정과 잠수함 간식호가 준비 끝으로 표시되고 다시 준비하기, 아이에게 보내기, 이 기기에서 시작 버튼이 있다">
+                <figcaption>부모 대시보드</figcaption>
+            </figure>
+            <div class="g-text">
+                <h3><span class="g-num">1</span>부모 대시보드 열기</h3>
+                <p>게임 목록 맨 아래 <span class="g-btn">👪 부모 대시보드</span>를 누르면 보물찾기마다 이 기기에 저장된 상태가 보여요.</p>
+                <ul>
+                    <li><span class="g-btn">🧰 준비하기</span>: 게임을 준비해요. 각 게임 설명서의 "부모 준비"를 따라 하면 돼요.</li>
+                    <li><span class="g-btn">📨 아이에게 보내기</span>: 준비가 끝나면 켜져요. 아이 기기로 보낼 링크가 나와요.</li>
+                    <li><span class="g-btn">이 기기에서 시작</span>: 아이가 부모 폰을 그대로 쓸 때 눌러요. 작전명 스낵 볼트는 이 자리가 <span class="g-btn">본부 열기</span>예요.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="g-step">
+            <figure class="g-shot">
+                <img src="img/common/02-send.webp" width="390" height="844" loading="lazy" alt="아이에게 보내기를 누른 뒤 QR 코드와 링크 복사 버튼이 나온 화면">
+                <figcaption>아이에게 보내기</figcaption>
+            </figure>
+            <div class="g-text">
+                <h3><span class="g-num">2</span>QR을 보여 주거나 링크를 보내기</h3>
+                <p>아이 기기 카메라로 QR을 찍거나, <span class="g-btn">링크 복사</span>(폰에서는 <span class="g-btn">보내기</span>도 있어요)로 메신저에 보내요. 아이가 링크를 열면 그 기기에서 게임이 바로 시작돼요.</p>
+                <ul>
+                    <li>같은 링크를 다시 열면 하던 데서 이어져요.</li>
+                    <li>진행, 기록, 관찰 리포트는 <b>링크를 연 기기</b>에 남아요. 끝난 뒤 리포트는 아이 기기에서 봐요.</li>
+                </ul>
+                <p class="g-warn">⚠️ 링크에 준비 내용이 통째로 들어 있어서 길어요. QR이 촘촘해 안 읽히면 메신저로 보내 주세요. 카카오톡 안에서 열리면 저장도 그 안에 되니, 처음 연 곳에서 계속 열어 주세요.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="g-foot"><a href="../admin.html">부모 대시보드</a> · <a href="../index.html">게임 목록</a></footer>
+</body>
+
+</html>

@@ -55,6 +55,7 @@ const HUNTS = [
     c: '#1f6f6a',
     soft: '#e3f1ef',
     prep: 'home-detective/setup.html',
+    guide: 'guide/detective.html',
     here: 'home-detective/index.html',
     state() {
       const s = det.loadSetup();
@@ -82,6 +83,7 @@ const HUNTS = [
     c: '#0f6e9c',
     soft: '#e1f0f8',
     prep: 'home-submarine/setup.html',
+    guide: 'guide/submarine.html',
     here: 'home-submarine/index.html',
     state() {
       const s = sub.loadSetup();
@@ -98,7 +100,10 @@ const HUNTS = [
     link() {
       const s = sub.loadSetup();
       // 이 기기에서 이미 끝낸 임무면 새 임무로 바꿔서 보낸다 (아이에게 폰을 건넬 때와 같은 규칙)
-      if (sub.freshMission(s)) sub.saveSetup(s);
+      if (sub.freshMission(s)) {
+        s.predict = null; // 지난 임무의 예측과 비교하지 않게
+        sub.saveSetup(s);
+      }
       return at('home-submarine/play.html') + '#c=' + sub.encodeSetup(s);
     },
     shareText: () => '임무 No.' + sub.loadSetup().missionNo + ' 링크야. 눌러서 출항해!',
@@ -113,6 +118,7 @@ const HUNTS = [
           const s = sub.loadSetup();
           s.seed = sub.newSeed();
           s.missionNo = (s.missionNo | 0) + 1;
+          s.predict = null; // 지난 임무의 예측과 비교하지 않게
           sub.saveSetup(s);
           refresh();
         },
@@ -155,6 +161,7 @@ const HUNTS = [
     c: '#4338ca',
     soft: '#e0e7ff',
     prep: 'operation-vault/setup.html',
+    guide: 'guide/vault.html',
     here: 'operation-vault/operator.html',
     hereLabel: '본부 열기',
     state() {
@@ -207,6 +214,7 @@ function huntCard(hunt) {
     h('div', { class: 'hunt-head' }, h('div', { class: 'ico', 'aria-hidden': 'true', text: hunt.icon }), h('div', {}, h('h3', { text: hunt.name }), h('p', { text: hunt.desc }))),
     h('div', { class: 'chips' }, hunt.chips.map((c) => h('span', { text: c }))),
     h('div', { class: 'status ' + st.kind }, st.text, st.last ? h('span', { class: 'last', text: st.last }) : null),
+    hunt.guide ? h('a', { class: 'guide-link', href: hunt.guide, 'data-act': 'guide', text: '📖 설명서 보기 (준비하는 법, 게임 진행)' }) : null,
     h(
       'div',
       { class: 'acts' },

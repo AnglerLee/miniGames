@@ -173,7 +173,7 @@
       randomBtn,
       tabs,
       grid,
-      h('footer', { class: 'hub-foot' }, [h('a', { href: 'admin.html', text: '👪 부모 대시보드' })]),
+      h('footer', { class: 'hub-foot' }, [h('a', { href: 'admin.html', text: '👪 부모 대시보드' }), ' · ', h('a', { href: 'guide/index.html', text: '📖 게임 설명서' })]),
     ])
   );
 })();

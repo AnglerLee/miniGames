@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>우리 집 탐정 설명서</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body class="g-detective">
+  <header class="g-top">
+    <a href="index.html">← 설명서 목록</a>
+    <a href="../home-detective/index.html">게임 열기</a>
+  </header>
+  <main class="g-wrap">
+    <section class="g-hero">
+      <div class="g-ico" aria-hidden="true">🕵️</div>
+      <h1>우리 집 탐정</h1>
+      <p class="g-lead">집이 사건 현장, 인형이 용의자예요. 아이가 혼자 집 안을 돌며 쪽지를 찾고, 진술의 모순을 찾아 간식 도둑을 고발해요.</p>
+      <ul class="g-facts">
+        <li><b>누가</b>아이 1명, 폰 1대 (부모는 지켜보기)</li>
+        <li><b>부모 준비</b>10분쯤</li>
+        <li><b>놀이 시간</b>20~30분 (보통 난이도 제한 28분)</li>
+        <li><b>준비물</b>포스트잇 7~11장과 펜, 인형 4~6개, 보물상자와 간식</li>
+      </ul>
+      <nav class="g-toc" aria-label="차례"><a href="#prep">부모 준비</a><a href="#play">게임 진행</a><a href="#after">끝난 뒤</a><a href="#faq">막혔을 때</a></nav>
+    </section>
+
+    <!-- ============================================================ 1. 부모 준비 -->
+    <h2 class="g-part" id="prep"><span>1</span>부모 준비</h2>
+    <p class="g-intro">화면이 6단계로 안내해요. 방과 인형을 고르면 앱이 사건(범인, 진술, 증거)을 만들고, 어느 쪽지를 어디에 둘지 하나씩 알려 줘요. 아이가 쓸 폰으로 준비하면 가장 편해요.</p>
+
+    <section class="g-step text-only" id="prep-start">
+      <div class="g-text">
+        <h3><span class="g-num">0</span>준비물 모으고 시작하기</h3>
+        <p>부모 대시보드의 <b>우리 집 탐정</b> 칸에서 <span class="g-btn">🧰 준비하기</span>를 누르거나, 게임 첫 화면에서 <span class="g-btn">새 사건 준비하기 (부모)</span>를 눌러요. 한 번 준비한 뒤에는 대시보드 버튼 이름이 <span class="g-btn">🧰 다시 준비하기</span>로 바뀌어요.</p>
+        <p>"시작하기 전에" 화면에 준비물이 나오면 모아 두고 <span class="g-btn">준비 시작하기</span>를 눌러요.</p>
+        <ul class="g-list" style="padding-left:0">
+          <li><span>📝</span><div><b>포스트잇과 펜</b><br>쪽지마다 기호 하나(예: ★3)를 크게 적어요. 장수는 난이도에 따라 달라요.</div></li>
+          <li><span>🧸</span><div><b>인형</b><br>용의자 역할이에요. 모자라면 로봇, 자동차, 그림도 돼요.</div></li>
+          <li><span>🎁</span><div><b>보물상자와 간식</b><br>상자나 봉투면 충분해요. 범인을 잡으면 아이가 찾으러 가요.</div></li>
+        </ul>
+        <div class="g-scroll" style="margin-top:12px">
+          <table class="g-table">
+            <thead><tr><th>난이도</th><th>쉬움</th><th>보통</th><th>어려움</th></tr></thead>
+            <tbody>
+              <tr><td>용의자(인형)</td><td>4명</td><td>5명</td><td>6명</td></tr>
+              <tr><td>증거</td><td>3개</td><td>4개</td><td>5개 (함정 1개)</td></tr>
+              <tr><td>포스트잇 쪽지</td><td>7장</td><td>9장</td><td>11장</td></tr>
+              <tr><td>기본 제한 시간</td><td>30분</td><td>28분</td><td>25분</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="g-tip">💡 준비 내용은 고칠 때마다 이 기기에 바로 저장돼요. 중간에 창을 닫아도 이어서 할 수 있어요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="prep-basic">
+      <figure class="g-shot">
+        <img src="img/detective/01-basic.webp" width="390" height="844" alt="기본 설정 화면: 탐정 이름 지우, 난이도 보통(용의자 5명, 증거 4개, 쪽지 9장, 제한 28분), 제한 시간 28분">
+        <figcaption>1 / 6단계 기본 설정</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">1</span>기본 설정</h3>
+        <p><b>탐정 이름</b>에 아이 이름을 적으면 게임이 "지우 탐정"처럼 불러 줘요. 비워 두면 그냥 "탐정"이에요.</p>
+        <p><b>난이도</b>를 고르면 용의자·증거·쪽지 수와 제한 시간이 함께 바뀌어요. 처음이면 쉬움, 추리 게임을 몇 번 해 봤으면 보통이 맞아요.</p>
+        <p><b>제한 시간</b>은 <span class="g-btn">−</span> <span class="g-btn">+</span>로 10~60분 사이에서 바꿀 수 있어요. 시간을 넘겨도 수사는 계속되고 등급만 낮아져요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="prep-rooms">
+      <figure class="g-shot">
+        <img src="img/detective/02-rooms.webp" width="390" height="844" alt="방 고르기 화면: 거실, 부엌, 안방, 아이 방, 화장실 5곳이 골라져 있고 5 / 6곳이라고 나온다">
+        <figcaption>2 / 6단계 방 고르기</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">2</span>방 고르기</h3>
+        <p>아이가 돌아다닐 방을 <b>4~6곳</b> 눌러 골라요. 쪽지는 고른 방에만 숨겨요. 이름은 집에서 부르는 대로 고쳐도 되고, 목록에 없는 방은 "직접 추가"로 넣어요.</p>
+        <p>아래 <b>간식이 있던 방 (사건 현장)</b>에서 한 곳을 고르거나 <span class="g-btn">알아서 정하기</span>로 둬요. 증거 쪽지 두 장이 그 방의 "간식이 있던 자리" 근처에 숨겨져요.</p>
+        <p class="g-tip">💡 사건 현장 방의 한 곳(식탁 위 등)을 간식이 있던 자리로 정해 두세요. 빈 간식 통이나 접시를 놓아 두면 더 실감 나요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="prep-suspects">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/03-suspects.webp" width="390" height="844" alt="용의자 인형 화면: 보통 · 5명 필요, 6명 등록. 곰돌이, 토끼, 로봇 카드마다 그림 바꾸기와 사진 버튼이 있다">
+        <figcaption>3 / 6단계 용의자 인형</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">3</span>용의자 인형</h3>
+        <p>집에 있는 인형 이름으로 바꿔 적어요. 아이가 아끼는 인형일수록 재미있어요. <span class="g-btn">+ 인형 추가</span>로 8명까지 넣을 수 있어요.</p>
+        <p>난이도보다 많이 넣으면 사건마다 필요한 수만큼 골라져 나와요. 실제로 나오는 인형은 5단계 맨 위에서 확인해요.</p>
+        <p><span class="g-btn">📷 사진</span>으로 인형을 찍어 두면 아이 화면에 그 얼굴이 나와요. 사진은 이 폰에만 저장돼요.</p>
+        <p class="g-tip">💡 지금 인형들을 한곳에 모아 두면 다음 단계에서 쪽지를 붙이기 쉬워요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="prep-treasure">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/04-treasure.webp" width="390" height="844" alt="보물과 보상 화면: 보물이 있는 곳 세탁기 안 파란 상자, 보너스 보상 영화 한 편, 기준 A 등급 이상, 부모 확인 번호 2468, 아래에 사건 만들기 버튼">
+        <figcaption>4 / 6단계 보물과 보상</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">4</span>보물과 보상</h3>
+        <p>아이가 범인을 잡으면 범인이 자백하면서 보물 정보를 알려 줘요. 알려 줄 방식을 넷 중에서 골라요.</p>
+        <ul>
+          <li><b>숫자 자물쇠 번호</b>: 상자를 자물쇠로 잠가 두면 번호를 알려 줘요.</li>
+          <li><b>보물을 숨긴 곳</b>: 숨긴 곳을 알려 줘요. (예: 세탁기 안 파란 상자)</li>
+          <li><b>열쇠를 둔 곳</b>: 상자를 잠그고 열쇠 둔 곳을 알려 줘요.</li>
+          <li><b>직접 쓰는 문구</b>: 적은 문구를 그대로 보여 줘요.</li>
+        </ul>
+        <p><b>보너스 보상</b>(선택)은 등급 기준을 넘을 때만 공개돼요. 기준은 <span class="g-btn">A 등급 이상</span> <span class="g-btn">S 등급만</span> <span class="g-btn">등급과 상관없이</span> 중에서 골라요.</p>
+        <p><b>부모 확인 번호</b>는 게임 중 부모 메뉴를 열 때 써요. 처음엔 0000이니 아이가 모르는 번호로 바꿔 두세요. 다 적었으면 <span class="g-btn">사건 만들기</span>를 눌러요.</p>
+        <p class="g-warn">⚠️ 보물 내용은 아이 화면에 범인을 잡은 뒤에만 나와요. 그 전에 아이가 이 준비 화면을 보지 않게 해 주세요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="prep-tags">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/05-tags.webp" width="390" height="844" alt="쪽지 붙이기 화면: 거실(간식이 있던 방) 쪽지 2장. ★3은 거실의 간식이 있던 자리 근처에 숨기기, 숨긴 곳 식탁 의자 위, 붙였어요에 체크. ◆5는 멈춘 시계 증거, 소파 쿠션 밑">
+        <figcaption>5 / 6단계 쪽지 붙이기 (가장 오래 걸려요)</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">5</span>쪽지 붙이기</h3>
+        <p>쪽지 카드가 방별로 묶여 나와요. 카드 하나마다 이렇게 해요.</p>
+        <ol>
+          <li>노란 칸의 기호(예: <b>★3</b>)를 포스트잇에 크게 적어요. 모양과 숫자 하나씩이에요.</li>
+          <li><b>용의자 쪽지</b>: 그 인형에 붙이고, 안내한 방에 인형을 둬요.<br><b>증거 쪽지</b>: 안내한 방 어딘가에 숨겨요.</li>
+          <li>숨긴 곳을 칸에 짧게 적거나 <span class="g-btn">📷 사진</span>을 찍어 둬요. 아이가 막히면 게임이 대신 귀띔해 줘요.</li>
+          <li><span class="g-btn">붙였어요</span>를 눌러 체크해요.</li>
+        </ol>
+        <p>맨 아래 <b>🎁 보물상자</b> 카드에서 간식을 넣은 상자를 숨기고 <span class="g-btn">보물상자를 숨겼어요</span>를 눌러요. 쪽지와 보물상자를 모두 체크해야 다음으로 넘어가요.</p>
+        <ul>
+          <li>프린터가 있으면 <span class="g-btn">🖨 쪽지 인쇄하기</span>로 기호만 A4 한 장에 뽑아 오려 써도 돼요. 어디에 둘지는 인쇄되지 않고 화면에만 보여요.</li>
+          <li>범인이 누구인지는 맨 아래 <span class="g-btn">🔒 정답 보기 (부모만)</span>에 있어요.</li>
+          <li>다른 범인으로 바꾸고 싶으면 위쪽 <span class="g-btn">다른 사건으로 바꾸기</span>를 눌러요. 기호가 모두 바뀌어요.</li>
+        </ul>
+        <p class="g-warn">⚠️ 이미 쪽지를 붙인 뒤에 난이도, 방, 인형 수, 사건 현장을 바꾸면 기호가 모두 달라져서 처음부터 다시 붙여야 해요. 이름만 고치는 건 괜찮아요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="prep-watch">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/06-watch.webp" width="390" height="844" alt="관찰 준비 화면 아래쪽: 다른 기기로 보내기를 펼치면 QR 코드와 링크 복사 버튼이 나온다. 맨 아래 아이에게 폰 건네기 버튼">
+        <figcaption>6 / 6단계 관찰 준비 — 다른 기기로 보내기를 펼친 모습</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">6</span>관찰 준비, 그리고 폰 건네기</h3>
+        <p><b>관찰자 예측</b>(선택) 세 가지를 눌러 둬요. 수사가 얼마나 걸릴지, 무전 힌트를 몇 번 쓸지, 무엇을 먼저 찾을지예요. 끝나면 실제와 비교해 줘요.</p>
+        <p><b>지켜보는 법</b>에는 끼어들지 않기와 비상시 확인 번호가 적혀 있어요.</p>
+        <p>이제 아이에게 넘겨요.</p>
+        <ul>
+          <li><b>이 폰으로 할 때</b>: 아래 <span class="g-btn">아이에게 폰 건네기</span>를 누르고 폰을 아이에게 건네요. 화면이 아이의 탐정 수첩으로 바뀌어요.</li>
+          <li><b>아이 태블릿이나 아이 폰으로 할 때</b>: <span class="g-btn">📨 다른 기기로 보내기</span>를 펼쳐요. 아이 기기 카메라로 QR을 찍거나, <span class="g-btn">링크 복사</span>(폰에 따라 <span class="g-btn">보내기</span>도 있어요)로 메신저에 보내요. 링크를 연 기기에서 같은 사건이 바로 시작돼요.</li>
+        </ul>
+        <p class="g-warn">⚠️ 다른 기기로 보낼 때 사진은 가지 않아요. 인형은 그림으로 보이고, 숨긴 곳 힌트는 글만 함께 가요. 진행, 기록, 관찰 리포트는 링크를 연 기기에 남아요.</p>
+        <p class="g-tip">💡 나중에 보내도 돼요. 부모 대시보드의 우리 집 탐정 칸에서 <span class="g-btn">📨 아이에게 보내기</span>를 누르면 같은 QR과 링크가 나와요. 이 기기에서 바로 하려면 <span class="g-btn">이 기기에서 시작</span>을 눌러요.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 2. 게임 진행 -->
+    <h2 class="g-part" id="play"><span>2</span>게임 진행</h2>
+    <p class="g-intro">여기부터는 아이 혼자 해요. 부모는 끼어들지 않고 지켜봐 주세요. 막히면 아이가 게임 안의 무전으로 힌트를 받아요.</p>
+
+    <section class="g-step" id="play-brief">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/07-briefing.webp" width="390" height="844" alt="사건 개요 화면: 지우 탐정, 거실에 있던 간식 상자가 사라졌어. 제한 28분, 배지 3개, 난이도 보통. 용의자 5명과 수사 규칙, 아래에 수사 시작 버튼">
+        <figcaption>사건 파일을 열면 나오는 브리핑</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">1</span>사건 파일과 브리핑</h3>
+        <p>처음엔 "사건 파일" 표지가 나와요. 아이가 표지를 누르면 브리핑이 열려요. 사건 개요, 용의자, 수사 규칙, 하는 법이 차례로 있어요.</p>
+        <p>수사 규칙은 네 가지예요.</p>
+        <ol>
+          <li>범인은 한 명이다.</li>
+          <li>범인은 간식이 사라진 시각에 사건 현장에 혼자 있었다.</li>
+          <li>범인은 그 시각에 대해서만 거짓말을 한다.</li>
+          <li>범인이 아니면 사실만 말한다. 증거는 거짓말을 하지 않는다.</li>
+        </ol>
+        <p>아이가 <span class="g-btn">🔎 수사 시작</span>을 누르는 순간부터 시계가 가요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="play-site">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/08-site.webp" width="390" height="844" alt="현장 탭: 남은 시간 21:47, 간식 78%, 배지 3개, 탐문 2/5 · 증거 1/4. 찾은 쪽지 3/9, 방마다 찾은 쪽지와 아직 못 찾은 물음표 칸. 아래에 현장, 수첩, 쪽지 발견, 정리표, 고발 탭">
+        <figcaption>현장 탭. 위쪽 쿠키가 남은 시간만큼 줄어요</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">2</span>집 안을 돌며 쪽지 찾기</h3>
+        <p>아이는 폰을 들고 방을 돌아다니며 포스트잇을 찾아요. <b>현장</b> 탭에 방마다 쪽지 칸이 있어서 어느 방에 몇 장 남았는지 보여요. 쉬움과 보통에서는 물음표 칸에 용의자인지 증거인지도 적혀 있어요.</p>
+        <p>위쪽 줄이 긴장을 만들어요.</p>
+        <ul>
+          <li><b>남은 시간</b>과 쿠키: 범인이 간식을 먹어 치우는 만큼 쿠키와 "간식 %"가 실제로 줄어요. 음악도 점점 빨라져요.</li>
+          <li><b>★ 탐정 배지 3개</b>: 고발 기회예요.</li>
+          <li><b>탐문 · 증거</b>: 지금까지 마친 수예요.</li>
+        </ul>
+        <p class="g-warn">⚠️ 시계는 실제 시각으로 흘러요. 폰 화면이 꺼지거나 창을 닫아도 시간은 가요. 잠깐 멈출 일이 생기면 <span class="g-btn">☰ 메뉴</span> → <span class="g-btn">⏸ 잠깐 멈춤</span>을 눌러요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="play-pad">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/09-pad.webp" width="390" height="844" alt="쪽지 기호 넣기 판: 별과 숫자 2를 골라 ★2가 보이고 이 기호가 맞아? 확인 버튼. 아래에 모양 6개와 숫자 1~9, 지우기">
+        <figcaption>가운데 쪽지 발견 버튼을 누르면 나오는 입력판</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">3</span>쪽지 기호 넣기</h3>
+        <p>쪽지를 찾으면 아래 가운데 <span class="g-btn">📝 쪽지 발견</span>을 눌러요. 쪽지에 적힌 <b>모양</b>(동그라미, 세모, 네모, 별, 하트, 마름모)과 <b>숫자</b>(1~9)를 고르고 <span class="g-btn">확인</span>을 눌러요.</p>
+        <p>기호가 맞으면 인형 쪽지는 <b>탐문</b>, 방에 숨긴 쪽지는 <b>증거 조사</b> 화면이 열려요. 찾은 쪽지는 현장 탭의 칸을 눌러 언제든 다시 열 수 있어요.</p>
+        <p class="g-tip">💡 없는 기호를 세 번 연달아 넣으면 15초 동안 입력이 잠겨요. 아무 기호나 찍어 보는 걸 막는 장치예요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="play-ask">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/10-interrogate.webp" width="390" height="844" alt="탐문 화면: 고양이(투덜이)가 말풍선으로 오후 4시에는 화장실에 있었어, 토끼랑 같이 있었어라고 답한다. 오후 2시와 4시 질문에 체크, 3시는 물음표">
+        <figcaption>탐문. 세 시각을 하나씩 물어봐요</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">4</span>용의자 탐문</h3>
+        <p>인형마다 <b>오후 2시, 3시, 4시에 어디 있었어?</b> 세 가지를 물어요. 인형은 어느 방에 있었는지, 누구와 함께였는지 말해 줘요. 인형마다 투덜이, 겁쟁이 같은 말투가 있어요.</p>
+        <p>들은 말은 수첩과 정리표에 저절로 적혀요. 범인도 똑같은 모습으로 대답해서 화면만 보고는 티가 나지 않아요.</p>
+        <p class="g-tip">💡 난이도가 높을수록 "누가 또 있었는지는 기억이 안 나" 같은 짧은 대답이 많아져요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="play-evidence">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/11-scene.webp" width="390" height="844" alt="바닥의 발자국 조사 화면: 먼지를 문질러 닦은 자리에 별무늬 발자국이 드러나 있고, 아래에 어떤 무늬일까? 보기 물방울무늬, 지그재그, 별무늬, 줄무늬">
+        <figcaption>증거 조사: 먼지를 문질러 발자국을 찾는 중</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">5</span>증거 조사</h3>
+        <p>증거 쪽지를 넣으면 증거 소개가 나오고, <span class="g-btn">🔎 조사 시작</span>을 누르면 손으로 조사하는 짧은 장면이 열려요. 다 풀면 <b>새로운 사실</b> 카드가 나오고 <span class="g-btn">✎ 수첩에 적기</span>로 닫아요.</p>
+        <div class="g-scroll">
+          <table class="g-table">
+            <thead><tr><th>증거</th><th>아이가 하는 일</th></tr></thead>
+            <tbody>
+              <tr><td>🕰️ 멈춘 시계</td><td>유리 조각을 쓸어 내고 시각을 읽어요. 보통부터는 거울에 비친 시계예요. 간식이 사라진 시각을 알려 줘요.</td></tr>
+              <tr><td>👣 발자국</td><td>먼지를 문질러 닦고 같은 무늬를 골라요.</td></tr>
+              <tr><td>🖐️ 지문</td><td>붓으로 문질러 지문을 살리고, 기준 지문과 비교해 골라요.</td></tr>
+              <tr><td>🍫 초코 손자국</td><td>불빛을 비춰 숨은 손자국을 찾아요. 가짜 얼룩이 섞여 있어요.</td></tr>
+              <tr><td>📹 CCTV</td><td>다이얼 두 개를 맞추고 화면 속 사람 수를 골라요.</td></tr>
+              <tr><td>🧾 찢어진 출입 기록</td><td>조각 두 개를 눌러 자리를 바꿔 가며 맞춰요.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="g-tip">💡 사건 현장의 시계를 먼저 조사하면 정리표에 사건 시각이 표시돼서 추리가 쉬워져요. 어려움에는 사건과 상관없는 함정 증거가 하나 섞여요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="play-board">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/12-board.webp" width="390" height="844" alt="정리표 탭: 용의자 5명과 오후 2시, 3시, 4시 칸. 사건 시각 오후 4시 열이 빨갛게 표시되고, 고양이의 4시 칸을 눌러 위에 고양이: 오후 4시에 화장실에 토끼와 함께 있었다가 나온다. 아래에 조사한 증거 4개">
+        <figcaption>정리표. 사건 시각 열을 위아래로 비교해요</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">6</span>수첩과 정리표로 추리하기</h3>
+        <p><b>수첩</b> 탭에는 수사 규칙, 용의자마다 발자국 무늬와 지문 모양, 들은 진술, 조사한 증거가 모여 있어요. 줄을 누르면 ✔ 믿음 → ✖ 의심 표시를 할 수 있어요.</p>
+        <p><b>정리표</b> 탭은 용의자 × 세 시각 표예요. 칸을 누르면 전체 문장이 위에 나와요. 시계를 조사한 뒤에는 사건 시각 열이 빨갛게 빛나요.</p>
+        <p>그림의 예에서는 곰돌이가 "오후 4시에 화장실에 혼자 있었다"고 했는데, 고양이는 "그 시각 화장실에 토끼와 함께 있었다"고 해요. 둘 중 하나는 거짓말이에요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="play-hint">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/13-hint.webp" width="390" height="844" alt="본부 무전 화면: 부엌의 쪽지. 1단계 부엌에 아직 용의자 쪽지가 있어. 2단계 숨긴 사람의 귀띔: 냉장고 옆. 이게 마지막 힌트야">
+        <figcaption>무전 힌트. 2단계에 부모가 적은 숨긴 곳이 나와요</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">7</span>막히면 무전 힌트</h3>
+        <p>아이가 위쪽 <span class="g-btn">📻 무전</span>을 누르면 두 갈래가 나와요.</p>
+        <ul>
+          <li><span class="g-btn">🔍 쪽지를 못 찾겠어</span>: 방을 고르면 1단계는 일반 안내, 2단계는 준비 때 적은 숨긴 곳 글(글이 없으면 사진 가운데 부분)이에요. 사진을 찍어 둔 쪽지는 3단계에서 사진 전체를 보여 줘요.</li>
+          <li><span class="g-btn">🧠 추리가 막혔어</span>: 무엇을 비교하면 좋을지 3단계로 점점 분명하게 알려 줘요.</li>
+        </ul>
+        <p>힌트를 들을 때마다 남은 시간이 줄어요. 1단계 0:20, 2단계 0:40, 3단계 1:00이에요. 한 번 들은 힌트는 다시 봐도 공짜예요.</p>
+        <p class="g-tip">💡 한동안 진전이 없으면(쉬움 3분, 보통 4분, 어려움 5분) 무전 버튼이 깜빡이며 힌트를 권해요. 부모가 대신 알려 주지 않아도 돼요.</p>
+      </div>
+    </section>
+
+    <section class="g-step" id="play-accuse">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/14-accuse.webp" width="390" height="844" alt="고발 탭 확인 단계: 범인 고양이, 거짓말 오후 4시에 화장실에 토끼와 함께 있었다, 근거 곰돌이: 오후 4시에 화장실에 혼자 있었다. 아래에 고발한다! 버튼">
+        <figcaption>고발 4단계 중 마지막 확인</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">8</span>범인 고발</h3>
+        <p><b>고발</b> 탭에서 <b>범인 → 거짓말 → 근거 → 확인</b> 차례로 골라요. 범인의 진술 중 거짓말 하나와, 그 말이 거짓이라는 근거(다른 인형의 진술이나 증거) 하나를 함께 대야 해요. 마지막에 <span class="g-btn">고발한다!</span>를 눌러요.</p>
+        <div class="g-scroll">
+          <table class="g-table">
+            <thead><tr><th>결과</th><th>어떻게 되나</th></tr></thead>
+            <tbody>
+              <tr><td>범인과 근거 모두 맞음</td><td>"범인 검거"! 결말 화면으로 넘어가요.</td></tr>
+              <tr><td>범인은 맞지만 근거가 틀림</td><td>"증거 불충분". 범인이 발뺌해요. 시간 −0:45, 배지는 그대로예요.</td></tr>
+              <tr><td>결백한 인형을 고발</td><td>"잘못된 고발". 배지 하나와 시간 −2:00을 잃어요.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>틀리면 <span class="g-btn">다시 수사하기</span>로 돌아가요. 배지를 다 쓰면 1분 동안 고발할 수 없고, 그 뒤에 배지 하나를 돌려받아요.</p>
+        <p class="g-tip">💡 제한 시간이 지나도 게임은 끝나지 않아요. "⏰ 시간 초과!"가 뜨면 <span class="g-btn">계속 수사하기</span>로 이어 가고, 등급만 B 이하가 돼요.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3. 끝난 뒤 -->
+    <h2 class="g-part" id="after"><span>3</span>끝난 뒤</h2>
+    <p class="g-intro">범인을 잡으면 결말 화면을 아이가 한 장씩 넘겨 봐요. 마지막 장에서 아이가 폰을 돌려주면 부모가 관찰 리포트를 봐요.</p>
+
+    <section class="g-step" id="after-ending">
+      <figure class="g-shot">
+        <img loading="lazy" src="img/detective/15-treasure.webp" width="390" height="844" alt="보물 공개 화면: 고양이가 비밀 봉투를 건넸어. 보물이 있는 곳 세탁기 안 파란 상자, 보너스 보상 영화 한 편">
+        <figcaption>보물 공개: 봉투를 누르면 부모가 적은 내용이 나와요</figcaption>
+      </figure>
+      <div class="g-text">
+        <h3><span class="g-num">1</span>자백, 등급, 보물, 신문</h3>
+        <p>결말은 다섯 장이에요. <span class="g-btn">다음</span>을 눌러 넘겨요.</p>
+        <ol>
+          <li><b>범인의 자백</b>: 범인이 거짓말을 털어놓아요.</li>
+          <li><b>수사 결과</b>: 등급(S, A, B, C)과 점수, 깎인 이유가 나와요.</li>
+          <li><b>보물 공개</b>: 봉투를 누르면 4단계에 적은 보물 정보가 나와요. 보너스 보상은 기준 등급을 넘었을 때만 보이고, 못 넘으면 잠긴 채로 "다음 사건에서 도전!"이라고 나와요.</li>
+          <li><b>오늘의 신문</b>: 사건을 기념하는 "우리 집 일보" 1면이에요. <span class="g-btn">사진으로 저장</span>으로 간직할 수 있어요.</li>
+          <li><b>수사 끝!</b>: "부모님께 폰을 돌려주자"가 나와요.</li>
+        </ol>
+        <p>아이는 보물 정보를 보고 실제 보물상자를 찾으러 가요.</p>
+        <div class="g-scroll">
+          <table class="g-table">
+            <thead><tr><th>등급</th><th>점수 (100점에서 깎기)</th></tr></thead>
+            <tbody>
+              <tr><td>S 명탐정</td><td>90점 이상</td></tr>
+              <tr><td>A 뛰어난 탐정</td><td>75점 이상</td></tr>
+              <tr><td>B 끈기 있는 탐정</td><td>55점 이상 (시간을 넘기면 B가 최고)</td></tr>
+              <tr><td>C 포기하지 않은 탐정</td><td>55점 아래</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>깎이는 점수: 잘못된 고발 12점, 증거 불충분 5점, 힌트 1·2·3단계 4·7·10점, 조사 중 틀린 선택 1점씩(최대 5점), 제한 시간의 70%를 넘기면 최대 15점, 시간 초과 10점.</p>
+      </div>
+    </section>
+
+    <section class="g-step pair" id="after-report">
+      <div class="g-pair">
+        <figure class="g-shot">
+          <img loading="lazy" src="img/detective/16-report.webp" width="390" height="844" alt="관찰 리포트 위쪽: 한눈에(걸린 시간 17:36 / 28:00, 등급 A 89점, 찾은 쪽지 9/9, 힌트 2번, 잘못된 고발 0번, 멈춘 횟수 0번)와 수사 흐름 시간표">
+          <figcaption>한눈에와 수사 흐름</figcaption>
+        </figure>
+        <figure class="g-shot">
+          <img loading="lazy" src="img/detective/17-report-praise.webp" width="390" height="844" alt="관찰 리포트 아래쪽: 예측과 실제(맞힌 문항 2/3), 이렇게 말해 주세요 칭찬 문장 두 개, 다음 사건 제안">
+          <figcaption>예측과 실제, 칭찬 문장</figcaption>
+        </figure>
+      </div>
+      <div class="g-text">
+        <h3><span class="g-num">2</span>관찰 리포트 (부모)</h3>
+        <p>마지막 장의 <span class="g-btn">관찰 리포트 보기 (부모)</span>를 눌러요. 아이가 어떻게 풀었는지 기록에 남은 것만 보여 줘요.</p>
+        <ul>
+          <li><b>한눈에</b>: 걸린 시간, 등급, 찾은 쪽지, 힌트, 잘못된 고발, 멈춘 횟수</li>
+          <li><b>수사 흐름</b>: 쪽지를 찾고 조사하고 힌트를 들은 시각</li>
+          <li><b>가장 오래 걸린 구간</b>과 <b>풀이 방식</b></li>
+          <li><b>예측과 실제</b>: 6단계에서 고른 예측이 맞았는지</li>
+          <li><b>이렇게 말해 주세요</b>: 결과보다 과정을 짚는 칭찬 문장</li>
+          <li><b>다음 사건 제안</b>: 난이도를 올릴지 그대로 둘지</li>
+        </ul>
+        <p>리포트와 기록은 게임을 한 기기에 남아요. 나중에 게임 첫 화면의 <span class="g-btn">결과와 관찰 리포트 다시 보기</span>로 다시 볼 수 있고, 아래 "지난 사건 기록"에 등급이 쌓여요.</p>
+      </div>
+    </section>
+
+    <section class="g-step text-only" id="after-again">
+      <div class="g-text">
+        <h3><span class="g-num">3</span>다시 할 때</h3>
+        <p>준비 화면을 다시 열면 첫 장에 <span class="g-btn">지난번 방과 인형 그대로 새 사건 만들기</span>가 나와요. 방, 인형, 사진, 보물 방식은 그대로 두고 범인과 쪽지 기호만 새로 정해요.</p>
+        <p>기호가 바뀌니 <b>포스트잇은 새로 적어 붙여야 해요.</b> 보물 숨긴 곳도 다시 적는데, 지난번과 같으면 <span class="g-btn">그대로 쓰기</span>를 눌러요.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 막혔을 때 -->
+    <section class="g-faq" id="faq">
+      <h2 class="g-part"><span>?</span>막혔을 때</h2>
+
+      <section class="g-step" id="faq-parent">
+        <figure class="g-shot">
+          <img loading="lazy" src="img/detective/18-parent.webp" width="390" height="844" alt="부모 메뉴: 쪽지 목록마다 기호, 방과 숨긴 곳, 못 찾음 또는 끝남이 나오고, 못 찾은 쪽지에 찾은 것으로 처리 버튼이 있다">
+          <figcaption>부모 메뉴 (확인 번호를 넣은 뒤)</figcaption>
+        </figure>
+        <div class="g-text">
+          <h3><span class="g-num">🔒</span>게임 안의 부모 메뉴</h3>
+          <p>비상시에만 써요. 수사 화면 위쪽 <span class="g-btn">☰ 메뉴</span> → <span class="g-btn">🔒 부모 메뉴</span>를 누르고 4단계에서 정한 확인 번호 4자리를 넣어요.</p>
+          <ul>
+            <li>쪽지마다 기호, 방, 적어 둔 숨긴 곳, 찾았는지가 나와요.</li>
+            <li><span class="g-btn">찾은 것으로 처리</span>: 그 쪽지를 찾은 것으로 바꿔요. 용의자는 진술 3개를 모두 들은 것으로, 증거는 조사를 마친 것으로 돼요.</li>
+            <li><span class="g-btn">수사 끝내고 보물 공개</span>: 자백 없이 바로 보물을 보여 줘요. 등급은 C로 남아요.</li>
+          </ul>
+          <p class="g-warn">⚠️ 이 화면에는 쪽지 위치가 보여요. 아이에게 보이지 않게 열어 주세요.</p>
+        </div>
+      </section>
+
+      <details><summary>쪽지가 떨어지거나 없어졌어요</summary><p>부모 메뉴를 열어 그 쪽지의 <span class="g-btn">찾은 것으로 처리</span>를 눌러요. 아이는 그 쪽지 내용을 바로 볼 수 있어요.</p></details>
+      <details><summary>아이가 쪽지를 도저히 못 찾아요</summary><p>대신 알려 주지 말고 <span class="g-btn">📻 무전</span> → <span class="g-btn">🔍 쪽지를 못 찾겠어</span>를 권해 주세요. 준비 때 숨긴 곳 글이나 사진을 남겼다면 2·3단계에서 그대로 귀띔해 줘요.</p></details>
+      <details><summary>추리가 막혀서 고발을 못 해요</summary><p><span class="g-btn">📻 무전</span> → <span class="g-btn">🧠 추리가 막혔어</span>가 1단계부터 무엇을 비교할지 알려 줘요. 정리표의 사건 시각 열에서 서로 맞지 않는 말을 찾는 게 핵심이에요.</p></details>
+      <details><summary>전화가 와서 잠깐 멈춰야 해요</summary><p><span class="g-btn">☰ 메뉴</span> → <span class="g-btn">⏸ 잠깐 멈춤</span>을 누르면 시계가 멈춰요. 돌아오면 <span class="g-btn">▶ 다시 시작</span>을 눌러요. 멈추지 않고 폰을 꺼 두면 그동안에도 시간이 흘러요.</p></details>
+      <details><summary>기호를 넣는데 눌리지 않아요</summary><p>없는 기호를 세 번 연달아 넣으면 15초 동안 잠겨요. 판에 남은 초가 보이니 기다렸다가 다시 넣으면 돼요.</p></details>
+      <details><summary>배지를 다 써서 고발이 안 돼요</summary><p>"서장님께 보고 중…"이 끝나는 1분 뒤에 배지 하나가 돌아와요. 그동안 수첩과 정리표를 다시 보게 해 주세요.</p></details>
+      <details><summary>시간이 다 됐어요</summary><p>게임은 끝나지 않아요. <span class="g-btn">계속 수사하기</span>를 눌러 이어 가면 되고, 등급만 B 이하가 돼요.</p></details>
+      <details><summary>확인 번호를 잊었어요</summary><p>준비 화면(게임 첫 화면의 <span class="g-btn">새 사건 준비하기 (부모)</span>)의 4단계 "보물과 보상"과 6단계 "지켜보는 법"에 번호가 나와요. 아이가 없는 곳에서 확인하세요.</p></details>
+      <details><summary>다른 기기로 보냈더니 인형 사진이 안 나와요</summary><p>사진은 준비한 기기에만 남아요. 다른 기기에서는 고른 그림으로 보여요. 사진까지 쓰려면 준비한 기기를 아이에게 건네세요.</p></details>
+      <details><summary>범인이 누구인지 확인하고 싶어요</summary><p>준비 화면 5단계 "쪽지 붙이기" 맨 아래 <span class="g-btn">🔒 정답 보기 (부모만)</span>에 범인, 거짓말, 거짓말을 깨는 근거가 있어요.</p></details>
+    </section>
+  </main>
+  <footer class="g-foot"><a href="../admin.html">부모 대시보드</a> · <a href="index.html">다른 게임 설명서</a></footer>
+</body>
+</html>

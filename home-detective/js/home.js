@@ -124,7 +124,7 @@ function render() {
       st.kind === 'none' ? [flowList(), actionsBox] : [actionsBox, flowList()],
       h('h2', { class: 'section-title', text: '지난 사건 기록' }),
       historyList(),
-      h('div', { class: 'home-foot' }, h('a', { class: 'link-back', href: '../index.html' }, '← 미니게임 목록'))
+      h('div', { class: 'home-foot' }, h('a', { class: 'link-back', href: '../index.html' }, '← 미니게임 목록'), ' · ', h('a', { class: 'link-back', href: '../guide/detective.html' }, '📖 설명서'))
     )
   );
 }

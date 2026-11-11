@@ -94,15 +94,26 @@ export function buildStage(stageId, ctx) {
 
   // 단계마다 나오는 경보 종류
   const kindsFor = { dive: ['fix'], deep: ['fix', 'fix', 'fetch'], salvage: ['relay'], rise: ['fix', 'fetch', 'relay'] }[stageId];
-  const doubles = new Set(rng.sample([...Array(waveCount).keys()], Math.min(D.doubles[k], waveCount)));
-  // 처음 나오는 종류는 혼자 나오게 한다: 심해의 첫 부품 경보, 인양의 첫 전달
-  const waves = [];
+  // 판마다 경보 종류를 먼저 정한다. 심해에서는 부품 경보가 한 번은 나오게 한다
+  const kinds = [];
   let fetchSeen = stageId !== 'deep';
+  // 처음 나오는 종류는 혼자 나오게 한다: 심해의 첫 부품 경보, 인양의 첫 전달. 그 판은 겹치기에서 뺀다
+  let intro = stageId === 'salvage' ? 0 : -1;
   for (let w = 0; w < waveCount; w++) {
-    const alerts = [];
     let kind = rng.pick(kindsFor);
     if (stageId === 'deep' && !fetchSeen && w === waveCount - 1) kind = 'fetch';
-    if (kind === 'fetch') fetchSeen = true;
+    if (kind === 'fetch' && !fetchSeen) {
+      fetchSeen = true;
+      intro = w;
+    }
+    kinds.push(kind);
+  }
+  const pool = [...Array(waveCount).keys()].filter((w) => w !== intro);
+  const doubles = new Set(rng.sample(pool, Math.min(D.doubles[k], pool.length)));
+  const waves = [];
+  for (let w = 0; w < waveCount; w++) {
+    const alerts = [];
+    const kind = kinds[w];
     const first = makeAlert(kind, last >= 0 ? [last] : []);
     alerts.push(first);
     if (doubles.has(w) && N >= 3) {

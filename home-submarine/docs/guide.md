@@ -7,10 +7,10 @@ ES 모듈을 쓰므로 파일을 더블클릭해서는 열리지 않는다. 아�
 **집 Wi-Fi 에서 (PC 를 서버로)**
 
 ```bash
-python3 operation-vault/serve.py        # 저장소 루트를 8000번 포트로 연다
+npm run dev        # 저장소 맨 위에서. 저장소 루트를 8000번 포트로 열고 폰에서 열 주소를 알려 준다
 ```
 
-폰 브라우저에서 `http://<PC 주소>:8000/home-submarine/` 를 연다.
+(`python3 operation-vault/serve.py` 도 같은 일을 한다.) 폰 브라우저에서 `http://<PC 주소>:8000/home-submarine/` 를 연다.
 
 **GitHub Pages**
 

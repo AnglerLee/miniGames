@@ -50,8 +50,11 @@ AnglerBox 는 기본 브랜치(`master`)의 최신 커밋을 받아 루트에서
 
 ```bash
 npm run build     # dist/ 를 만든다 (로그에 파일 수와 버전 주소 수)
+npm run preview   # 빌드한 뒤 NAS 와 같은 주소 모양(http://localhost:8000/minigames/)으로 연다
 npm test          # 탐정·잠수함·스낵 볼트 규칙 테스트
 ```
+
+평소 고칠 때는 `npm run dev` 로 레포 맨 위를 그대로 연다(빌드 없이, 새로고침하면 바로 보인다).
 
 `dist/` 는 `.gitignore` 에 있다.
 

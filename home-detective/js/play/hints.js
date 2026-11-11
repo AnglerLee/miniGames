@@ -50,7 +50,7 @@ export function searchContent(tag, level) {
   const room = G.cs.rooms[tag.room].name;
   const kind = tag.kind === 'suspect' ? '용의자' : '증거';
   const p = placedOf(tag);
-  if (level === 1) return { text: room + '에 아직 ' + kind + ' 쪽지가 있어. 눈높이보다 낮은 곳, 물건 뒤를 봐.' };
+  if (level === 1) return { text: room + '에 아직 ' + kind + ' 쪽지가 있어. 높은 곳, 낮은 곳, 물건 뒤까지 천천히 둘러봐.' };
   if (level === 2) {
     if (p.text) return { text: '숨긴 사람의 귀띔: "' + p.text + '"' };
     if (p.photo) return { text: '숨긴 곳 사진의 한가운데야. 어디인지 알겠어?', photo: p.photo, crop: true };
