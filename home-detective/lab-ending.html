@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>결말 시험대 - 우리 집 탐정</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/ending.css">
+    <style>
+        body { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
+        #root { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+    </style>
+</head>
+
+<body>
+    <!--
+      결말 화면과 관찰 리포트만 따로 띄워 보는 개발용 화면. 실제 게임과 같은 저장소(localStorage)를 쓰므로
+      진행 중인 사건이 있는 기기에서는 열지 않는다.
+      예: lab-ending.html?d=1&seed=7&case=clean|messy|late|forced&view=ending|report&debug=1
+      그 밖에: reset=1 (기록 지우고 새로), name=탐정이름 (빈 값이면 이름 없음), long=1 (용의자 이름 8자),
+              cname=범인이름, photo=1 (범인 사진), bonus=A|S|always|none, treasure=lock|place|key|text,
+              ttext=보물 문구, predict=0 (예측 없음)
+    -->
+    <div id="root"></div>
+    <script type="module" src="js/play/lab-ending.js"></script>
+</body>
+
+</html>

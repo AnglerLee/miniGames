@@ -2,10 +2,11 @@
 
 const Storage = {
     KEYS: {
-        CONFIG: 'treasureHunt3_config',
-        STATE: 'treasureHunt3_state',
-        HISTORY: 'treasureHunt3_history',
-        ADMIN: 'treasureHunt3_admin'
+        // AnglerBox 에서는 여러 앱이 한 주소(출처)를 함께 쓰므로 키 앞에 앱 이름(minigames:)을 붙인다
+        CONFIG: 'minigames:treasureHunt3_config',
+        STATE: 'minigames:treasureHunt3_state',
+        HISTORY: 'minigames:treasureHunt3_history',
+        ADMIN: 'minigames:treasureHunt3_admin'
     },
 
     get(key) {

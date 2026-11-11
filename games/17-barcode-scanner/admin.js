@@ -19,7 +19,7 @@
 
     function readStore() {
         try {
-            const v = JSON.parse(localStorage.getItem(KEY));
+            const v = JSON.parse(localStorage.getItem(AdminKit.ns(KEY)));
             return v && typeof v === 'object' ? v : {};
         } catch (e) {
             return {};
@@ -39,7 +39,7 @@
         s.targetBarcodes = list;
         s.lastUpdated = new Date().toISOString();
         try {
-            localStorage.setItem(KEY, JSON.stringify(s));
+            localStorage.setItem(AdminKit.ns(KEY), JSON.stringify(s));
             keep = list.slice();
             return true;
         } catch (e) {

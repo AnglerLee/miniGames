@@ -2,6 +2,21 @@
 
 집에서 아이들과 함께 즐기는 보물찾기 게임을 위한 웹 기반 미니게임 모음입니다!
 
+![보물찾기 미니게임](docs/thumbnail.png)
+
+## 🌐 바로가기
+
+- 게임 목록 (아이): https://pros2.synology.me/minigames/
+- 부모 대시보드: https://pros2.synology.me/minigames/admin.html
+
+이렇게 씁니다.
+
+1. 부모가 대시보드에서 보물찾기를 골라 **준비하기**를 누릅니다. 준비 내용은 부모 기기에 저장됩니다.
+2. 준비가 끝나면 **아이에게 보내기**를 누르고, QR을 보여 주거나 링크를 메신저로 보냅니다.
+3. 아이는 링크를 연 기기에서 혼자 시작합니다. 진행과 기록, 관찰 리포트는 그 기기에 남습니다.
+
+NAS(AnglerBox)에 게시하는 방법은 [docs/deploy-anglerbox.md](docs/deploy-anglerbox.md)에 있습니다.
+
 ## ✨ 특징
 
 - 📱 **모바일 친화적**: 스마트폰에서 터치로 쉽게 플레이
@@ -12,24 +27,35 @@
 - 👥 **1~2인 모드**: 혼자 또는 둘이서 번갈아 플레이
 - 🔐 **관리자 PIN**: 4자리 PIN으로 설정 보호
 - 💾 **서버 불필요**: 모든 데이터는 브라우저 localStorage에 저장
+- 📨 **아이에게 링크 보내기**: 부모 대시보드에서 보물찾기 준비 내용을 링크·QR로 아이 기기에 보낸다
 - 🎊 **풍부한 효과**: 효과음과 배경 리듬, 화면 연출, 진동(되는 기기만)
 - 🕶️ **작전명 스낵 볼트**: 폰 두 대로 하는 3D 협력 금고 침투 게임 (`operation-vault/`)
+- 🕵️ **우리 집 탐정**: 부모가 준비하고 아이가 혼자 푸는 추리 게임. 인형이 용의자, 집이 사건 현장 (`home-detective/`)
+- 🚢 **잠수함 간식호**: 부모가 준비하고 아이가 혼자 하는 실시간 미션. 집이 잠수함, 방마다 터지는 고장을 걸어 다니며 고친다 (`home-submarine/`)
 
 ## 📁 프로젝트 구조
 
 ```
 miniGames/
-├── index.html                     # 게임 목록 (별 모으기, 오늘의 도전)
-├── admin.html                     # 전체 관리자 (게임별 설정 페이지로 이동)
+├── index.html                     # 게임 목록 (별 모으기, 오늘의 도전, 보물찾기 카드)
+├── admin.html                     # 부모 대시보드 (보물찾기 준비 상태, 아이에게 링크 보내기, 게임별 설정)
+├── anglerbox.json                 # AnglerBox 게시 설정 (주소 /minigames/)
+├── package.json                   # npm run build (게시용 dist/), npm test
+├── scripts/build-site.mjs         # 게시용 빌드: 파일 모으기, assets 주소에 해시, 끊어진 링크 검사
 ├── docs/arcade-guide.md           # 미니게임 공통 엔진 안내서 (기획 기준, API)
+├── docs/deploy-anglerbox.md       # NAS(AnglerBox) 게시 안내
 ├── operation-vault/               # 🕶️ 작전명 스낵 볼트 (폰 2대 3D 협력 게임)
+├── home-detective/                # 🕵️ 우리 집 탐정 (부모 준비 → 아이 혼자 추리 → 부모 관찰)
+├── home-submarine/                # 🚢 잠수함 간식호 (부모 준비 → 아이 혼자 실시간 수리 미션 → 부모 관찰)
 ├── treasure-hunt3/                # 🏠 홈 트레저헌트 v2.0
 │   ├── index.html                # 메인 화면 & 미션 허브
 │   ├── admin.html                # 관리자 대시보드 (PIN 인증)
 │   ├── play.html                 # 미션 플레이 (미니게임 / 물건찾기)
 │   ├── treasure.html             # 보물상자 (비밀번호 입력)
+│   ├── join.html                 # 부모가 보낸 링크를 받아 이 기기에 저장
 │   ├── js/
 │   │   ├── storage.js            # localStorage 관리
+│   │   ├── share.js              # 다른 기기로 보내는 링크 만들기·읽기
 │   │   ├── game-engine.js        # 게임 상태 & 로직
 │   │   ├── app.js                # 유틸리티 & 초기화
 │   │   ├── theme-manager.js      # 9개 테마 관리
@@ -57,6 +83,8 @@ miniGames/
     ├── js/admin-kit.js            # 게임별 관리자 페이지 도구 (난이도 슬라이더, 설정 저장)
     ├── js/games-list.js           # 게임 목록 (이름, 분류, 필요한 센서)
     ├── js/hub.js                  # 게임 목록 화면
+    ├── js/dashboard.js            # 부모 대시보드의 보물찾기 칸 (상태, 아이에게 보내기)
+    ├── js/share-box.js            # 링크 상자 (QR, 복사, 보내기)
     ├── css/arcade.css             # 미니게임 공통 스타일
     ├── css/hub.css                # 게임 목록 화면 스타일
     └── css/admin-theme.css        # 관리자 페이지 스타일
@@ -141,12 +169,14 @@ admin.html ──── PIN 인증 → 대시보드 (설정 관리)
 
 ### localStorage 키
 
+AnglerBox 에서는 여러 앱이 한 주소를 함께 쓰므로 이 사이트의 모든 키 앞에 `minigames:` 를 붙입니다.
+
 | 키 | 용도 |
 |----|------|
-| `treasureHunt3_config` | 게임 설정 (테마, 미션, 옵션 등) |
-| `treasureHunt3_state` | 게임 진행 상태 (현재 미션, 결과, 단서) |
-| `treasureHunt3_admin` | 관리자 PIN |
-| `treasureHunt3_history` | 플레이 기록 (최대 50건) |
+| `minigames:treasureHunt3_config` | 게임 설정 (테마, 미션, 옵션 등) |
+| `minigames:treasureHunt3_state` | 게임 진행 상태 (현재 미션, 결과, 단서) |
+| `minigames:treasureHunt3_admin` | 관리자 PIN |
+| `minigames:treasureHunt3_history` | 플레이 기록 (최대 50건) |
 
 ### 성적 시스템
 
@@ -233,14 +263,14 @@ admin.html ──── PIN 인증 → 대시보드 (설정 관리)
 
 ## 📱 모바일에서 사용하기
 
+### 방법 0: NAS (AnglerBox, 권장)
+
+https://pros2.synology.me/minigames/ 를 엽니다. `https://` 라서 카메라와 센서를 모두 쓸 수 있습니다. 게시와 업데이트는 [docs/deploy-anglerbox.md](docs/deploy-anglerbox.md)를 봅니다.
+
 ### 방법 1: 로컬 서버
 
 ```bash
-# Python 3
-python -m http.server 8000
-
-# Node.js
-npx http-server
+python3 operation-vault/serve.py    # 레포 맨 위를 서빙하고 폰에서 열 주소를 알려 준다
 ```
 
 같은 Wi-Fi 네트워크의 스마트폰에서 `컴퓨터IP:8000`으로 접속
@@ -255,7 +285,7 @@ npx http-server
 
 ### 방법 3: 파일 직접 전송
 
-스마트폰으로 파일 복사 후 브라우저에서 `index.html` 열기 (작전명 스낵 볼트는 이 방법으로 열리지 않습니다)
+스마트폰으로 파일 복사 후 브라우저에서 `index.html` 열기 (작전명 스낵 볼트, 우리 집 탐정, 잠수함 간식호는 이 방법으로 열리지 않습니다)
 
 ## 📋 브라우저 호환성
 
@@ -269,7 +299,8 @@ npx http-server
 모든 설정과 진행 상태는 브라우저의 `localStorage`에 저장됩니다:
 - 서버가 필요 없음
 - 같은 브라우저에서는 새로고침해도 유지
-- 다른 브라우저나 기기에서는 별도 설정 필요
+- 다른 브라우저나 기기에서는 별도 설정 필요 (보물찾기는 부모 대시보드의 "아이에게 보내기" 링크로 넘깁니다)
+- 키 이름은 모두 `minigames:` 로 시작합니다
 
 ## 🐛 문제 해결
 
@@ -280,8 +311,9 @@ npx http-server
 | 비밀번호 표시 안 됨 | admin에서 저장 확인, 같은 브라우저 사용 확인 |
 | 소리가 안 남 | 아이폰은 무음 스위치를 끕니다. 게임 중 ⏸ 버튼에서 소리 켜고 끄기를 확인합니다 |
 | 카메라가 안 열림 | 주소가 `http://` 이면 카메라가 막힙니다. 게임이 번호 입력이나 사진 올리기로 바뀌니 그대로 하면 됩니다 |
-| 별과 기록을 지우고 싶음 | `admin.html` 맨 아래 "모든 게임의 별과 최고 기록 지우기"(두 번 누름) |
-| PIN을 잊어버림 | 브라우저 개발자도구 → Console → `localStorage.removeItem('treasureHunt3_admin')` |
+| 별과 기록을 지우고 싶음 | `admin.html` 맨 아래 "이 기기의 미니게임 별과 최고 기록 지우기"(두 번 누름) |
+| PIN을 잊어버림 | 브라우저 개발자도구 → Console → `localStorage.removeItem('minigames:treasureHunt3_admin')` |
+| 아이 기기에서 링크가 안 열림 | 링크가 잘리지 않았는지 봅니다. QR 이 안 읽히면 메신저로 링크를 보냅니다 |
 
 ## 📝 라이선스
 

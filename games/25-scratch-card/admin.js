@@ -3,7 +3,7 @@
 (function () {
     'use strict';
 
-    const PHOTO_KEY = 'scratch_bg_image'; // 게임이 읽는 사진. JSON 이 아니라 data URL 문자열 그대로 저장한다
+    const PHOTO_KEY = 'minigames:scratch_bg_image'; // 게임이 읽는 사진. JSON 이 아니라 data URL 문자열 그대로 저장한다
     const h = AdminKit.h;
 
     // 사진은 localStorage 에 들어가므로 줄여서 저장한다. 그래도 넘치면 더 작게 다시 해 본다

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>수리 놀이 시험대 - 잠수함 간식호</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="css/base.css">
+    <style>
+        body { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
+        #bar { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; }
+        #bar .btn { min-height: 34px; padding: 4px 10px; font-size: 13px; }
+        #stage { flex: 1; min-height: 0; display: flex; flex-direction: column; margin: 0 10px 10px; padding: 12px; border-radius: 14px; background: linear-gradient(180deg, var(--panel-2), var(--panel)); border: 1px solid var(--panel-line); overflow: hidden; }
+        #log { padding: 0 10px 8px; font: 12px var(--mono); color: var(--text-soft); min-height: 20px; }
+    </style>
+</head>
+
+<body>
+    <!-- 수리 놀이 하나만 따로 띄워 보는 개발용 화면. 예: lab.html?task=valve&seed=3&level=1 -->
+    <div id="bar"></div>
+    <div id="log"></div>
+    <div id="stage"></div>
+    <script type="module" src="js/play/lab.js"></script>
+</body>
+
+</html>

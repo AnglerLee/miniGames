@@ -1,0 +1,9 @@
+{
+  "name": "home-detective",
+  "private": true,
+  "type": "module",
+  "description": "우리 집 탐정 - 집 전체가 사건 현장이 되는 추리 게임",
+  "scripts": {
+    "test": "node --test \"tests/*.test.js\""
+  }
+}

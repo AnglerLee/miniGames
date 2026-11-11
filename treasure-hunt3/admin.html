@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="data:,">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>홈 트레저헌트 - 관리자</title>
     <link rel="stylesheet" href="css/common.css">
@@ -661,6 +662,14 @@
                         </div>
                     </div>
 
+                    <!-- 아이 기기로 보내기 -->
+                    <div>
+                        <div class="section-header">▸ 아이 기기로 보내기</div>
+                        <p style="margin:0 0 10px; font-size:0.9rem; opacity:0.85;">아이가 태블릿이나 자기 폰으로 할 때 씁니다. 지금 내용을 저장하고, 그 기기에서 열 링크를 만듭니다. 링크를 연 기기에서 바로 시작돼요.</p>
+                        <button class="btn btn-secondary btn-block" id="sendLinkBtn" type="button">📨 저장하고 링크 만들기</button>
+                        <div id="sendLinkSlot" style="margin-top:12px;"></div>
+                    </div>
+
                     <!-- Reset -->
                     <div style="margin-top:16px;">
                         <button class="btn btn-danger btn-block" id="resetGameBtn">🗑️ 진행 중인 게임 초기화</button>
@@ -765,6 +774,22 @@
     <script src="js/effects.js"></script>
     <script src="js/game-engine.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/share.js"></script>
+    <script type="module">
+        // 저장 버튼과 같은 검사를 거쳐 저장한 뒤, 저장된 설정으로 링크를 만든다
+        import { shareBox } from '../assets/js/share-box.js';
+        const slot = document.getElementById('sendLinkSlot');
+        document.getElementById('sendLinkBtn').addEventListener('click', () => {
+            const before = Storage.getConfig();
+            document.getElementById('saveBtn').click();
+            const config = Storage.getConfig();
+            if (!config || (before && before.createdAt === config.createdAt)) {
+                slot.textContent = '저장하지 못했어요. 위의 안내(미션, 보물 상자 암호)를 확인해 주세요.';
+                return;
+            }
+            slot.replaceChildren(shareBox({ url: HuntShare.url(config), title: '홈 트레저헌트', text: '보물찾기 링크야. 눌러서 시작해!' }));
+        });
+    </script>
     <script>
         /* ===== admin.html - PIN Auth & Dashboard ===== */
         (function () {

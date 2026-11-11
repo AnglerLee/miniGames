@@ -1,0 +1,319 @@
+/* 잠수함 간식호 - 모든 화면이 함께 쓰는 바탕 모양.
+   깊은 바다색 바탕에 계기판(강철 패널, 청록 불빛, 주황 경고등) 느낌으로 맞춘다. */
+
+:root {
+  --sea: #04121d;
+  --sea-2: #082638;
+  --sea-3: #0f3a54;
+  --panel: #12344b;
+  --panel-2: #1a4763;
+  --panel-line: #2c6485;
+  --text: #e8f6fb;
+  --text-soft: #9cc3d5;
+  --cyan: #4cc9f0;
+  --amber: #ffb703;
+  --red: #ff4d6d;
+  --red-deep: #c9184a;
+  --green: #7bed9f;
+  --note: #ffd95a;
+  --ink: #17232b;
+  --shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  --radius: 14px;
+  --mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --font: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  background:
+    radial-gradient(120% 70% at 50% 0%, var(--sea-3) 0%, transparent 62%),
+    linear-gradient(180deg, var(--sea-2), var(--sea));
+  background-attachment: fixed;
+  -webkit-text-size-adjust: 100%;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  background: none;
+  padding: 0;
+  touch-action: manipulation;
+}
+
+.soft {
+  color: var(--text-soft);
+}
+
+/* 계기판 패널 */
+.card {
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  color: var(--text);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--panel-line);
+}
+
+/* 버튼 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--panel-2);
+  border: 1px solid var(--panel-line);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4);
+  transition: transform 0.06s ease, box-shadow 0.06s ease, filter 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.btn.primary {
+  color: #04121d;
+  background: var(--cyan);
+  border-color: transparent;
+}
+
+.btn.warn {
+  color: #04121d;
+  background: var(--amber);
+  border-color: transparent;
+}
+
+.btn.danger {
+  color: #fff;
+  background: var(--red);
+  border-color: transparent;
+}
+
+.btn.ghost {
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+}
+
+.btn.block {
+  display: flex;
+  width: 100%;
+}
+
+.btn.small {
+  min-height: 38px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  filter: grayscale(0.7) brightness(0.75);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* 작은 이름표 */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+}
+
+/* 구역 쪽지 (포스트잇 모양). 예: ▲ 4 8 1 6 */
+.note-code {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 4px 4px 14px 4px;
+  background: var(--note);
+  color: var(--ink);
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  box-shadow: 2px 4px 0 rgba(0, 0, 0, 0.3);
+  transform: rotate(-1.5deg);
+  white-space: nowrap;
+}
+
+/* 구역 색 동그라미 (--c 에 구역 색을 넣는다) */
+.station-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink);
+  background: var(--c, var(--cyan));
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12), 0 0 16px color-mix(in srgb, var(--c, var(--cyan)) 55%, transparent);
+}
+
+/* 자체 모달 (브라우저 alert/confirm 대신) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(2, 10, 16, 0.78);
+  animation: hs-fade 0.15s ease;
+}
+
+.modal {
+  width: min(100%, 420px);
+  max-height: 86dvh;
+  overflow: auto;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  color: var(--text);
+  border: 1px solid var(--panel-line);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6);
+  animation: hs-pop 0.18s ease;
+}
+
+.modal h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.modal p {
+  color: var(--text-soft);
+  white-space: pre-line;
+}
+
+.modal .actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.modal .actions .btn {
+  flex: 1;
+}
+
+/* 잠깐 뜨는 알림 */
+.toast-box {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(96px + env(safe-area-inset-bottom));
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  max-width: min(88vw, 380px);
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(4, 18, 29, 0.95);
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--panel-line);
+  animation: hs-pop 0.18s ease;
+}
+
+.toast.good {
+  color: #04121d;
+  background: var(--green);
+}
+
+.toast.bad {
+  background: var(--red-deep);
+}
+
+@keyframes hs-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes hs-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
+
+@keyframes hs-shake {
+  20%,
+  60% {
+    transform: translateX(-7px);
+  }
+  40%,
+  80% {
+    transform: translateX(7px);
+  }
+}
+
+.shake {
+  animation: hs-shake 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

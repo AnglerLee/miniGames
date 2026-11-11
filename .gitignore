@@ -34,3 +34,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AnglerBox 게시용 빌드 결과 (npm run build)
+/dist

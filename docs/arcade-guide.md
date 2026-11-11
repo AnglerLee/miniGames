@@ -173,7 +173,7 @@ games/NN-이름/
 |---|---|
 | `Arcade.h(tag, attrs, children)` | 엘리먼트 만들기. `class`, `text`, `html`, `style`, `dataset`, `on이벤트` |
 | `Arcade.loadSettings(key, defaults)` | 관리자 설정 읽기 |
-| `Arcade.store.get/set/remove` | localStorage (JSON) |
+| `Arcade.store.get/set/remove` | localStorage (JSON). 키 앞에 `minigames:` 를 저절로 붙인다 (AnglerBox 에서 여러 앱이 한 주소를 함께 쓴다). 직접 `localStorage` 를 쓸 때는 `Arcade.ns(key)`, 관리자 페이지에서는 `AdminKit.ns(key)` 로 같은 키를 만든다 |
 | `Arcade.rand`, `randInt`, `pick`, `shuffle`, `clamp`, `lerp`, `wait`, `fmt`, `formatTime` | |
 | `Arcade.sfx(name, arg)` | 효과음 |
 | `Arcade.vibrate(pattern)` | 진동. 아이폰은 진동이 없으므로 소리와 화면 효과를 반드시 함께 낸다 |
@@ -227,7 +227,7 @@ games/NN-이름/
 
 ## 6. 관리자 페이지
 
-게임 화면과 설정 화면은 분리합니다. 설정은 기존과 같은 localStorage 키에 저장합니다.
+게임 화면과 설정 화면은 분리합니다. 설정은 `storageKey` 에 `minigames:` 를 붙인 localStorage 키에 저장합니다(admin-kit 이 붙이고, 게임의 `Arcade.loadSettings` 도 같은 키를 읽습니다).
 
 ```html
 <link rel="stylesheet" href="../../assets/css/admin-theme.css">

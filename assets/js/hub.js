@@ -142,7 +142,18 @@
     h('div', { class: 'hub-wrap' }, [
       h('header', { class: 'hub-head' }, [h('h1', { text: '🎮 미니게임 아케이드' }), h('p', { text: '게임을 깨고 별을 모아 보자!' })]),
       starsBox,
+      h('div', { class: 'hub-section-title' }, [h('span', { text: '🗺️ 보물찾기' }), h('small', { text: '부모님이 준비해 주면 시작!' })]),
       h('section', { class: 'hub-featured' }, [
+        h('a', { class: 'hub-big detective', href: 'home-detective/index.html' }, [
+          h('div', { class: 'ico', text: '🕵️' }),
+          h('b', { text: '우리 집 탐정' }),
+          h('span', { text: '인형들이 용의자! 집을 돌아다니며 혼자 푸는 추리 게임' }),
+        ]),
+        h('a', { class: 'hub-big submarine', href: 'home-submarine/index.html' }, [
+          h('div', { class: 'ico', text: '🚢' }),
+          h('b', { text: '잠수함 간식호' }),
+          h('span', { text: '집이 잠수함! 방마다 터지는 고장을 고치는 실시간 미션' }),
+        ]),
         h('a', { class: 'hub-big hunt', href: 'treasure-hunt3/index.html' }, [
           h('div', { class: 'ico', text: '🗺️' }),
           h('b', { text: '홈 트레저헌트' }),
@@ -151,7 +162,7 @@
         h('a', { class: 'hub-big vault', href: 'operation-vault/index.html' }, [
           h('div', { class: 'ico', text: '🕶️' }),
           h('b', { text: '작전명 스낵 볼트' }),
-          h('span', { text: '폰 두 대 협력 3D 금고 침투 (서버 실행 필요)' }),
+          h('span', { text: '폰 두 대로 부모와 함께하는 3D 금고 침투' }),
         ]),
       ]),
       h('div', { class: 'hub-section-title' }, [
@@ -162,7 +173,7 @@
       randomBtn,
       tabs,
       grid,
-      h('footer', { class: 'hub-foot' }, [h('a', { href: 'admin.html', text: '🔧 관리자 설정' })]),
+      h('footer', { class: 'hub-foot' }, [h('a', { href: 'admin.html', text: '👪 부모 대시보드' })]),
     ])
   );
 })();

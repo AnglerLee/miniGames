@@ -1,0 +1,367 @@
+/* 우리 집 탐정 - 모든 화면이 함께 쓰는 바탕 모양.
+   탐정 사무소 책상(어두운 청록) 위에 종이 카드(크림색)를 올려놓은 느낌으로 맞춘다. */
+
+:root {
+  --desk: #14222b;
+  --desk-2: #1c303b;
+  --desk-3: #27424f;
+  --paper: #f6ecd6;
+  --paper-2: #eadcbd;
+  --paper-line: #d3c19a;
+  --ink: #2b2118;
+  --ink-soft: #6a5a45;
+  --on-desk: #f3ead7;
+  --on-desk-soft: #a9b9bd;
+  --red: #d9412f;
+  --red-deep: #a82c1e;
+  --gold: #e3b341;
+  --green: #3f9d6b;
+  --blue: #3d7ea6;
+  --note: #ffd95a;
+  --shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  --radius: 14px;
+  --mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --font: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--on-desk);
+  background:
+    radial-gradient(120% 80% at 50% 0%, var(--desk-3) 0%, transparent 60%),
+    linear-gradient(180deg, var(--desk-2), var(--desk));
+  background-attachment: fixed;
+  -webkit-text-size-adjust: 100%;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  background: none;
+  padding: 0;
+  touch-action: manipulation;
+}
+
+/* 종이 카드 */
+.card {
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--paper-line);
+}
+
+.card h2,
+.card h3 {
+  color: var(--ink);
+}
+
+.card .soft {
+  color: var(--ink-soft);
+}
+
+.soft {
+  color: var(--on-desk-soft);
+}
+
+/* 버튼 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--paper-2);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.28);
+  transition: transform 0.06s ease, box-shadow 0.06s ease, filter 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.28);
+}
+
+.btn.primary {
+  color: #fff;
+  background: var(--red);
+}
+
+.btn.gold {
+  color: #2b2118;
+  background: var(--gold);
+}
+
+.btn.ghost {
+  color: var(--on-desk);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.card .btn.ghost,
+.modal .btn.ghost {
+  color: var(--ink);
+  background: rgba(0, 0, 0, 0.05);
+  border-color: var(--paper-line);
+}
+
+.btn.block {
+  display: flex;
+  width: 100%;
+}
+
+.btn.small {
+  min-height: 38px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  filter: grayscale(0.7) brightness(0.8);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* 작은 이름표 */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.12);
+  white-space: nowrap;
+}
+
+.card .chip {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--ink);
+}
+
+/* 쪽지 기호 (포스트잇 모양) */
+.note-code {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 76px;
+  padding: 8px 12px;
+  border-radius: 4px 4px 14px 4px;
+  background: var(--note);
+  color: #2b2118;
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 2px 4px 0 rgba(0, 0, 0, 0.22);
+  transform: rotate(-2deg);
+}
+
+/* 도장 */
+.stamp {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 3px solid var(--red);
+  border-radius: 8px;
+  color: var(--red);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  transform: rotate(-8deg);
+  opacity: 0.9;
+}
+
+/* 얼굴 (그림 문자 또는 사진) */
+.avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--paper-2);
+  border: 3px solid var(--paper-line);
+  font-size: 30px;
+  line-height: 1;
+  overflow: hidden;
+}
+
+.avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar.big {
+  width: 112px;
+  height: 112px;
+  font-size: 60px;
+  border-width: 4px;
+}
+
+.avatar.small {
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+  border-width: 2px;
+}
+
+/* 자체 모달 (브라우저 alert/confirm 대신) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(8, 14, 18, 0.72);
+  animation: hd-fade 0.15s ease;
+}
+
+.modal {
+  width: min(100%, 420px);
+  max-height: 86dvh;
+  overflow: auto;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  animation: hd-pop 0.18s ease;
+}
+
+.modal h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.modal p {
+  color: var(--ink-soft);
+  white-space: pre-line;
+}
+
+.modal .actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.modal .actions .btn {
+  flex: 1;
+}
+
+/* 잠깐 뜨는 알림 */
+.toast-box {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(92px + env(safe-area-inset-bottom));
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  max-width: min(88vw, 380px);
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(20, 30, 36, 0.94);
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  animation: hd-pop 0.18s ease;
+}
+
+.toast.good {
+  background: var(--green);
+}
+
+.toast.bad {
+  background: var(--red-deep);
+}
+
+@keyframes hd-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes hd-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
+
+@keyframes hd-shake {
+  20%,
+  60% {
+    transform: translateX(-7px);
+  }
+  40%,
+  80% {
+    transform: translateX(7px);
+  }
+}
+
+.shake {
+  animation: hd-shake 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
