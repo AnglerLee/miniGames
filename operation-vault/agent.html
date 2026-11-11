@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05070d">
+  <link rel="icon" href="data:,">
+  <title>현장 요원 - 작전명 스낵 볼트</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/agent.css">
+  <link rel="modulepreload" href="vendor/three/three.module.js">
+  <link rel="modulepreload" href="vendor/three/three.core.js">
+</head>
+<body class="agent">
+  <canvas id="view"></canvas>
+  <div id="hud"></div>
+  <div id="screen"></div>
+  <div id="rotate-notice"><div>📱<br>세로로 돌려 주세요</div></div>
+  <div id="boot">불러오는 중...</div>
+
+  <script>
+    // 파일을 직접 열면 모듈이 실행되지 않는다. 서버로 열도록 안내한다.
+    if (location.protocol === 'file:') {
+      document.getElementById('boot').textContent =
+        '파일을 직접 열어서는 실행되지 않습니다. operation-vault 폴더에서 python3 serve.py 를 실행한 뒤 안내되는 주소로 접속하세요.';
+    }
+  </script>
+  <script type="module" src="js/agent/main.js"></script>
+</body>
+</html>
