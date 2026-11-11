@@ -54,10 +54,15 @@
     return el;
   }
 
+  // AnglerBox 에서는 여러 앱이 한 주소(출처)를 함께 쓴다. 이 사이트의 저장 키에는 모두 앱 이름을 앞에 붙인다.
+  // 관리자 도구(admin-kit.js)의 접두사와 같아야 한다.
+  const NS = 'minigames:';
+  const ns = (key) => NS + key;
+
   const store = {
     get(key, fallback = null) {
       try {
-        const raw = localStorage.getItem(key);
+        const raw = localStorage.getItem(ns(key));
         return raw === null ? fallback : JSON.parse(raw);
       } catch (e) {
         return fallback;
@@ -65,7 +70,7 @@
     },
     set(key, value) {
       try {
-        localStorage.setItem(key, JSON.stringify(value));
+        localStorage.setItem(ns(key), JSON.stringify(value));
         return true;
       } catch (e) {
         return false;
@@ -73,7 +78,7 @@
     },
     remove(key) {
       try {
-        localStorage.removeItem(key);
+        localStorage.removeItem(ns(key));
       } catch (e) {
         /* 저장소를 쓸 수 없는 환경 */
       }
@@ -1365,6 +1370,7 @@
     shuffle,
     wait,
     h,
+    ns,
     store,
     loadSettings,
     vibrate,

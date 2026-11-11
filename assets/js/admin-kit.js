@@ -6,6 +6,10 @@
 
   const LEVELS = ['🟢 쉬움', '🟡 보통', '🔴 어려움'];
 
+  // 저장 키 접두사. 게임 쪽(arcade.js 의 Arcade.ns)과 같아야 게임이 이 설정을 읽는다.
+  const NS = 'minigames:';
+  const ns = (key) => NS + key;
+
   const CSS = `
     .ak-slider-box { margin: 0 0 1.5rem; }
     .ak-slider-box input[type=range] { width: 100%; accent-color: var(--primary-color); height: 28px; }
@@ -48,7 +52,7 @@
 
   function load(key) {
     try {
-      const v = JSON.parse(localStorage.getItem(key));
+      const v = JSON.parse(localStorage.getItem(ns(key)));
       return v && typeof v === 'object' ? v : {};
     } catch (e) {
       return {};
@@ -215,7 +219,7 @@
       // 이 도구가 모르는 값(직접 만든 부분이 저장한 값)은 그대로 둔다
       const next = Object.assign({}, load(spec.storageKey), values(), { lastUpdated: new Date().toISOString() });
       try {
-        localStorage.setItem(spec.storageKey, JSON.stringify(next));
+        localStorage.setItem(ns(spec.storageKey), JSON.stringify(next));
         toast('저장했어요');
         return true;
       } catch (e) {
@@ -273,7 +277,7 @@
           delete btn.dataset.armed;
           btn.textContent = '초기화';
           try {
-            localStorage.removeItem(spec.storageKey);
+            localStorage.removeItem(ns(spec.storageKey));
           } catch (e) {
             /* 저장소를 쓸 수 없는 환경 */
           }
@@ -311,7 +315,7 @@
             onclick: () => {
               const all = load('arcade_records');
               delete all[spec.recordId];
-              localStorage.setItem('arcade_records', JSON.stringify(all));
+              localStorage.setItem(ns('arcade_records'), JSON.stringify(all));
               toast('기록을 지웠어요');
             },
           }),
@@ -321,5 +325,5 @@
     return api;
   }
 
-  window.AdminKit = { page, toast, h };
+  window.AdminKit = { page, toast, h, ns };
 })();

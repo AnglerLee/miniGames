@@ -5,7 +5,7 @@
 
   const { h, shuffle, clamp, rand, sfx, fx, fmt } = Arcade;
   const GAME_ID = 'game25';
-  const PHOTO_KEY = 'scratch_bg_image'; // 관리자 페이지가 올린 사진. JSON 이 아니라 data URL 문자열 그대로다
+  const PHOTO_KEY = 'minigames:scratch_bg_image'; // 관리자 페이지가 올린 사진. JSON 이 아니라 data URL 문자열 그대로다
 
   // ----- 설정 (관리자 페이지와 같은 키, 같은 기본값)
   const PRESETS = [

@@ -10,7 +10,7 @@
     function legacySettings() {
         const out = {};
         try {
-            const all = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
+            const all = JSON.parse(localStorage.getItem(AdminKit.ns('treasureHunt_gameConfigs'))) || {};
             const old = (all[GAME_ID] && all[GAME_ID].gameSettings) || {};
             const time = Number(old.timePerQuestion);
             const total = Number(old.totalQuestions);

@@ -1,0 +1,9 @@
+{
+  "name": "home-submarine",
+  "private": true,
+  "type": "module",
+  "description": "잠수함 간식호 - 집이 잠수함이 되는 실시간 수리 미션",
+  "scripts": {
+    "test": "node --test \"tests/*.test.js\""
+  }
+}

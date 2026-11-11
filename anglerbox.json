@@ -1,0 +1,11 @@
+{
+  "slug": "minigames",
+  "title": "보물찾기 미니게임",
+  "summary": "아이와 집에서 하는 미니게임 20개와 보물찾기 4가지. 부모가 준비하고 링크를 보내면 아이가 시작한다",
+  "category": "game",
+  "tags": ["보물찾기", "미니게임", "아이", "집놀이"],
+  "runMode": "navigate",
+  "collection": "kids",
+  "web": { "dir": ".", "build": true, "out": "dist", "script": "build" },
+  "server": null
+}

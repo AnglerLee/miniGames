@@ -154,7 +154,7 @@
 
   function readAudioUrl(id) {
     let url = null;
-    try { url = localStorage.getItem('reverseAudio_' + id); } catch (e) { return null; }
+    try { url = localStorage.getItem(Arcade.ns('reverseAudio_' + id)); } catch (e) { return null; }
     if (url && url.charAt(0) === '"') {
       try { url = JSON.parse(url); } catch (e) { /* 그대로 쓴다 */ }
     }

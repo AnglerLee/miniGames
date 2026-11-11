@@ -24,7 +24,7 @@
     // ----- 저장소
     function readList(level) {
         try {
-            const list = JSON.parse(localStorage.getItem('reverseAudio_questions_' + level));
+            const list = JSON.parse(localStorage.getItem(AdminKit.ns('reverseAudio_questions_' + level)));
             return Array.isArray(list) ? list.filter((q) => q && typeof q.id === 'string') : [];
         } catch (e) {
             return [];
@@ -32,12 +32,12 @@
     }
 
     function writeList(level, list) {
-        localStorage.setItem('reverseAudio_questions_' + level, JSON.stringify(list));
+        localStorage.setItem(AdminKit.ns('reverseAudio_questions_' + level), JSON.stringify(list));
     }
 
     function readAudio(id) {
         try {
-            return localStorage.getItem('reverseAudio_' + id);
+            return localStorage.getItem(AdminKit.ns('reverseAudio_' + id));
         } catch (e) {
             return null;
         }
@@ -205,7 +205,7 @@
             armedId = null;
             clearTimeout(armTimer);
             try {
-                localStorage.removeItem('reverseAudio_' + item.id);
+                localStorage.removeItem(AdminKit.ns('reverseAudio_' + item.id));
                 writeList(item.level, readList(item.level).filter((q) => q.id !== item.id));
             } catch (e) {
                 /* 저장소를 쓸 수 없는 환경 */
@@ -295,7 +295,7 @@
             reader.onloadend = () => {
                 const id = `q_${level}_${Date.now()}`;
                 try {
-                    localStorage.setItem('reverseAudio_' + id, reader.result);
+                    localStorage.setItem(AdminKit.ns('reverseAudio_' + id), reader.result);
                 } catch (e) {
                     api.toast('저장 공간이 모자라요. 다른 녹음을 지우고 다시 해 주세요');
                     return;
@@ -305,7 +305,7 @@
                     items.push({ id, answer });
                     writeList(level, items);
                 } catch (e) {
-                    localStorage.removeItem('reverseAudio_' + id);
+                    localStorage.removeItem(AdminKit.ns('reverseAudio_' + id));
                     api.toast('저장 공간이 모자라요');
                     return;
                 }

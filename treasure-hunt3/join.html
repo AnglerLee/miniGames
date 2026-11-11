@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>보물찾기 받는 중</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/themes.css">
+</head>
+
+<body>
+    <!-- 부모가 보낸 링크(join.html#c=…)를 받아 이 기기에 보물찾기를 저장하고 시작 화면으로 넘긴다 -->
+    <div class="container" style="text-align:center; padding-top:30vh;">
+        <div style="font-size:3rem;">🗺️</div>
+        <p id="msg">보물찾기를 받는 중…</p>
+        <p id="fail" style="display:none;">링크를 읽지 못했어요. 부모님께 링크를 다시 보내 달라고 해 주세요.<br><br><a href="index.html">보물찾기 시작 화면으로</a></p>
+    </div>
+    <script src="js/storage.js"></script>
+    <script src="js/share.js"></script>
+    <script>
+        (function () {
+            'use strict';
+            var m = location.hash.match(/^#c=(.+)$/);
+            var config = m ? HuntShare.decode(m[1]) : null;
+            if (!config) {
+                document.getElementById('msg').style.display = 'none';
+                document.getElementById('fail').style.display = '';
+                return;
+            }
+            // 같은 링크를 다시 열면 하던 데서 이어 간다. 다른 보물찾기면 진행을 지우고 새로 시작한다.
+            var old = Storage.getConfig();
+            if (!old || old.createdAt !== config.createdAt) Storage.clearState();
+            Storage.setConfig(config);
+            location.replace('index.html');
+        })();
+    </script>
+</body>
+
+</html>
