@@ -1,0 +1,464 @@
+/* 부모 화면: 시작 화면, 작전 설정, 본부 콘솔 */
+
+body {
+  background: radial-gradient(1200px 600px at 50% -10%, #14224a 0%, var(--bg) 60%);
+}
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.brand {
+  text-align: center;
+  padding: 18px 0 6px;
+}
+.brand .eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  color: var(--accent);
+}
+.brand h1 {
+  font-size: 30px;
+  line-height: 1.2;
+  margin-top: 6px;
+}
+.brand p {
+  color: var(--dim);
+  margin-top: 8px;
+}
+
+.role {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  width: 100%;
+  padding: 18px 16px;
+  border-radius: var(--radius);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  text-decoration: none;
+  color: inherit;
+}
+.role:active {
+  filter: brightness(1.25);
+}
+.role .icon {
+  font-size: 34px;
+}
+.role b {
+  display: block;
+  font-size: 18px;
+  color: var(--text);
+}
+.role span {
+  color: var(--dim);
+  font-size: 14px;
+}
+
+/* 설정 폼 */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.field > label,
+.field > .label {
+  font-weight: 700;
+}
+.field small {
+  color: var(--dim);
+}
+input[type='text'],
+textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 17px;
+  color: var(--text);
+  background: #050912;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 13px 14px;
+}
+input[type='text']:focus,
+textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+input[type='range'] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.difficulty-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--dim);
+}
+.difficulty-labels .on {
+  color: var(--text);
+  font-weight: 700;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  font-weight: 600;
+  font-size: 15px;
+}
+.chip.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #04202b;
+}
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.switch {
+  position: relative;
+  width: 56px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  flex: none;
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--dim);
+  transition: transform 0.15s ease;
+}
+.switch.on {
+  background: #0e5f73;
+  border-color: var(--accent);
+}
+.switch.on::after {
+  transform: translateX(24px);
+  background: var(--accent);
+}
+.error {
+  color: var(--red);
+  font-weight: 600;
+}
+
+/* 본부 콘솔 */
+.console {
+  max-width: 480px;
+  margin: 0 auto;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+.console header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
+  border-bottom: 1px solid var(--line);
+}
+.console header b {
+  font-size: 17px;
+}
+.console header .code {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--dim);
+}
+.console main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--line);
+  background: #0a1122;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tabs button {
+  padding: 10px 4px 12px;
+  font-size: 13px;
+  color: var(--dim);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.tabs button .icon {
+  font-size: 22px;
+}
+.tabs button.on {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.qr-box {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px;
+  width: fit-content;
+  margin: 0 auto;
+}
+.qr-box canvas {
+  display: block;
+  image-rendering: pixelated;
+}
+.mission-code {
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: var(--accent);
+}
+.note {
+  border-left: 4px solid var(--amber);
+  background: rgba(255, 181, 71, 0.08);
+  border-radius: 0 12px 12px 0;
+  padding: 12px 14px;
+}
+.note.red {
+  border-color: var(--red);
+  background: rgba(255, 77, 94, 0.08);
+}
+.big-number {
+  font-family: var(--mono);
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-align: center;
+  color: var(--gold);
+}
+
+/* 매뉴얼 */
+.tuned {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+}
+.tuned b {
+  font-size: 17px;
+}
+.tuned button {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 8px 4px;
+}
+.script {
+  border-radius: 14px;
+  padding: 14px;
+  background: linear-gradient(180deg, rgba(54, 224, 255, 0.14), rgba(54, 224, 255, 0.05));
+  border: 1px solid rgba(54, 224, 255, 0.4);
+}
+.script .who {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.script p {
+  font-size: 17px;
+  font-weight: 600;
+}
+.howto {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--dim);
+  font-size: 15px;
+}
+.howto li + li {
+  margin-top: 4px;
+}
+.howto b {
+  color: var(--text);
+}
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+  margin-bottom: 8px;
+}
+
+.glyph-group + .glyph-group {
+  margin-top: 12px;
+}
+.glyph-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.glyph-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 2px 4px;
+  border-radius: 10px;
+  background: #050912;
+  border: 1px solid var(--line);
+}
+.glyph-tile b {
+  font-family: var(--mono);
+  font-size: 22px;
+  color: var(--gold);
+  line-height: 1.1;
+}
+.color-table {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.color-table div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #050912;
+  border: 1px solid var(--line);
+  font-weight: 700;
+}
+.color-table i {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.blueprint {
+  display: block;
+  margin: 0 auto;
+  border-radius: 10px;
+  max-width: 100%;
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 13px;
+  color: var(--dim);
+  justify-content: center;
+}
+.legend i {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+table.grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+table.grid th,
+table.grid td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+}
+table.grid th {
+  font-size: 13px;
+  color: var(--dim);
+  font-weight: 700;
+}
+table.grid td.name {
+  text-align: left;
+  font-weight: 600;
+}
+table.grid td.name canvas {
+  vertical-align: middle;
+  margin-right: 8px;
+}
+table.grid .dot {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+.plate {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 17px;
+  margin-bottom: 8px;
+}
+.plate-rule {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  font-size: 16px;
+}
+.plate-rule .step {
+  color: var(--dim);
+}
+.plate-rule b {
+  color: var(--gold);
+  font-family: var(--mono);
+}
+
+/* 보물 공개 */
+.reveal {
+  text-align: center;
+  padding: 22px 16px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 215, 106, 0.18), rgba(255, 215, 106, 0.04));
+  border: 1px solid var(--gold);
+}
+.reveal .rank {
+  font-family: var(--mono);
+  font-size: 64px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+}
+.reveal .what {
+  margin-top: 14px;
+  color: var(--dim);
+  font-size: 14px;
+}
+.reveal .value {
+  font-size: 30px;
+  font-weight: 800;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}

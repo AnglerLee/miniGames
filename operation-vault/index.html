@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="data:,">
+  <title>작전명 스낵 볼트</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/operator.css">
+</head>
+<body>
+  <div class="page">
+    <div class="brand">
+      <div class="eyebrow">OPERATION SNACK VAULT</div>
+      <h1>작전명<br>스낵 볼트</h1>
+      <p>폰 두 대로 함께 뚫는 금고 침투 작전.<br>경비대가 오기 전에 금고를 열어라!</p>
+    </div>
+
+    <a class="role" href="setup.html">
+      <span class="icon">🎧</span>
+      <span><b>본부 오퍼레이터 (부모)</b><span>새 작전을 만들고 보안 매뉴얼을 봅니다</span></span>
+    </a>
+    <a class="role hidden" id="resume" href="operator.html">
+      <span class="icon">📡</span>
+      <span><b>진행 중인 작전 콘솔</b><span id="resume-code"></span></span>
+    </a>
+    <a class="role" href="agent.html">
+      <span class="icon">🕶️</span>
+      <span><b>현장 요원 (아이)</b><span>작전 코드를 입력하고 시설에 침투합니다</span></span>
+    </a>
+
+    <div class="card small dim">
+      <b style="color:var(--text)">하는 법</b><br>
+      1. 부모 폰에서 작전을 만들고 간식을 넣은 보물상자를 준비합니다.<br>
+      2. 아이 폰으로 QR을 찍거나 작전 코드를 입력합니다.<br>
+      3. 아이는 화면에 보이는 것을 말하고, 부모는 매뉴얼을 보고 알려 줍니다.<br>
+      4. 금고가 열리면 나오는 개봉 코드로 보물 정보를 확인합니다.
+    </div>
+    <div class="card hidden" id="records">
+      <div class="section-title">이 폰의 지난 작전</div>
+      <table class="grid" id="record-rows"></table>
+    </div>
+    <p class="small dim center" id="file-warning"></p>
+  </div>
+
+  <script>
+    // 파일을 직접 열면 모듈이 실행되지 않는다. 서버로 열도록 안내한다.
+    if (location.protocol === 'file:') {
+      document.getElementById('file-warning').textContent =
+        '이 게임은 파일을 직접 열어서는 실행되지 않습니다. operation-vault 폴더에서 python3 serve.py 를 실행한 뒤 안내되는 주소로 접속하세요.';
+    }
+    try {
+      var saved = JSON.parse(localStorage.getItem('operationVault_mission') || 'null');
+      if (saved && saved.code) {
+        document.getElementById('resume').classList.remove('hidden');
+        document.getElementById('resume-code').textContent = '작전 코드 ' + saved.code;
+      }
+    } catch (e) { /* 저장소를 쓸 수 없으면 건너뛴다 */ }
+
+    // 현장 요원으로 끝낸 작전의 기록 (아이 폰에 쌓인다)
+    try {
+      var records = JSON.parse(localStorage.getItem('operationVault_records') || '[]');
+      if (records.length) {
+        var rows = document.getElementById('record-rows');
+        var head = document.createElement('tr');
+        ['날짜', '등급', '남은 시간', '실수', '발각'].forEach(function (t) {
+          var th = document.createElement('th');
+          th.textContent = t;
+          head.appendChild(th);
+        });
+        rows.appendChild(head);
+        records.slice(0, 8).forEach(function (r) {
+          var d = new Date(r.at);
+          var sec = Math.max(0, Math.ceil(r.remainingMs / 1000));
+          var cells = [
+            (d.getMonth() + 1) + '/' + d.getDate(),
+            r.rank,
+            Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'),
+            r.mistakes,
+            r.captures
+          ];
+          var tr = document.createElement('tr');
+          cells.forEach(function (c, i) {
+            var td = document.createElement('td');
+            td.textContent = c;
+            if (i === 1) { td.style.fontWeight = '800'; td.style.color = 'var(--gold)'; }
+            tr.appendChild(td);
+          });
+          rows.appendChild(tr);
+        });
+        document.getElementById('records').classList.remove('hidden');
+      }
+    } catch (e) { /* 기록이 없거나 읽을 수 없으면 건너뛴다 */ }
+  </script>
+</body>
+</html>

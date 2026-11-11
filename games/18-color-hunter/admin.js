@@ -1,71 +1,29 @@
-// 관리자 설정 스크립트 (18 Color Hunter)
-const GAME_ID = 'game18';
-const form = document.getElementById('settingsForm');
-const resetBtn = document.getElementById('resetBtn');
+// 컬러 헌터 관리자 설정
+// 난이도 기본값은 game.js 의 PRESETS 와 같아야 한다.
+// 옛 설정의 colorThreshold(RGB 거리)는 새 기준(일치도 %)으로 바꿔 보여 준다. 바꾸는 식도 game.js 와 같다.
+(function () {
+    const needFromOld = (d) => Math.min(90, Math.max(40, Math.round(96 - 0.24 * d)));
 
-// 난이도별 프리셋
-const difficultyPresets = {
-    0: { name: '🟢 쉬움', passCount: 5, colorThreshold: 150 },
-    1: { name: '🟡 보통', passCount: 3, colorThreshold: 130 },
-    2: { name: '🔴 어려움', passCount: 1, colorThreshold: 100 }
-};
-
-// 설정 로드
-function loadSettings() {
-    // 1. 게임별 설정 로드
-    const gameSettings = JSON.parse(localStorage.getItem('game18_settings')) || {};
-    const difficulty = gameSettings.difficulty !== undefined ? gameSettings.difficulty : 0;
-
-    document.getElementById('difficultySlider').value = difficulty;
-    document.getElementById('passCount').value = gameSettings.passCount !== undefined ? gameSettings.passCount : difficultyPresets[difficulty].passCount;
-    document.getElementById('colorThreshold').value = gameSettings.colorThreshold !== undefined ? gameSettings.colorThreshold : difficultyPresets[difficulty].colorThreshold;
-
-
-}
-
-// 난이도 슬라이더 변경 시 프리셋 로드
-function onDifficultyChange() {
-    const difficulty = parseInt(document.getElementById('difficultySlider').value);
-    const preset = difficultyPresets[difficulty];
-
-    document.getElementById('passCount').value = preset.passCount;
-    document.getElementById('colorThreshold').value = preset.colorThreshold;
-}
-
-// 설정 저장
-function saveSettings(e) {
-    e.preventDefault();
-
-    // 1. 게임별 설정 저장
-    const gameSettings = {
-        difficulty: parseInt(document.getElementById('difficultySlider').value),
-        passCount: parseInt(document.getElementById('passCount').value),
-        colorThreshold: parseInt(document.getElementById('colorThreshold').value),
-        lastUpdated: new Date().toISOString()
-    };
-    localStorage.setItem('game18_settings', JSON.stringify(gameSettings));
-
-
-
-    alert('설정이 저장되었습니다!');
-}
-
-// 설정 초기화
-function resetSettings() {
-    if (confirm('모든 설정을 초기화하시겠습니까?')) {
-        // 게임별 설정 삭제
-        localStorage.removeItem('game18_settings');
-
-
-
-        loadSettings();
-        alert('초기화되었습니다.');
-    }
-}
-
-// 이벤트 리스너
-form.addEventListener('submit', saveSettings);
-resetBtn.addEventListener('click', resetSettings);
-document.getElementById('difficultySlider').addEventListener('input', onDifficultyChange);
-
-loadSettings();
+    AdminKit.page({
+        title: '컬러 헌터 설정',
+        storageKey: 'game18_settings',
+        recordId: 'game18',
+        note: '집 안에서 목표 색 물건을 찍어 팔레트 3장(기본 → 명도 → 순서)을 채우는 게임입니다. ' +
+            '카메라는 <b>https</b> 나 localhost 주소에서만 열리고, 그 밖에서는 사진을 찍어 올리는 방식으로 바뀝니다.',
+        presets: [
+            { stageTime: 120, matchNeed: 60, passCount: 3 },
+            { stageTime: 90, matchNeed: 66, passCount: 2 },
+            { stageTime: 70, matchNeed: 72, passCount: 1 }
+        ],
+        fields: [
+            { key: 'stageTime', label: '⏱️ 팔레트당 시간 (초)', min: 30, max: 300, step: 5, help: '마지막 팔레트는 이 시간의 60%로 시작하고, 색을 찾을 때마다 시간이 늘어납니다' },
+            { key: 'matchNeed', label: '🎯 성공 기준 일치도 (%)', min: 40, max: 95, step: 1, help: '찍은 색이 이만큼 비슷해야 칸이 채워집니다. 낮을수록 너그럽습니다' },
+            { key: 'passCount', label: '⏭️ 패스 수 (한 판)', min: 0, max: 10, step: 1, help: '어려운 색을 건너뛰는 횟수. 쓸 때마다 별이 하나 줄어듭니다' }
+        ],
+        onRender(form, api) {
+            const s = api.stored();
+            const old = Number(s.colorThreshold);
+            if (s.matchNeed === undefined && Number.isFinite(old) && old > 0) api.set('matchNeed', needFromOld(old));
+        }
+    });
+})();

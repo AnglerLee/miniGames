@@ -1,0 +1,10 @@
+{
+  "name": "operation-vault",
+  "private": true,
+  "type": "module",
+  "description": "작전명 스낵 볼트 - 폰 2대로 하는 협력 금고 침투 게임",
+  "scripts": {
+    "test": "node --test \"tests/*.test.js\"",
+    "serve": "python3 serve.py"
+  }
+}

@@ -1,0 +1,296 @@
+/* 넘버 러시 */
+
+/* 상태 줄: 진행 수(왼쪽), 콤보 알약(가운데, 엔진), 콤보 게이지(오른쪽) */
+.nr-status {
+  flex: none;
+  width: 100%;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.nr-left {
+  font-family: var(--ar-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.nr-left b {
+  color: var(--ar-gold);
+}
+
+.nr-gauge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nr-mult {
+  min-width: 24px;
+  text-align: right;
+  font-family: var(--ar-mono);
+  font-weight: 900;
+  font-size: 15px;
+  color: var(--ar-dim);
+}
+
+.nr-mult.up {
+  color: var(--ar-gold);
+}
+
+.nr-gbar {
+  width: 72px;
+  height: 10px;
+  border-radius: 6px;
+  background: var(--ar-panel-2);
+  overflow: hidden;
+}
+
+.nr-gbar i {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #ffb347, #ffe08a);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.nr-gauge.low .nr-gbar i {
+  background: var(--ar-bad);
+}
+
+/* 콤보 알약은 상태 줄 가운데 빈자리에 얹는다 (숫자판을 가리지 않게) */
+.ar-combo {
+  top: 1px;
+}
+
+/* ---------- 숫자판 ---------- */
+.nr-board {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  border-radius: 22px;
+  border: 1px solid var(--ar-line);
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.07) 1.2px, transparent 1.3px) 0 0 / 22px 22px,
+    linear-gradient(180deg, rgba(54, 214, 255, 0.07), rgba(124, 92, 255, 0.09));
+  touch-action: none;
+}
+
+.nr-board[data-stage='2'] {
+  border-color: rgba(255, 209, 102, 0.4);
+}
+
+.nr-board[data-stage='3'] {
+  border-color: rgba(124, 92, 255, 0.65);
+}
+
+.nr-field {
+  position: absolute;
+  inset: 5px;
+}
+
+/* 실수하면 판이 잠깐 언다 */
+.nr-board::after {
+  content: '❄️';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  font-size: 56px;
+  border-radius: inherit;
+  background: rgba(150, 215, 255, 0.2);
+  box-shadow: inset 0 0 0 3px rgba(170, 228, 255, 0.85);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+
+.nr-board.frozen::after {
+  opacity: 1;
+}
+
+.nr-board.frozen .nr-num:not(.wrong) .nr-face {
+  filter: saturate(0.35) brightness(0.8);
+}
+
+/* ---------- 숫자 버튼: 바깥은 자리(transform), 안쪽은 생김새와 움직임 ---------- */
+.nr-num {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--s, 56px);
+  height: var(--s, 56px);
+  margin: calc(var(--s, 56px) / -2) 0 0 calc(var(--s, 56px) / -2);
+  touch-action: none;
+  will-change: transform;
+}
+
+.nr-face {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  font-size: calc(var(--s, 56px) * 0.43);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: #172055;
+  background: radial-gradient(circle at 34% 26%, #ffffff 0%, #e6ecff 48%, #b4c1f7 100%);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.38), inset 0 -3px 0 rgba(70, 90, 190, 0.22);
+  transform: rotate(var(--rot, 0deg));
+}
+
+.nr-num.blue .nr-face {
+  color: #fff;
+  background: radial-gradient(circle at 34% 26%, #9ccbff 0%, #3b82f6 55%, #1d4ed8 100%);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.38), inset 0 -3px 0 rgba(10, 30, 120, 0.3);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* 빨강은 네모: 색을 구별하기 어려워도 모양으로 알 수 있다 */
+.nr-num.red .nr-face {
+  color: #fff;
+  border-radius: 34%;
+  background: radial-gradient(circle at 34% 26%, #ffb0b9 0%, #f0455f 55%, #c81e3f 100%);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.38), inset 0 -3px 0 rgba(110, 0, 30, 0.3);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.nr-num.masked .nr-face {
+  color: #ffe08a;
+}
+
+.nr-num.in .nr-face {
+  animation: nr-in 0.3s cubic-bezier(0.2, 1.5, 0.4, 1) var(--d, 0ms) backwards;
+}
+
+.nr-num.hint .nr-face {
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.38), 0 0 0 3px var(--ar-gold), 0 0 18px rgba(255, 209, 102, 0.9);
+  animation: nr-hint 0.7s ease-in-out infinite;
+}
+
+.nr-num.marked .nr-face {
+  color: #c9d0f5;
+  background: linear-gradient(180deg, #7d86b8, #4d568a);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.38);
+}
+
+.nr-num.marked::after {
+  content: '✕';
+  position: absolute;
+  right: -3px;
+  top: -4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: #fff;
+  background: var(--ar-bad);
+}
+
+.nr-num.wrong .nr-face {
+  color: #fff;
+  background: linear-gradient(180deg, #ff8f9f, #e0354f);
+  animation: nr-wrong 0.38s ease;
+}
+
+.nr-num.gone {
+  pointer-events: none;
+}
+
+.nr-num.gone::after {
+  display: none;
+}
+
+.nr-num.gone .nr-face {
+  animation: nr-pop 0.24s ease-out forwards;
+}
+
+/* ---------- 3스테이지 목표 줄: 지금 차례인 색을 밝힌다 ---------- */
+.nr-ph {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  opacity: 0.45;
+}
+
+.nr-ph::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #3b82f6;
+}
+
+.nr-ph.red::before {
+  border-radius: 30%;
+  background: #f0455f;
+}
+
+.nr-ph.on {
+  opacity: 1;
+  color: var(--ar-gold);
+}
+
+.nr-ph.done {
+  text-decoration: line-through;
+}
+
+.nr-arrow {
+  margin: 0 7px;
+  font-size: 11px;
+  color: var(--ar-dim);
+}
+
+@keyframes nr-in {
+  from {
+    opacity: 0;
+    transform: rotate(var(--rot, 0deg)) scale(0.2);
+  }
+}
+
+@keyframes nr-hint {
+  0%,
+  100% {
+    transform: rotate(var(--rot, 0deg)) scale(1);
+  }
+  50% {
+    transform: rotate(var(--rot, 0deg)) scale(1.12);
+  }
+}
+
+@keyframes nr-wrong {
+  0%,
+  100% {
+    transform: rotate(var(--rot, 0deg)) translateX(0);
+  }
+  20% {
+    transform: rotate(var(--rot, 0deg)) translateX(-6px);
+  }
+  40% {
+    transform: rotate(var(--rot, 0deg)) translateX(6px);
+  }
+  60% {
+    transform: rotate(var(--rot, 0deg)) translateX(-4px);
+  }
+  80% {
+    transform: rotate(var(--rot, 0deg)) translateX(3px);
+  }
+}
+
+@keyframes nr-pop {
+  to {
+    opacity: 0;
+    transform: rotate(var(--rot, 0deg)) scale(1.7);
+  }
+}

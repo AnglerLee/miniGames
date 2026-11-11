@@ -3,58 +3,17 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>이모지 넌센스 🤔</title>
-    <link rel="stylesheet" href="../../assets/css/common.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>이모지 퀴즈쇼</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="../../assets/css/arcade.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="container">
-        <div class="game-header">
-            <h1>🤔 이모지 넌센스</h1>
-
-        </div>
-
-        <div class="game-area">
-            <div class="game-header-info">
-                <div class="info-item score-item" id="score">
-                    <div class="label">📋 진행</div>
-                    <div class="value">1/1</div>
-                </div>
-                <div class="info-item timer-item" id="timer">
-                    <div class="label">⏱️ 시간</div>
-                    <div class="value">00:00</div>
-                </div>
-                <div class="info-item pass-item" id="passes">
-                    <div class="label">🎫 패스</div>
-                    <div class="value">3</div>
-                </div>
-            </div>
-
-            <div id="quiz-container">
-                <div id="quiz" class="emoji-display"></div>
-            </div>
-
-            <div class="input-container">
-                <input type="text" id="answerInput" placeholder="정답을 입력하세요" autocomplete="off">
-            </div>
-
-            <div class="button-group">
-                <button class="btn-pass" id="passBtn">패스</button>
-                <button class="btn-check" id="checkBtn">확인</button>
-            </div>
-
-            <p id="result"></p>
-        </div>
-    </div>
-
-    <!-- Common Utilities -->
-    <script src="../../assets/js/common.js"></script>
-    <!-- Game Data -->
+    <script src="../../assets/js/arcade.js"></script>
     <script src="questions.js"></script>
-    <!-- Game Logic -->
-    <script src="script.js"></script>
+    <script src="game.js"></script>
 </body>
 
 </html>

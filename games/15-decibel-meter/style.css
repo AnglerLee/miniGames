@@ -1,0 +1,217 @@
+/* 목소리 비행선 */
+
+/* 판은 위쪽 진행 줄과 하늘(캔버스) 두 칸으로 꽉 채운다 */
+.ar-stage {
+  gap: 8px;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+/* 콤보 표시는 진행 줄을 가리지 않게 하늘 위쪽으로 내린다 */
+.ar-combo {
+  top: 54px;
+}
+
+.vs-top {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+}
+
+.vs-chip {
+  flex: none;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--ar-panel);
+  border: 1px solid var(--ar-line);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.vs-track {
+  position: relative;
+  flex: 1;
+  min-width: 40px;
+  height: 10px;
+  margin-right: 10px;
+  border-radius: 6px;
+  background: var(--ar-panel-2);
+}
+
+.vs-track i {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--ar-accent-2), var(--ar-accent));
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.vs-mark {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 14px;
+  height: 10px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 2px var(--ar-accent), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.vs-track b {
+  position: absolute;
+  right: -12px;
+  top: 50%;
+  transform: translateY(-58%);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.vs-mode {
+  flex: none;
+  min-height: 40px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: var(--ar-panel);
+  border: 1px solid var(--ar-line);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.vs-mode:active {
+  filter: brightness(1.4);
+}
+
+.vs-sky {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  touch-action: none;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.08), 0 8px 0 rgba(0, 0, 0, 0.25);
+}
+
+.vs-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 보정 안내: 비행선이 보이도록 하늘 위쪽 가운데에 띄운다 */
+.vs-cal {
+  position: absolute;
+  left: 50%;
+  top: 9%;
+  transform: translateX(-50%);
+  width: min(300px, calc(100% - 64px));
+  padding: 14px 14px 16px;
+  border-radius: 20px;
+  background: rgba(12, 14, 36, 0.84);
+  border: 1px solid var(--ar-line);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.vs-cal-icon {
+  font-size: 38px;
+  line-height: 1.1;
+}
+
+.vs-cal-title {
+  font-size: 21px;
+  font-weight: 900;
+}
+
+.vs-cal-title b,
+.vs-cal-sub b {
+  color: var(--ar-gold);
+}
+
+.vs-cal-sub {
+  font-size: 14px;
+  color: var(--ar-dim);
+}
+
+.vs-cal-bar {
+  width: 100%;
+  height: 10px;
+  margin: 4px 0 2px;
+  border-radius: 6px;
+  background: var(--ar-panel-2);
+  overflow: hidden;
+}
+
+.vs-cal-bar i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--ar-accent-2), var(--ar-accent));
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.vs-cal .ar-btn {
+  margin-top: 4px;
+}
+
+/* 손가락 조작: 엄지가 닿는 아래쪽의 큰 누름판 */
+.vs-pad {
+  min-height: 64px;
+  border-radius: 18px;
+  font-size: 19px;
+  font-weight: 800;
+  background: var(--ar-panel-2);
+  border: 2px solid var(--ar-line);
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3);
+  touch-action: none;
+  transition: transform 0.06s, box-shadow 0.06s;
+}
+
+.vs-pad b {
+  color: var(--ar-gold);
+}
+
+.vs-pad.on {
+  color: var(--ar-on-accent);
+  background: linear-gradient(180deg, var(--ar-accent-2), var(--ar-accent));
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+  transform: translateY(3px);
+}
+
+.vs-pad.on b {
+  color: inherit;
+}
+
+.vs-pad[data-storm='true'] {
+  border-color: var(--ar-gold);
+  animation: ar-pulse 0.5s ease-in-out infinite;
+}
+
+@media (max-height: 660px) {
+  .vs-pad {
+    min-height: 56px;
+    font-size: 17px;
+  }
+  .vs-cal {
+    top: 5%;
+    padding: 10px 12px 12px;
+    gap: 4px;
+  }
+  .vs-cal-icon {
+    font-size: 30px;
+  }
+  .vs-cal-title {
+    font-size: 18px;
+  }
+}

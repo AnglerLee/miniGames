@@ -1,152 +1,42 @@
-// 관리자 설정 스크립트 (16 Magic Compass)
-const GAME_ID = 'game16';
-const form = document.getElementById('settingsForm');
-const resetBtn = document.getElementById('resetBtn');
-const difficultySlider = document.getElementById('difficultySlider');
-const currentDifficultyLabel = document.getElementById('currentDifficulty');
-
-// 난이도 프리셋
-const difficultyPresets = {
-    0: { // 쉬움
-        name: '🟢 쉬움',
-        tolerance: 20,
-        holdTime: 1,
-        missionCount: 1,
-        compassNoise: {
-            amplitude: 3,     // 흔들림 작게
-            frequency: 0.3,
-            complexity: 2
+// 매직 컴퍼스 관리자 설정
+// 난이도 기본값은 game.js 의 PRESETS 와 같아야 한다.
+AdminKit.page({
+    title: '매직 컴퍼스 설정',
+    storageKey: 'game16_settings',
+    recordId: 'game16',
+    note: '삐삐 소리와 불빛만 따라 몸을 돌려 보물을 찾는 레이더 게임입니다. 스테이지 2는 가짜 돌멩이, 3은 도망가는 보물과 자기 폭풍. 방향 센서가 없으면 화면을 끌어서 돌립니다.',
+    presets: [
+        { tolerance: 20, holdTime: 1.2, missionCount: 2, findTime: 14, noiseAmplitude: 8, noiseFrequency: 0.5, noiseComplexity: 2 },
+        { tolerance: 15, holdTime: 1.6, missionCount: 3, findTime: 12, noiseAmplitude: 12, noiseFrequency: 0.7, noiseComplexity: 3 },
+        { tolerance: 11, holdTime: 2, missionCount: 4, findTime: 10, noiseAmplitude: 16, noiseFrequency: 0.9, noiseComplexity: 4 }
+    ],
+    fields: [
+        { key: 'tolerance', label: '신호 폭 (±도)', min: 5, max: 35, step: 1, help: '이만큼 안으로 향하면 발굴이 시작됩니다. 삐삐 소리는 이 폭의 4.5배 안에서 들립니다' },
+        { key: 'holdTime', label: '발굴 시간 (초)', min: 0.5, max: 4, step: 0.1, help: '보물 쪽을 향한 채 버텨야 하는 시간' },
+        { key: 'missionCount', label: '스테이지당 보물 수', min: 1, max: 6, step: 1, help: '스테이지마다 찾아야 하는 보물 수' },
+        { key: 'findTime', label: '보물당 시간 (초)', min: 6, max: 30, step: 1, help: '스테이지 시간 = 보물당 시간 × 보물 수. 스테이지 2는 1.25배, 3은 1.4배' },
+        { section: '자기 폭풍 (스테이지 3)' },
+        { key: 'noiseAmplitude', label: '폭풍 세기 (±도)', min: 0, max: 30, step: 1, help: '폭풍이 오면 레이더가 흔들리는 폭. 0이면 흔들리지 않습니다' },
+        { key: 'noiseFrequency', label: '흔들림 속도 (Hz)', min: 0.1, max: 2, step: 0.1, help: '클수록 빠르게 흔들립니다' },
+        { key: 'noiseComplexity', label: '불규칙함 (1~5)', min: 1, max: 5, step: 1, help: '클수록 흔들림을 예측하기 어렵습니다' }
+    ],
+    // 옛 설정 { difficultyLevel, compassNoise: { amplitude, frequency, complexity } } 을 화면에 옮겨 담는다
+    onRender(form, api) {
+        const raw = api.stored();
+        if (raw.difficulty === undefined && raw.difficultyLevel !== undefined) {
+            const lv = Math.min(2, Math.max(0, parseInt(raw.difficultyLevel, 10) || 0));
+            const slider = document.getElementById('difficultySlider');
+            if (slider && lv > 0) {
+                slider.value = lv;
+                slider.dispatchEvent(new Event('input')); // 그 난이도의 기본값으로 다시 채워진다
+                ['tolerance', 'holdTime', 'missionCount', 'findTime'].forEach((k) => {
+                    if (raw[k] !== undefined && raw[k] !== null) api.set(k, raw[k]);
+                });
+            }
         }
-    },
-    1: { // 보통
-        name: '🟡 보통',
-        tolerance: 15,
-        holdTime: 2,
-        missionCount: 3,
-        compassNoise: {
-            amplitude: 5,     // 흔들림 중간
-            frequency: 0.5,
-            complexity: 3
-        }
-    },
-    2: { // 어려움
-        name: '🔴 어려움',
-        tolerance: 10,
-        holdTime: 3,
-        missionCount: 5,
-        compassNoise: {
-            amplitude: 8,     // 흔들림 크게
-            frequency: 0.8,
-            complexity: 4
-        }
+        const old = raw.compassNoise && typeof raw.compassNoise === 'object' ? raw.compassNoise : {};
+        [['noiseAmplitude', 'amplitude'], ['noiseFrequency', 'frequency'], ['noiseComplexity', 'complexity']].forEach(([k, o]) => {
+            if (raw[k] === undefined && old[o] !== undefined && old[o] !== null) api.set(k, old[o]);
+        });
     }
-};
-
-// 기본 설정
-const defaultSettings = {
-    difficultyLevel: 0,
-    tolerance: 20,
-    holdTime: 1,
-    missionCount: 1,
-    compassNoise: {
-        amplitude: 5,
-        frequency: 0.5,
-        complexity: 3
-    }
-};
-
-// 난이도 슬라이더 변경 이벤트
-difficultySlider.addEventListener('input', (e) => {
-    const level = parseInt(e.target.value);
-    applyPreset(level);
 });
-
-// 프리셋 적용
-function applyPreset(level) {
-    const preset = difficultyPresets[level];
-
-    // 라벨 업데이트
-    currentDifficultyLabel.textContent = preset.name;
-
-    // 입력 필드 업데이트
-    document.getElementById('tolerance').value = preset.tolerance;
-    document.getElementById('holdTime').value = preset.holdTime;
-    document.getElementById('missionCount').value = preset.missionCount;
-
-    // 나침반 흔들림 설정 업데이트
-    document.getElementById('noiseAmplitude').value = preset.compassNoise.amplitude;
-    document.getElementById('noiseFrequency').value = preset.compassNoise.frequency;
-    document.getElementById('noiseComplexity').value = preset.compassNoise.complexity;
-}
-
-// 설정 로드
-function loadSettings() {
-    // 1. 게임별 설정 로드
-    const gameSettings = JSON.parse(localStorage.getItem('game16_settings')) || defaultSettings;
-
-    // 난이도 레벨 로드
-    const difficultyLevel = gameSettings.difficultyLevel !== undefined ? gameSettings.difficultyLevel : 0;
-    difficultySlider.value = difficultyLevel;
-
-    // 세부 설정 로드
-    document.getElementById('tolerance').value = gameSettings.tolerance || 20;
-    document.getElementById('holdTime').value = gameSettings.holdTime || 1;
-    document.getElementById('missionCount').value = gameSettings.missionCount || 1;
-
-    // 현재 난이도 라벨 업데이트
-    currentDifficultyLabel.textContent = difficultyPresets[difficultyLevel].name;
-
-    // 나침반 흔들림 설정
-    if (gameSettings.compassNoise) {
-        document.getElementById('noiseAmplitude').value = gameSettings.compassNoise.amplitude || 5;
-        document.getElementById('noiseFrequency').value = gameSettings.compassNoise.frequency || 0.5;
-        document.getElementById('noiseComplexity').value = gameSettings.compassNoise.complexity || 3;
-    }
-
-
-}
-
-// 설정 저장
-function saveSettings(e) {
-    e.preventDefault();
-
-    const difficultyLevel = parseInt(difficultySlider.value);
-
-    // 1. 게임별 설정 저장
-    const gameSettings = {
-        difficultyLevel: difficultyLevel,
-        tolerance: parseInt(document.getElementById('tolerance').value),
-        holdTime: parseFloat(document.getElementById('holdTime').value),
-        missionCount: parseInt(document.getElementById('missionCount').value),
-        compassNoise: {
-            amplitude: parseInt(document.getElementById('noiseAmplitude').value),
-            frequency: parseFloat(document.getElementById('noiseFrequency').value),
-            complexity: parseInt(document.getElementById('noiseComplexity').value)
-        },
-        lastUpdated: new Date().toISOString()
-    };
-
-    localStorage.setItem('game16_settings', JSON.stringify(gameSettings));
-
-
-
-    alert('설정이 저장되었습니다!');
-}
-
-// 설정 초기화
-function resetSettings() {
-    if (confirm('모든 설정을 초기화하시겠습니까?')) {
-        // 게임별 설정 삭제
-        localStorage.removeItem('game16_settings');
-
-
-
-        loadSettings();
-        alert('초기화되었습니다.');
-    }
-}
-
-form.addEventListener('submit', saveSettings);
-resetBtn.addEventListener('click', resetSettings);
-
-loadSettings();

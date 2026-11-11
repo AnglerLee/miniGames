@@ -1,117 +1,55 @@
-// 관리자 설정 스크립트 (20 Emoji Quiz)
-const GAME_ID = 'game20';
-const form = document.getElementById('settingsForm');
-const resetBtn = document.getElementById('resetBtn');
+// 이모지 퀴즈쇼 관리자 설정
+// 난이도 기본값은 game.js 의 PRESETS 와 같아야 한다.
+(function () {
+    'use strict';
 
-// 난이도 프리셋 정의
-const difficultyPresets = {
-    0: { name: '😊 쉬움', timePerQuestion: 25, totalQuestions: 15 },
-    1: { name: '😐 보통', timePerQuestion: 20, totalQuestions: 20 },
-    2: { name: '😰 어려움', timePerQuestion: 15, totalQuestions: 30 }
-};
+    const GAME_ID = 'game20';
 
-// 난이도 슬라이더 요소
-const difficultySlider = document.getElementById('difficultySlider');
-const difficultyLabel = document.getElementById('difficultyLabel');
-const timePerQuestionInput = document.getElementById('timePerQuestion');
-const totalQuestionsInput = document.getElementById('totalQuestions');
-
-// 슬라이더 변경 시 프리셋 적용
-difficultySlider.addEventListener('input', function () {
-    const level = parseInt(this.value);
-    const preset = difficultyPresets[level];
-
-    difficultyLabel.textContent = preset.name;
-    timePerQuestionInput.value = preset.timePerQuestion;
-    totalQuestionsInput.value = preset.totalQuestions;
-});
-
-// 설정 로드
-function loadSettings() {
-
-
-
-    // 2. 게임별 설정 로드
-    const gameSettings = JSON.parse(localStorage.getItem('game20_settings')) || {};
-
-    // 난이도 레벨 복원 (또는 기본값 0)
-    const savedDifficulty = gameSettings.difficulty || 0;
-    difficultySlider.value = savedDifficulty;
-    difficultyLabel.textContent = difficultyPresets[savedDifficulty].name;
-
-    // 세부 설정 복원
-    timePerQuestionInput.value = gameSettings.timePerQuestion || 30;
-    totalQuestionsInput.value = gameSettings.totalQuestions || 20;
-}
-
-// 커스텀 모달 생성 함수
-function showCustomModal(message, type = 'success') {
-    const modal = document.createElement('div');
-    modal.className = 'modal active';
-    modal.innerHTML = `
-        <div class="modal-content fade-in">
-            <div class="icon" style="font-size: 60px;">${type === 'success' ? '✅' : '❓'}</div>
-            <p style="font-size: 18px; margin: 20px 0;">${message}</p>
-            <button class="btn btn-primary" onclick="this.closest('.modal').remove()">확인</button>
-        </div>
-    `;
-    document.body.appendChild(modal);
-
-    // 3초 후 자동 제거 (success일 경우만)
-    if (type === 'success') {
-        setTimeout(() => {
-            if (modal.parentNode) {
-                modal.remove();
-            }
-        }, 3000);
+    // 예전 게임이 쓰던 자리(treasureHunt_gameConfigs.game20.gameSettings)에 값이 있으면 기본값으로 삼는다.
+    // game.js 의 legacySettings 와 같은 계산이다. 그 자리의 다른 값은 건드리지 않는다.
+    function legacySettings() {
+        const out = {};
+        try {
+            const all = JSON.parse(localStorage.getItem('treasureHunt_gameConfigs')) || {};
+            const old = (all[GAME_ID] && all[GAME_ID].gameSettings) || {};
+            const time = Number(old.timePerQuestion);
+            const total = Number(old.totalQuestions);
+            if (time > 0) out.questionTime = Math.min(60, Math.max(8, time));
+            if (total > 0) out.quota = Math.min(8, Math.max(3, Math.round(total / 3)));
+        } catch (e) {
+            /* 예전 값이 깨져 있으면 무시한다 */
+        }
+        return out;
     }
-}
 
-function showConfirmModal(message, onConfirm) {
-    const modal = document.createElement('div');
-    modal.className = 'modal active';
-    modal.innerHTML = `
-        <div class="modal-content fade-in">
-            <div class="icon" style="font-size: 60px;">⚠️</div>
-            <p style="font-size: 18px; margin: 20px 0;">${message}</p>
-            <div style="display: flex; gap: 10px; justify-content: center;">
-                <button class="btn btn-secondary" id="cancelBtn">취소</button>
-                <button class="btn btn-primary" id="confirmBtn">확인</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
+    function applyLegacy(api) {
+        const old = legacySettings();
+        Object.keys(old).forEach((key) => api.set(key, old[key]));
+    }
 
-    document.getElementById('cancelBtn').addEventListener('click', () => {
-        modal.remove();
+    AdminKit.page({
+        title: '이모지 퀴즈쇼 설정',
+        storageKey: 'emoji_quiz_settings',
+        recordId: GAME_ID,
+        note: '이모지를 보고 답을 맞히는 세 라운드 퀴즈입니다(고르기 → 글자 조립 → 스피드 조립). 키보드 없이 글자 타일을 눌러 답을 만듭니다.',
+        presets: [
+            { questionTime: 25, quota: 4, lives: 4 },
+            { questionTime: 20, quota: 5, lives: 3 },
+            { questionTime: 15, quota: 6, lives: 3 }
+        ],
+        fields: [
+            { key: 'questionTime', label: '⏱️ 문제당 시간 (초)', min: 8, max: 60, step: 1, help: '글자 조립 한 문제의 시간. 1라운드 고르기는 이 시간의 40%' },
+            { key: 'quota', label: '❓ 라운드당 문제 수', min: 3, max: 8, step: 1, help: '세 라운드 모두 이만큼씩 나옵니다' },
+            { key: 'lives', label: '❤️ 하트 수', min: 1, max: 5, step: 1, help: '틀리거나 시간이 지나면 하나씩 줄어듭니다' }
+        ],
+        extras: [
+            { section: '도움' },
+            { key: 'autoHint', label: '2라운드에서 시간이 절반 지나면 힌트 한 줄 보여 주기', type: 'checkbox', default: true, wide: true, help: '마지막 라운드에는 힌트가 나오지 않습니다' }
+        ],
+        onRender(form, api) {
+            // 새 설정을 한 번도 저장하지 않았다면 예전 값을 보여 준다
+            if (!Object.keys(api.stored()).length) applyLegacy(api);
+        },
+        onReset: applyLegacy
     });
-
-    document.getElementById('confirmBtn').addEventListener('click', () => {
-        modal.remove();
-        onConfirm();
-    });
-}
-
-// 설정 저장
-function saveSettings(e) {
-    e.preventDefault();
-
-
-
-    showCustomModal('설정이 저장되었습니다! 🎉', 'success');
-}
-
-// 설정 초기화
-function resetSettings() {
-    showConfirmModal('모든 설정을 초기화하시겠습니까?', () => {
-        localStorage.removeItem('game20_settings');
-
-        loadSettings();
-        showCustomModal('설정이 초기화되었습니다.', 'success');
-    });
-}
-
-form.addEventListener('submit', saveSettings);
-resetBtn.addEventListener('click', resetSettings);
-
-loadSettings();
+})();

@@ -1,0 +1,947 @@
+/* 아케이드 공통 스타일: 모든 미니게임이 함께 쓰는 화면 틀과 부품 */
+
+:root {
+  --ar-bg-1: #1b2350;
+  --ar-bg-2: #0a0d22;
+  --ar-panel: rgba(255, 255, 255, 0.07);
+  --ar-panel-2: rgba(255, 255, 255, 0.12);
+  --ar-solid: #1b2249;
+  --ar-line: rgba(255, 255, 255, 0.16);
+  --ar-text: #f5f7ff;
+  --ar-dim: #aab3d8;
+  --ar-accent: #7c5cff;
+  --ar-accent-2: #36d6ff;
+  --ar-on-accent: #fff; /* 강조색 버튼 위의 글자색. 강조색이 밝으면 엔진이 어둡게 바꾼다 */
+  --ar-good: #3ddc97;
+  --ar-bad: #ff5d73;
+  --ar-gold: #ffd166;
+  --ar-radius: 18px;
+  --ar-font: system-ui, -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  --ar-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: var(--ar-font);
+  color: var(--ar-text);
+  background: radial-gradient(120% 80% at 50% 0%, var(--ar-bg-1) 0%, var(--ar-bg-2) 70%) fixed;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+  word-break: keep-all;
+  line-height: 1.4;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* ---------- 화면 틀 ---------- */
+.ar-app {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: calc(6px + env(safe-area-inset-top)) 12px calc(6px + env(safe-area-inset-bottom));
+}
+
+/* 보물찾기 안에서 열리면 테마 배경 위에 어두운 막을 깐다 */
+body.ar-themed::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 10, 26, 0.72);
+}
+
+.ar-hud {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 6px;
+}
+
+.ar-hud-top {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+}
+
+.ar-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--ar-panel);
+  border: 1px solid var(--ar-line);
+  font-size: 17px;
+  display: grid;
+  place-items: center;
+}
+
+.ar-icon-btn:active {
+  filter: brightness(1.4);
+}
+
+/* 보이는 크기는 40px 이지만 누르는 범위는 48px 로 넓힌다 */
+.ar-icon-btn {
+  position: relative;
+}
+
+.ar-icon-btn::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+}
+
+.ar-hud-mid {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.ar-hud-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ar-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.ar-pips {
+  display: flex;
+  gap: 6px;
+}
+
+.ar-pips i {
+  width: 22px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--ar-panel-2);
+  transition: background 0.3s, transform 0.3s;
+}
+
+.ar-pips i.done {
+  background: var(--ar-good);
+}
+
+.ar-pips i.now {
+  background: var(--ar-accent-2);
+  transform: scaleY(1.5);
+}
+
+.ar-score {
+  min-width: 64px;
+  text-align: right;
+  font-family: var(--ar-mono);
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--ar-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.ar-score.bump {
+  animation: ar-bump 0.25s ease;
+}
+
+.ar-hud-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 22px; /* 시간 글자가 채워져도 HUD 높이가 변하지 않게 고정한다 */
+}
+
+.ar-lives {
+  display: flex;
+  gap: 2px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.ar-lives span {
+  transition: transform 0.3s, opacity 0.3s, filter 0.3s;
+}
+
+.ar-lives span.off {
+  opacity: 0.25;
+  filter: grayscale(1);
+  transform: scale(0.8);
+}
+
+.ar-timebar {
+  flex: 1;
+  height: 10px;
+  border-radius: 6px;
+  background: var(--ar-panel-2);
+  overflow: hidden;
+}
+
+.ar-timebar i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--ar-accent-2), var(--ar-accent));
+  transform-origin: left center;
+}
+
+.ar-time {
+  min-width: 44px;
+  text-align: right;
+  font-family: var(--ar-mono);
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 22px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ar-hud.warn .ar-timebar i {
+  background: var(--ar-bad);
+}
+
+.ar-hud.warn .ar-time {
+  color: var(--ar-bad);
+  animation: ar-pulse 0.5s ease-in-out infinite;
+}
+
+.ar-goal {
+  text-align: center;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 7px 12px;
+  border-radius: 12px;
+  background: var(--ar-panel);
+  border: 1px solid var(--ar-line);
+}
+
+.ar-goal b {
+  color: var(--ar-gold);
+}
+
+.ar-stage-wrap {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+}
+
+.ar-stage {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ar-footer {
+  flex: none;
+  display: flex;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+.ar-footer:empty {
+  display: none;
+}
+
+.ar-footer > * {
+  flex: 1;
+}
+
+.ar-combo {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  color: #2a1500;
+  background: linear-gradient(180deg, #ffe08a, #ffb347);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.ar-combo.on {
+  opacity: 1;
+}
+
+.ar-combo.bump {
+  animation: ar-combo 0.3s ease;
+}
+
+.ar-combo.hot {
+  background: linear-gradient(180deg, #ff9a8b, #ff5d73);
+  color: #fff;
+}
+
+/* 일시 정지 중에는 CSS 움직임도 멈춘다 */
+.ar-app.ar-paused,
+.ar-app.ar-paused * {
+  animation-play-state: paused !important;
+}
+
+body.ar-is-paused .ar-fx {
+  visibility: hidden;
+}
+
+/* ---------- 버튼 ---------- */
+.ar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 12px 20px;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--ar-on-accent);
+  text-decoration: none;
+  background: linear-gradient(180deg, var(--ar-accent-2), var(--ar-accent));
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.06s, box-shadow 0.06s, filter 0.15s;
+}
+
+.ar-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.ar-btn:disabled,
+.ar-btn.disabled {
+  filter: grayscale(0.8) brightness(0.6);
+  pointer-events: none;
+}
+
+.ar-btn.block {
+  display: flex;
+  width: 100%;
+}
+
+.ar-btn.sm {
+  min-height: 42px;
+  padding: 8px 14px;
+  font-size: 15px;
+  border-radius: 12px;
+}
+
+.ar-btn.lg {
+  min-height: 62px;
+  font-size: 22px;
+}
+
+.ar-btn.ghost {
+  color: var(--ar-text);
+  background: var(--ar-panel-2);
+  border: 1px solid var(--ar-line);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+.ar-btn.good {
+  color: #fff;
+  background: linear-gradient(180deg, #6ff0b4, #1fae72);
+}
+
+.ar-btn.bad {
+  color: #fff;
+  background: linear-gradient(180deg, #ff8f9f, #e0354f);
+}
+
+.ar-btn.gold {
+  color: #3a2300;
+  background: linear-gradient(180deg, #ffe7a3, #ffb938);
+}
+
+/* ---------- 게임 화면에서 자주 쓰는 부품 ---------- */
+input,
+textarea {
+  font: inherit;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.ar-input {
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 2px solid var(--ar-line);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--ar-text);
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+}
+
+.ar-input:focus {
+  border-color: var(--ar-accent-2);
+}
+
+.ar-card {
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--ar-radius);
+  background: var(--ar-panel);
+  border: 1px solid var(--ar-line);
+}
+
+.ar-label {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--ar-dim);
+}
+
+.ar-big {
+  font-weight: 900;
+  font-size: clamp(40px, 14vw, 72px);
+  line-height: 1.1;
+}
+
+.ar-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--ar-panel-2);
+  border: 1px solid var(--ar-line);
+}
+
+.ar-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.ar-dim {
+  color: var(--ar-dim);
+}
+
+.ar-hidden {
+  display: none !important;
+}
+
+/* ---------- 겹침 화면: 시작, 일시 정지, 결과 ---------- */
+.ar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(6, 8, 22, 0.86);
+  animation: ar-fade 0.2s ease;
+}
+
+/* 일시 정지 중에는 판이 비치지 않게 완전히 가린다 (멈춰 놓고 외우는 것을 막는다) */
+.ar-overlay.solid {
+  background: radial-gradient(120% 80% at 50% 0%, var(--ar-bg-1) 0%, var(--ar-bg-2) 70%);
+}
+
+.ar-sheet {
+  width: min(100%, 400px);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 22px 20px 20px;
+  border-radius: 26px;
+  text-align: center;
+  background: linear-gradient(180deg, #252e63, var(--ar-solid));
+  border: 1px solid var(--ar-line);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: ar-rise 0.3s cubic-bezier(0.2, 1.2, 0.4, 1);
+}
+
+.ar-sheet .ar-emblem {
+  font-size: 64px;
+  line-height: 1;
+  display: inline-block;
+  animation: ar-bob 2.2s ease-in-out infinite;
+}
+
+.ar-sheet h1 {
+  margin: 10px 0 4px;
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.ar-sheet .ar-tagline {
+  margin: 0 0 14px;
+  color: var(--ar-dim);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ar-howto {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  text-align: left;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ar-howto li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.ar-howto li::before {
+  content: attr(data-n);
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: #10142e;
+  background: var(--ar-accent-2);
+}
+
+.ar-howto b {
+  color: var(--ar-gold);
+}
+
+.ar-best {
+  margin-bottom: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ar-dim);
+}
+
+.ar-best b {
+  color: var(--ar-gold);
+}
+
+.ar-sheet .ar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ar-sheet .ar-actions.row {
+  flex-direction: row;
+}
+
+.ar-sheet .ar-actions.row > * {
+  flex: 1;
+}
+
+.ar-stars {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 8px 0 4px;
+  font-size: 52px;
+  line-height: 1;
+}
+
+.ar-stars span {
+  opacity: 0.18;
+  filter: grayscale(1);
+  transform: scale(0.8);
+}
+
+.ar-stars span.on {
+  opacity: 1;
+  filter: none;
+  animation: ar-star 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+
+.ar-stars.sm {
+  font-size: 18px;
+  gap: 1px;
+  display: inline-flex;
+  margin: 0;
+  vertical-align: middle;
+}
+
+.ar-result-score {
+  font-family: var(--ar-mono);
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--ar-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.ar-newbest {
+  display: inline-block;
+  margin: 4px 0 2px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 900;
+  color: #3a2300;
+  background: linear-gradient(180deg, #ffe7a3, #ffb938);
+  animation: ar-pulse 0.8s ease-in-out infinite;
+}
+
+.ar-stats {
+  margin: 12px 0 16px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.25);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  font-size: 15px;
+  text-align: left;
+}
+
+.ar-stats dt {
+  color: var(--ar-dim);
+  font-weight: 600;
+}
+
+.ar-stats dd {
+  margin: 0;
+  font-weight: 800;
+  text-align: right;
+}
+
+.ar-msg {
+  margin: 6px 0 14px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ar-secret {
+  margin: 0 0 14px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 2px dashed var(--ar-gold);
+  background: rgba(255, 209, 102, 0.1);
+}
+
+.ar-secret .code {
+  font-family: var(--ar-mono);
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: var(--ar-gold);
+}
+
+/* 카운트다운 */
+.ar-count {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  background: rgba(6, 8, 22, 0.55);
+}
+
+.ar-count span {
+  font-size: 120px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 6px 0 rgba(0, 0, 0, 0.35), 0 0 40px var(--ar-accent-2);
+  animation: ar-count 0.6s ease both;
+}
+
+/* ---------- 연출 ---------- */
+.ar-fx {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ar-fx .p {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 3px;
+  will-change: transform, opacity;
+}
+
+.ar-fx .ft {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 900;
+  white-space: nowrap;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+  will-change: transform, opacity;
+}
+
+.ar-flash {
+  position: absolute;
+  inset: 0;
+}
+
+.ar-toast {
+  position: absolute;
+  top: calc(84px + env(safe-area-inset-top));
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: fit-content;
+  max-width: 90%;
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 16px;
+  text-align: center;
+  color: #10142e;
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  animation: ar-toast 0.25s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.ar-toast.good {
+  background: var(--ar-good);
+}
+
+.ar-toast.bad {
+  background: var(--ar-bad);
+  color: #fff;
+}
+
+.ar-toast.gold {
+  background: var(--ar-gold);
+}
+
+.ar-banner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 38%;
+  padding: 18px 12px;
+  text-align: center;
+  background: linear-gradient(90deg, transparent, rgba(8, 10, 26, 0.92) 18%, rgba(8, 10, 26, 0.92) 82%, transparent);
+  animation: ar-banner 0.35s cubic-bezier(0.2, 1.2, 0.4, 1) both;
+}
+
+.ar-banner .t {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: var(--ar-gold);
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.4);
+}
+
+.ar-banner .s {
+  margin-top: 4px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.ar-banner.bad .t {
+  color: var(--ar-bad);
+}
+
+.ar-banner.good .t {
+  color: var(--ar-good);
+}
+
+.ar-pop {
+  animation: ar-bump 0.3s ease;
+}
+
+.ar-shake {
+  animation: ar-shake 0.35s ease;
+}
+
+.ar-pulse {
+  animation: ar-pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes ar-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes ar-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+}
+
+@keyframes ar-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(3deg);
+  }
+}
+
+@keyframes ar-bump {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes ar-combo {
+  0% {
+    transform: translateX(-50%) scale(1);
+  }
+  40% {
+    transform: translateX(-50%) scale(1.3) rotate(-3deg);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+@keyframes ar-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes ar-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-8px);
+  }
+  40% {
+    transform: translateX(7px);
+  }
+  60% {
+    transform: translateX(-5px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+}
+
+@keyframes ar-star {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-40deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes ar-count {
+  0% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
+
+@keyframes ar-toast {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.9);
+  }
+}
+
+@keyframes ar-banner {
+  from {
+    opacity: 0;
+    transform: scaleY(0.2);
+  }
+}
+
+@media (max-height: 620px) {
+  .ar-sheet .ar-emblem {
+    font-size: 44px;
+  }
+  .ar-sheet h1 {
+    font-size: 23px;
+  }
+  .ar-howto {
+    font-size: 14px;
+    gap: 6px;
+    padding: 10px 12px;
+  }
+  .ar-stars {
+    font-size: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ar-sheet .ar-emblem {
+    animation: none;
+  }
+}

@@ -1,0 +1,492 @@
+/* 숫자 퍼즐: 최소 이동 퍼즐 릴레이 */
+
+/* 목표 줄이 두 줄로 넘어가 판 높이가 바뀌지 않게 한다 */
+.ar-goal {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sp-wrap {
+  flex: 1 1 0;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* 위쪽 한 줄: 왼쪽에 이동 수, 오른쪽에 남은 이동. 가운데는 콤보 표시 자리로 비워 둔다 */
+.sp-status {
+  flex: none;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sp-status .ar-chip {
+  padding: 3px 11px;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: border-color 0.2s;
+}
+
+.sp-status b {
+  font-family: var(--ar-mono);
+  font-size: 16px;
+  color: var(--ar-gold);
+}
+
+.sp-status small {
+  font-size: 12px;
+  color: var(--ar-dim);
+}
+
+.sp-moves.over b {
+  color: #ffa94d;
+}
+
+.sp-left.danger {
+  border-color: var(--ar-bad);
+  animation: ar-pulse 0.7s ease-in-out infinite;
+}
+
+.sp-left.danger b {
+  color: var(--ar-bad);
+}
+
+/* ---------- 온도 막대와 완성 모습 ---------- */
+.sp-info {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sp-heat {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 8px 12px 10px;
+  border-radius: 14px;
+  background: var(--ar-panel);
+  border: 1px solid var(--ar-line);
+}
+
+.sp-heat-text {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.sp-heat-text b {
+  display: inline-block;
+  min-width: 1.3em;
+  text-align: center;
+  font-family: var(--ar-mono);
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ar-gold);
+}
+
+.sp-feel {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ar-dim);
+}
+
+.sp-feel.good {
+  color: #ffb347;
+}
+
+.sp-feel.bad {
+  color: #8fd0ff;
+}
+
+.sp-heat.good {
+  animation: sp-warm 0.35s ease;
+}
+
+.sp-heat.bad {
+  animation: sp-cold 0.35s ease;
+}
+
+/* 목표 수만큼의 칸. 완성에 가까워질수록 불이 들어온다 */
+.sp-heat-bar {
+  display: flex;
+  gap: 3px;
+  height: 12px;
+}
+
+.sp-heat-bar i {
+  flex: 1;
+  border-radius: 4px;
+  background: var(--ar-panel-2);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.sp-heat-bar i.on {
+  background: linear-gradient(180deg, #ffe08a, #ff9f43);
+  box-shadow: 0 0 8px rgba(255, 170, 60, 0.55);
+}
+
+/* 출발점보다도 멀어졌다 */
+.sp-heat.far .sp-heat-bar i {
+  background: rgba(110, 180, 255, 0.28);
+}
+
+.sp-goalpic {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.sp-goalpic span {
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--ar-dim);
+}
+
+.sp-preview {
+  --sp-s: 18px;
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border-radius: 9px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 0 2px var(--ar-line);
+}
+
+.sp-preview.nums {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  padding: 3px;
+}
+
+.sp-preview.nums.n4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.sp-preview.nums i {
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  background: rgba(77, 141, 255, 0.6);
+}
+
+.sp-preview.nums.n4 i {
+  font-size: 8px;
+}
+
+.sp-preview.nums i:empty {
+  background: none;
+}
+
+/* ---------- 판과 타일 ---------- */
+.sp-box {
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+}
+
+.sp-board {
+  position: absolute;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.34);
+  box-shadow: 0 0 0 2px var(--ar-line), inset 0 6px 16px rgba(0, 0, 0, 0.45);
+  touch-action: none;
+}
+
+.sp-board.good {
+  animation: sp-ring-good 0.35s ease;
+}
+
+.sp-board.bad {
+  animation: sp-ring-bad 0.35s ease;
+}
+
+.sp-board.no {
+  animation: sp-ring-no 0.25s ease;
+}
+
+.sp-tile {
+  --hue: 218;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--sp-s);
+  height: var(--sp-s);
+  display: grid;
+  place-items: center;
+  border-radius: calc(var(--sp-s) * 0.17);
+  font-size: calc(var(--sp-s) * 0.5);
+  font-weight: 900;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.28);
+  background: linear-gradient(160deg, hsl(var(--hue), 96%, 69%), hsl(var(--hue), 76%, 48%));
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.42);
+  transition: transform 0.13s cubic-bezier(0.3, 0.9, 0.4, 1);
+  will-change: transform;
+  cursor: pointer;
+}
+
+/* 줄마다 색이 달라서 어느 줄의 타일인지 색으로도 알 수 있다 */
+.sp-tile[data-row='1'] {
+  --hue: 190;
+}
+
+.sp-tile[data-row='2'] {
+  --hue: 262;
+}
+
+.sp-tile[data-row='3'] {
+  --hue: 322;
+}
+
+/* 볼록한 느낌(그림 위에도 얹힌다) */
+.sp-tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.42), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+
+/* 제자리에 들어간 숫자 타일은 테두리가 빛난다 */
+.sp-board:not(.pic) .sp-tile.home::after {
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.85), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.sp-tile.no {
+  animation: sp-no 0.3s ease;
+}
+
+.sp-tile.hint {
+  z-index: 2;
+  animation: sp-hint 0.7s ease-in-out infinite;
+}
+
+.sp-board.done .sp-tile {
+  animation: sp-done 0.6s ease;
+}
+
+/* ---------- 그림 조각 ---------- */
+.sp-board.pic .sp-tile {
+  overflow: hidden;
+  background: #1b2249;
+}
+
+.sp-tile.last {
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.13s, opacity 0.35s;
+}
+
+.sp-tile.last.show {
+  opacity: 1;
+}
+
+/* 그림 한 장은 타일 3칸 크기. 타일은 자기 칸(--tr, --tc)만큼만 보여 준다 */
+.sp-scene {
+  position: absolute;
+  left: calc(var(--tc, 0) * var(--sp-s) * -1);
+  top: calc(var(--tr, 0) * var(--sp-s) * -1);
+  width: calc(var(--sp-s) * 3);
+  height: calc(var(--sp-s) * 3);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 38%, rgba(10, 12, 40, 0.5)),
+    linear-gradient(90deg, var(--p1), var(--p2) 50%, var(--p3));
+  pointer-events: none;
+}
+
+/* 액자 테두리: 가장자리 조각은 바깥쪽에 줄이 지나간다 */
+.sp-scene::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--sp-s) * 0.09);
+  border: calc(var(--sp-s) * 0.05) dashed rgba(255, 255, 255, 0.7);
+  border-radius: calc(var(--sp-s) * 0.3);
+}
+
+.sp-scene span {
+  position: absolute;
+  line-height: 1;
+  font-weight: 400;
+  text-shadow: none;
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.sp-scene .big {
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: calc(var(--sp-s) * 1.85);
+}
+
+.sp-scene .deco {
+  font-size: calc(var(--sp-s) * 0.46);
+}
+
+.sp-scene .d0 {
+  left: calc(var(--sp-s) * 0.24);
+  top: calc(var(--sp-s) * 0.24);
+}
+
+.sp-scene .d1 {
+  right: calc(var(--sp-s) * 0.24);
+  top: calc(var(--sp-s) * 0.24);
+}
+
+.sp-scene .d2 {
+  left: calc(var(--sp-s) * 0.24);
+  bottom: calc(var(--sp-s) * 0.24);
+}
+
+.sp-scene .d3 {
+  right: calc(var(--sp-s) * 0.24);
+  bottom: calc(var(--sp-s) * 0.24);
+}
+
+.sp-num {
+  position: absolute;
+  left: 7%;
+  top: 7%;
+  min-width: 1.5em;
+  padding: 0.15em 0;
+  border-radius: 999px;
+  font-style: normal;
+  font-size: calc(var(--sp-s) * 0.17);
+  text-align: center;
+  text-shadow: none;
+  background: rgba(8, 10, 26, 0.7);
+}
+
+/* ---------- 아래쪽 도움 버튼 ---------- */
+.sp-btn {
+  padding: 10px 8px;
+  font-size: 17px;
+  white-space: nowrap;
+}
+
+.sp-btn b {
+  min-width: 1.5em;
+  padding: 1px 0;
+  border-radius: 999px;
+  font-family: var(--ar-mono);
+  font-size: 15px;
+  color: #10142e;
+  background: var(--ar-gold);
+}
+
+.sp-btn small {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ar-dim);
+}
+
+/* ---------- 움직임 ---------- */
+@keyframes sp-warm {
+  0% {
+    border-color: #ffb347;
+    box-shadow: 0 0 18px rgba(255, 170, 60, 0.6);
+  }
+}
+
+@keyframes sp-cold {
+  0% {
+    border-color: #8fd0ff;
+    box-shadow: 0 0 18px rgba(110, 180, 255, 0.6);
+  }
+}
+
+@keyframes sp-ring-good {
+  0% {
+    box-shadow: 0 0 0 3px var(--ar-good), 0 0 26px rgba(61, 220, 151, 0.6), inset 0 6px 16px rgba(0, 0, 0, 0.45);
+  }
+}
+
+@keyframes sp-ring-bad {
+  0% {
+    box-shadow: 0 0 0 3px #6eb4ff, 0 0 26px rgba(110, 180, 255, 0.6), inset 0 6px 16px rgba(0, 0, 0, 0.45);
+  }
+}
+
+@keyframes sp-ring-no {
+  0% {
+    box-shadow: 0 0 0 3px var(--ar-bad), inset 0 6px 16px rgba(0, 0, 0, 0.45);
+  }
+}
+
+@keyframes sp-no {
+  0%,
+  100% {
+    filter: none;
+  }
+  40% {
+    filter: brightness(0.55) saturate(0.6);
+  }
+}
+
+@keyframes sp-hint {
+  0%,
+  100% {
+    filter: brightness(1);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.42), 0 0 0 3px var(--ar-gold);
+  }
+  50% {
+    filter: brightness(1.45);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.42), 0 0 0 5px var(--ar-gold), 0 0 22px var(--ar-gold);
+  }
+}
+
+@keyframes sp-done {
+  0% {
+    filter: brightness(1.9);
+  }
+}
+
+/* 화면이 길면 완성 모습을 크게 보여 준다 */
+@media (min-height: 720px) {
+  .sp-wrap {
+    gap: 10px;
+  }
+  .sp-preview {
+    width: 78px;
+    height: 78px;
+    border-radius: 12px;
+  }
+  .sp-preview.nums i {
+    font-size: 14px;
+    border-radius: 5px;
+  }
+  .sp-preview.nums.n4 i {
+    font-size: 11px;
+  }
+  .sp-goalpic span {
+    font-size: 11px;
+  }
+  .sp-heat {
+    padding: 14px 14px 16px;
+    gap: 10px;
+  }
+  .sp-heat-bar {
+    height: 16px;
+  }
+}

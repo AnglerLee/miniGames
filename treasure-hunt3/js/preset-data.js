@@ -1,26 +1,26 @@
 /* ===== preset-data.js - Theme Scenario Data ===== */
 
 const GAME_INFO = {
-    'game02': { name: '미로 탈출', icon: '🌀', path: '02-maze', category: 'puzzle' },
+    'game02': { name: '미로 탈출', icon: '🔑', path: '02-maze', category: 'puzzle' },
     'game03': { name: '짝 맞추기', icon: '🃏', path: '03-card-match', category: 'puzzle' },
-    'game05': { name: '숫자 퍼즐', icon: '🔢', path: '05-sliding-puzzle', category: 'puzzle' },
-    'game07': { name: '빠른 계산', icon: '➕', path: '07-math-race', category: 'puzzle' },
-    'game08': { name: '단어 찾기', icon: '🔤', path: '08-word-search', category: 'puzzle' },
-    'game11': { name: '순서대로 터치', icon: '🔢', path: '11-sequence-tap', category: 'action' },
+    'game05': { name: '숫자 퍼즐', icon: '🧩', path: '05-sliding-puzzle', category: 'puzzle' },
+    'game07': { name: '계산 레이스', icon: '🏎️', path: '07-math-race', category: 'puzzle' },
+    'game08': { name: '단어 탐정', icon: '🕵️', path: '08-word-search', category: 'puzzle' },
+    'game11': { name: '넘버 러시', icon: '🔢', path: '11-sequence-tap', category: 'action' },
     'game12': { name: '색깔 스피드', icon: '🌈', path: '12-color-rush', category: 'action' },
     'game13': { name: '에너지 충전', icon: '⚡', path: '13-energy-charge', category: 'sensor', badge: '📱' },
-    'game15': { name: '데시벨 측정기', icon: '🔊', path: '15-decibel-meter', category: 'audio', badge: '🎤' },
+    'game15': { name: '목소리 비행선', icon: '🎈', path: '15-decibel-meter', category: 'audio', badge: '🎤' },
     'game16': { name: '매직 컴퍼스', icon: '🧭', path: '16-magic-compass', category: 'sensor', badge: '📱' },
-    'game17': { name: '바코드 스캐너', icon: '📱', path: '17-barcode-scanner', category: 'camera', badge: '📷' },
+    'game17': { name: '바코드 몬스터', icon: '👾', path: '17-barcode-scanner', category: 'camera', badge: '📷' },
     'game18': { name: '컬러 헌터', icon: '🎨', path: '18-color-hunter', category: 'camera', badge: '📷' },
     'game19': { name: '리버스 오디오', icon: '🔄', path: '19-reverse-audio', category: 'audio', badge: '🎤' },
-    'game20': { name: '이모지 넌센스', icon: '🤔', path: '20-emoji-quiz', category: 'puzzle' },
-    'game21': { name: '동시 터치 협동', icon: '🤝', path: '21-dual-touch', category: 'action' },
+    'game20': { name: '이모지 퀴즈쇼', icon: '🤔', path: '20-emoji-quiz', category: 'puzzle' },
+    'game21': { name: '둘이서 한 호흡', icon: '🤝', path: '21-dual-touch', category: 'action' },
     'game22': { name: '와이파이 해커', icon: '📡', path: '22-wifi-hacker', category: 'puzzle' },
-    'game23': { name: '디지털 금고 털이', icon: '🔓', path: '23-safe-cracker', category: 'special' },
-    'game24': { name: '폭탄 해체', icon: '💣', path: '24-bomb-balance', category: 'sensor', badge: '📱' },
+    'game23': { name: '금고 털이', icon: '🔓', path: '23-safe-cracker', category: 'special' },
+    'game24': { name: '폭탄 해체반', icon: '💣', path: '24-bomb-balance', category: 'sensor', badge: '📱' },
     'game25': { name: '복권 긁기', icon: '🎫', path: '25-scratch-card', category: 'special' },
-    'game27': { name: '절대음감 스톱워치', icon: '⏱️', path: '27-stopwatch', category: 'action' }
+    'game27': { name: '타임 스나이퍼', icon: '⏱️', path: '27-stopwatch', category: 'action' }
 };
 
 /* Theme data is loaded via <script> tags from data/*.js files */

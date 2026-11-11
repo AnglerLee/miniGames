@@ -1,0 +1,247 @@
+/* 작전명 스낵 볼트 - 공통 스타일 (부모 화면과 아이 화면이 함께 쓴다) */
+
+:root {
+  --bg: #070b16;
+  --panel: #111a30;
+  --panel-2: #18233f;
+  --line: #2a3760;
+  --text: #e9eefb;
+  --dim: #93a0c4;
+  --accent: #36e0ff;
+  --amber: #ffb547;
+  --red: #ff4d5e;
+  --green: #3ddc84;
+  --gold: #ffd76a;
+  --radius: 14px;
+  --font: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', system-ui, sans-serif;
+  --mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
+  /* 한글은 낱말 중간에서 줄이 바뀌지 않게 한다 */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 0;
+  background: none;
+  touch-action: manipulation;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  font-weight: 700;
+  font-size: 17px;
+  transition: transform 0.08s ease, filter 0.15s ease;
+}
+a.btn {
+  text-decoration: none;
+  color: var(--text);
+}
+.btn:active {
+  transform: scale(0.97);
+  filter: brightness(1.2);
+}
+.btn.primary {
+  background: linear-gradient(180deg, #45e6ff, #1aa9d6);
+  border-color: #7ff0ff;
+  color: #04202b;
+}
+.btn.danger {
+  background: linear-gradient(180deg, #ff6b78, #d92f45);
+  border-color: #ff9aa4;
+  color: #2b0409;
+}
+.btn.gold {
+  background: linear-gradient(180deg, #ffe08a, #e0a92e);
+  border-color: #fff0b8;
+  color: #2b1d02;
+}
+.btn.ghost {
+  background: transparent;
+}
+.btn.block {
+  display: flex;
+  width: 100%;
+}
+.btn:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.dim {
+  color: var(--dim);
+}
+.small {
+  font-size: 13px;
+}
+.center {
+  text-align: center;
+}
+.mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.hidden {
+  display: none !important;
+}
+
+/* 숫자 표시창과 화면 키패드 */
+.digits {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.digits span {
+  width: 54px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #050912;
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.digits.shake {
+  animation: shake 0.4s;
+}
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 320px;
+  margin: 0 auto;
+}
+.keypad button {
+  height: 58px;
+  border-radius: 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 24px;
+  font-weight: 700;
+}
+.keypad button:active {
+  background: var(--accent);
+  color: #04202b;
+}
+.keypad button.wide {
+  font-family: var(--font);
+  font-size: 15px;
+  color: var(--dim);
+}
+
+/* 자체 모달 (alert 대신 쓴다) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(3, 6, 14, 0.82);
+  backdrop-filter: blur(3px);
+}
+.modal {
+  width: min(360px, 100%);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 22px 20px 18px;
+  text-align: center;
+  animation: pop 0.18s ease-out;
+}
+.modal h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+.modal p {
+  color: var(--dim);
+  margin-bottom: 16px;
+  white-space: pre-line;
+}
+.modal .actions {
+  display: flex;
+  gap: 10px;
+}
+.modal .actions .btn {
+  flex: 1;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-8px);
+  }
+  40%,
+  80% {
+    transform: translateX(8px);
+  }
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}

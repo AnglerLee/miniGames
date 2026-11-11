@@ -1,78 +1,17 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>미로 탈출 - 관리자 설정</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="../../assets/css/admin-theme.css">
 </head>
+
 <body>
-    <div class="container">
-        <a href="../../admin.html" class="main-link">
-            ← 전체 게임 목록
-        </a>
-
-        <header class="admin-header">
-            <h1>🔧 게임 설정 (관리자)</h1>
-            <div class="subtitle">게임 설정 관리</div>
-        </header>
-
-        <div class="admin-form-card">
-            <form id="settingsForm">
-                
-            <div class="form-group"
-                style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
-                <label for="activeDifficulty">🎮 적용할 난이도</label>
-                <select id="activeDifficulty" class="form-input">
-                    <option value="easy">초급 (Easy)</option>
-                    <option value="normal">중급 (Normal)</option>
-                    <option value="hard">고급 (Hard)</option>
-                </select>
-            </div>
-
-            <div class="form-group"
-                style="background: #fff0f6; padding: 15px; border-radius: 8px; border: 1px solid #ffdeeb;">
-                <label for="gameTheme">🎨 게임 테마 (캐릭터 & 스타일)</label>
-                <select id="gameTheme" class="form-input">
-                    <option value="cat">🐱 고양이와 털실 (Pastel Pink)</option>
-                    <option value="rabbit">🐰 토끼와 당근 (Soft Green)</option>
-                    <option value="unicorn">🦄 유니콘과 무지개 (Dreamy Purple)</option>
-                    <option value="panda">🐼 팬더와 대나무 (Mint Blue)</option>
-                    <option value="dog">🐶 강아지와 뼈다귀 (Warm Orange)</option>
-                </select>
-                <p style="font-size: 13px; color: #d63384; margin-top: 5px;">* 아이들이 좋아하는 아기자기한 이모지와 색상이 적용됩니다.</p>
-            </div>
-
-            <h2>⏱ 난이도별 시간 제한 설정 (초)</h2>
-
-            <div class="form-group">
-                <label for="timeEasy">쉬움 (Easy) 시간 제한</label>
-                <input type="number" id="timeEasy" class="form-input" min="10" max="300" value="30">
-            </div>
-
-            <div class="form-group">
-                <label for="timeNormal">보통 (Normal) 시간 제한</label>
-                <input type="number" id="timeNormal" class="form-input" min="10" max="300" value="60">
-            </div>
-
-            <div class="form-group">
-                <label for="timeHard">어려움 (Hard) 시간 제한</label>
-                <input type="number" id="timeHard" class="form-input" min="10" max="300" value="90">
-            </div>
-
-
-
-            <div class="btn-group">
-                <button type="button" class="btn btn-home" onclick="location.href='index.html'">게임으로</button>
-                <button type="button" class="btn btn-reset" id="resetBtn">초기화</button>
-                <button type="submit" class="btn btn-save">저장하기</button>
-            </div>
-        
-            </form>
-        </div>
-    </div>
-
-    <script src="../../assets/js/common.js"></script>
+    <script src="../../assets/js/admin-kit.js"></script>
     <script src="admin.js"></script>
 </body>
+
 </html>
