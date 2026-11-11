@@ -1,0 +1,352 @@
+/* 복권 긁기 */
+
+/* ---------- 동전 게이지 ---------- */
+.sc-gauge {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 10px 10px;
+  border-radius: 18px;
+  background: var(--ar-panel);
+  border: 1px solid var(--ar-line);
+}
+
+.sc-gicon {
+  flex: none;
+  font-size: 36px;
+  line-height: 1;
+}
+
+.sc-gbody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sc-grow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  height: 28px; /* 글자에 따라 높이가 달라지면 판 크기를 잘못 잰다 */
+}
+
+.sc-glabel {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--ar-dim);
+}
+
+.sc-gnum {
+  font-family: var(--ar-mono);
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--ar-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-gnum small {
+  margin-left: 2px;
+  font-family: var(--ar-font);
+  font-size: 13px;
+  color: var(--ar-dim);
+}
+
+.sc-gbar {
+  position: relative;
+  height: 20px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.sc-gbar i {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffe58a, #ffb938);
+  transform-origin: left center;
+}
+
+/* 눈금 한 칸 = 칸 하나를 다 긁는 값 */
+.sc-ticks span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: rgba(16, 20, 46, 0.5);
+}
+
+.sc-ticks span.goal {
+  width: 4px;
+  margin-left: -2px;
+  background: #fff;
+  box-shadow: 0 0 6px #fff;
+}
+
+.sc-gauge.low {
+  border-color: var(--ar-bad);
+}
+
+.sc-gauge.low .sc-gbar i {
+  background: linear-gradient(180deg, #ff8f9f, #e0354f);
+}
+
+.sc-gauge.low .sc-gnum {
+  color: var(--ar-bad);
+  animation: ar-pulse 0.5s ease-in-out infinite;
+}
+
+.sc-gauge.gold .sc-gbar i {
+  background: linear-gradient(90deg, #ff7ab6, #ffd166);
+}
+
+/* ---------- 복권 ---------- */
+.sc-ticket {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px; /* game.js 의 PAD 와 같아야 한다 */
+  border-radius: 22px;
+  background: linear-gradient(160deg, #ffd6e8, #ffd166);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.3), inset 0 0 0 2px rgba(255, 255, 255, 0.45);
+}
+
+.sc-ticket.violet {
+  background: linear-gradient(160deg, #b9a5ff, #ff9cc8);
+}
+
+.sc-ticket.gold {
+  background: linear-gradient(160deg, #fff1b8, #f0a92a 55%, #ffe58a);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.3), inset 0 0 0 2px rgba(255, 255, 255, 0.6), 0 0 34px rgba(255, 209, 102, 0.45);
+}
+
+.sc-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 2px;
+  color: #3a1a3f;
+}
+
+.sc-name {
+  margin-right: auto;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.sc-bombs {
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  color: #fff;
+  background: rgba(16, 20, 46, 0.78);
+}
+
+/* 찾은 당첨 그림이 차례로 채워진다 */
+.sc-slots {
+  display: flex;
+  gap: 4px;
+}
+
+.sc-slots i {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  font-style: normal;
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(58, 26, 63, 0.4);
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.08);
+}
+
+.sc-slots i.on {
+  font-size: 20px;
+  background: #fff;
+  box-shadow: 0 0 0 2px #ffb938;
+  animation: ar-bump 0.3s ease;
+}
+
+.sc-board {
+  position: relative;
+  touch-action: none;
+}
+
+.sc-cell {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border-radius: 12%;
+  line-height: 1;
+  background: #fffaf0;
+  box-shadow: inset 0 3px 0 rgba(0, 0, 0, 0.08);
+}
+
+.sc-cell span {
+  display: block;
+}
+
+.sc-cell.open span {
+  animation: sc-pop 0.35s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+.sc-cell.hit {
+  background: linear-gradient(180deg, #fff7d1, #ffd166);
+  box-shadow: 0 0 0 3px #ffb938, 0 0 20px rgba(255, 209, 102, 0.9);
+  z-index: 1;
+}
+
+.sc-cell.dud span,
+.sc-cell.late span {
+  opacity: 0.45;
+  filter: grayscale(0.7);
+}
+
+.sc-cell.dud,
+.sc-cell.late {
+  background: #d9d5cc;
+}
+
+.sc-cell.boom {
+  background: #ff5d73;
+  animation: ar-shake 0.35s ease;
+}
+
+.sc-cell.fuse span {
+  animation: sc-fuse 0.18s linear infinite;
+}
+
+.sc-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.sc-cover.gone {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.7s ease;
+}
+
+.sc-tip {
+  max-width: 400px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ar-dim);
+}
+
+/* ---------- 황금 복권 ---------- */
+.sc-board.photo {
+  overflow: hidden;
+  border-radius: 12px;
+  background: #1a1030;
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.sc-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.sc-prize {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px;
+  text-align: center;
+  color: #fff;
+  background: radial-gradient(circle at 50% 36%, #7a4ad9, #3b1f8f 62%, #1a1030);
+}
+
+.sc-prize .e {
+  font-size: 84px;
+  line-height: 1.2;
+}
+
+.sc-prize .t {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--ar-gold);
+}
+
+.sc-prize .s {
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+/* 결과 화면에도 사진을 작게 남긴다 */
+.sc-thumb {
+  display: block;
+  max-width: 70%;
+  max-height: 96px;
+  margin: 0 auto 8px;
+  border-radius: 10px;
+  border: 2px solid var(--ar-gold);
+}
+
+@keyframes sc-pop {
+  from {
+    transform: scale(0.5);
+  }
+}
+
+@keyframes sc-fuse {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(-2px, 1px) rotate(-6deg);
+  }
+  75% {
+    transform: translate(2px, -1px) rotate(6deg);
+  }
+}
+
+@media (max-height: 660px) {
+  .sc-gauge {
+    padding-top: 6px;
+    padding-bottom: 8px;
+  }
+  .sc-gicon {
+    font-size: 30px;
+  }
+  .sc-gbar {
+    height: 16px;
+  }
+  .sc-prize .e {
+    font-size: 60px;
+  }
+  .sc-prize .t {
+    font-size: 22px;
+  }
+}

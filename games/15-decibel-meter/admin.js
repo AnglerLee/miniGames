@@ -1,132 +1,19 @@
-// 관리자 설정 스크립트 (15 Decibel Meter)
-const GAME_ID = 'game15';
-const form = document.getElementById('settingsForm');
-const resetBtn = document.getElementById('resetBtn');
-const difficultySlider = document.getElementById('difficultySlider');
-const difficultyLabel = document.getElementById('difficultyLabel');
-
-// 난이도 프리셋
-const DIFFICULTY_PRESETS = {
-    easy: { target: 50, maxLimit: 100, timeLimit: 0, sustainTime: 2 },
-    medium: { target: 70, maxLimit: 95, timeLimit: 30, sustainTime: 3 },
-    hard: { target: 85, maxLimit: 90, timeLimit: 20, sustainTime: 4 }
-};
-
-// 현재 선택된 난이도
-let currentDifficulty = 'easy';
-
-// 난이도 슬라이더 이벤트
-difficultySlider.addEventListener('input', (e) => {
-    const value = parseInt(e.target.value);
-    const difficulties = ['easy', 'medium', 'hard'];
-    const labels = ['쉬움', '보통', '어려움'];
-
-    currentDifficulty = difficulties[value];
-    difficultyLabel.textContent = labels[value];
-
-    // 프리셋 값으로 자동 업데이트
-    const preset = DIFFICULTY_PRESETS[currentDifficulty];
-    document.getElementById('target').value = preset.target;
-    document.getElementById('maxLimit').value = preset.maxLimit;
-    document.getElementById('timeLimit').value = preset.timeLimit;
-    document.getElementById('sustainTime').value = preset.sustainTime;
-
-    // 슬라이더 색상 변경
-    updateSliderColor(value);
+// 목소리 비행선 관리자 설정
+// 난이도 기본값은 game.js 의 PRESETS 와 같아야 한다.
+AdminKit.page({
+    title: '목소리 비행선 설정',
+    storageKey: 'game15_config',
+    recordId: 'game15',
+    note: '목소리 크기로 비행선 높이를 조종해 세 스테이지(고리 통과 → 좁은 협곡 → 쉿과 폭풍)를 날아갑니다. 시작할 때 "조용히 2초, 아~ 2초"로 마이크를 맞춥니다. 마이크가 없거나 거부되면 화면을 누르고 있는 방식으로 바뀝니다.',
+    presets: [
+        { stageSec: 30, gap: 3.0, sens: 1.2, lives: 4 },
+        { stageSec: 36, gap: 2.5, sens: 1.0, lives: 3 },
+        { stageSec: 42, gap: 2.1, sens: 0.9, lives: 3 }
+    ],
+    fields: [
+        { key: 'stageSec', label: '📏 스테이지 길이 (초)', min: 15, max: 90, step: 1, help: '스테이지 하나를 끝까지 나는 데 걸리는 시간. 세 스테이지 모두 같아요' },
+        { key: 'gap', label: '↔️ 장애물 간격 (초)', min: 1.4, max: 6, step: 0.1, help: '고리·기둥이 나오는 간격. 클수록 쉬워요. 재도전하면 저절로 넓어져요' },
+        { key: 'sens', label: '🎤 감도 보정 배수', min: 0.3, max: 3, step: 0.1, help: '1보다 크면 작은 소리로도 높이 올라가요. 아이 목소리가 작으면 올려 주세요' },
+        { key: 'lives', label: '❤️ 하트 수', min: 1, max: 5, step: 1, help: '벽·기둥에 부딪히거나 새를 깨우면 하나씩 줄어요' }
+    ]
 });
-
-// 슬라이더 색상 업데이트
-function updateSliderColor(value) {
-    const colors = ['#28a745', '#ffc107', '#dc3545'];
-    difficultySlider.style.accentColor = colors[value];
-}
-
-// 설정 로드
-function loadSettings() {
-
-
-    // 2. 게임별 난이도 설정 로드
-    const gameConfig = JSON.parse(localStorage.getItem('game15_config')) || { difficulties: DIFFICULTY_PRESETS };
-
-    // 현재 선택된 난이도를 기준으로 값 표시 (기본값: easy)
-    if (gameConfig.currentDifficulty) {
-        currentDifficulty = gameConfig.currentDifficulty;
-        const difficultyIndex = ['easy', 'medium', 'hard'].indexOf(currentDifficulty);
-        difficultySlider.value = difficultyIndex;
-        difficultyLabel.textContent = ['쉬움', '보통', '어려움'][difficultyIndex];
-        updateSliderColor(difficultyIndex);
-    }
-
-    // 현재 난이도의 설정값 표시
-    const currentSettings = gameConfig.difficulties[currentDifficulty] || DIFFICULTY_PRESETS[currentDifficulty];
-    document.getElementById('target').value = currentSettings.target;
-    document.getElementById('maxLimit').value = currentSettings.maxLimit;
-    document.getElementById('timeLimit').value = currentSettings.timeLimit;
-    document.getElementById('sustainTime').value = currentSettings.sustainTime;
-}
-
-// 설정 저장
-function saveSettings(e) {
-    e.preventDefault();
-
-
-
-    // 2. 게임별 난이도 설정 저장
-    // 기존 설정 로드
-    const savedConfig = JSON.parse(localStorage.getItem('game15_config')) || { difficulties: DIFFICULTY_PRESETS };
-
-    // 현재 난이도의 값만 업데이트
-    savedConfig.difficulties = savedConfig.difficulties || {};
-    savedConfig.difficulties[currentDifficulty] = {
-        target: parseInt(document.getElementById('target').value),
-        maxLimit: parseInt(document.getElementById('maxLimit').value),
-        timeLimit: parseInt(document.getElementById('timeLimit').value),
-        sustainTime: parseFloat(document.getElementById('sustainTime').value)
-    };
-
-    // 현재 선택된 난이도 저장
-    savedConfig.currentDifficulty = currentDifficulty;
-
-    localStorage.setItem('game15_config', JSON.stringify(savedConfig));
-
-    // 커스텀 모달 사용 (common.js의 showMessage 활용)
-    if (typeof showMessage === 'function') {
-        showMessage(`✅ ${difficultyLabel.textContent} 난이도 설정이 저장되었습니다!`, 'success');
-    } else {
-        alert(`${difficultyLabel.textContent} 난이도 설정이 저장되었습니다!`);
-    }
-}
-
-// 설정 초기화
-function resetSettings() {
-    // 커스텀 confirm 대체 - 간단한 확인 메시지 사용
-    const confirmed = confirm('모든 설정을 초기화하시겠습니까?');
-
-    if (confirmed) {
-
-
-        // 게임별 설정 초기화
-        localStorage.removeItem('game15_config');
-
-        // 슬라이더를 easy로 리셋
-        currentDifficulty = 'easy';
-        difficultySlider.value = 0;
-        difficultyLabel.textContent = '쉬움';
-        updateSliderColor(0);
-
-        loadSettings();
-
-        if (typeof showMessage === 'function') {
-            showMessage('✅ 초기화되었습니다.', 'success');
-        } else {
-            alert('초기화되었습니다.');
-        }
-    }
-}
-
-form.addEventListener('submit', saveSettings);
-resetBtn.addEventListener('click', resetSettings);
-
-// 초기 로드
-loadSettings();
-updateSliderColor(0);

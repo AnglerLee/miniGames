@@ -1,0 +1,219 @@
+/* 매직 컴퍼스: 보물 레이더 */
+
+.mc-wrap {
+  --glow: 0;
+  position: relative;
+  align-self: stretch;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  touch-action: none;
+  border-radius: 24px;
+}
+
+/* 신호에 가까울수록 레이더 뒤가 밝아진다 */
+.mc-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(closest-side, rgba(77, 216, 255, 0.4), rgba(77, 216, 255, 0.08) 70%, transparent);
+  opacity: var(--glow);
+}
+
+.mc-wrap[data-heat='dig']::before,
+.mc-wrap[data-heat='hot']::before {
+  background: radial-gradient(closest-side, rgba(255, 209, 102, 0.45), rgba(255, 209, 102, 0.08) 70%, transparent);
+}
+
+.mc-wrap.storm::before {
+  opacity: 1;
+  background: radial-gradient(closest-side, rgba(170, 110, 255, 0.35), transparent);
+  animation: mc-flicker 0.18s steps(2) infinite;
+}
+
+.mc-top {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mc-loot {
+  gap: 3px;
+  padding: 5px 10px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.mc-loot span {
+  transition: transform 0.25s;
+}
+
+.mc-loot span:not(.on) {
+  opacity: 0.55;
+  filter: grayscale(1) brightness(0.6);
+}
+
+.mc-loot span.on {
+  transform: scale(1.1);
+}
+
+.mc-mode {
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+  background: var(--ar-panel-2);
+  border: 1px solid var(--ar-line);
+}
+
+.mc-mode:active {
+  filter: brightness(1.4);
+}
+
+/* 레이더는 정사각형. 세로가 남으면 레이더와 아래 줄을 가운데로 모은다 */
+.mc-radar {
+  position: relative;
+  z-index: 1;
+  flex: 0 1 auto;
+  min-height: 0;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  margin-top: auto;
+}
+
+.mc-hint {
+  margin-bottom: auto;
+}
+
+.mc-canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  border-radius: 50%;
+  box-shadow: 0 0 calc(10px + 40px * var(--glow)) rgba(77, 216, 255, calc(0.15 + 0.4 * var(--glow)));
+}
+
+.mc-wrap[data-heat='dig'] .mc-canvas,
+.mc-wrap[data-heat='hot'] .mc-canvas {
+  box-shadow: 0 0 46px rgba(255, 209, 102, 0.55);
+}
+
+.mc-wrap.storm .mc-canvas {
+  box-shadow: 0 0 36px rgba(180, 120, 255, 0.6);
+}
+
+.mc-wrap.warn .mc-canvas {
+  animation: mc-warn 0.3s ease-in-out infinite alternate;
+}
+
+.mc-read {
+  position: relative;
+  z-index: 1;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.mc-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 28px;
+}
+
+.mc-bars i {
+  width: 8px;
+  border-radius: 2px;
+  background: var(--ar-panel-2);
+  transition: background 0.12s;
+}
+
+.mc-bars i:nth-child(1) { height: 20%; }
+.mc-bars i:nth-child(2) { height: 40%; }
+.mc-bars i:nth-child(3) { height: 60%; }
+.mc-bars i:nth-child(4) { height: 80%; }
+.mc-bars i:nth-child(5) { height: 100%; }
+
+.mc-bars i.on {
+  background: var(--ar-accent);
+}
+
+.mc-wrap[data-heat='hot'] .mc-bars i.on,
+.mc-wrap[data-heat='dig'] .mc-bars i.on {
+  background: var(--ar-gold);
+}
+
+.mc-word {
+  min-width: 6.2em;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: var(--ar-dim);
+  white-space: nowrap;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+.mc-wrap[data-heat='faint'] .mc-word { color: #8fb6c8; }
+.mc-wrap[data-heat='luke'] .mc-word { color: #9ee9ff; }
+.mc-wrap[data-heat='warm'] .mc-word { color: #7dffc0; }
+.mc-wrap[data-heat='hot'] .mc-word,
+.mc-wrap[data-heat='dig'] .mc-word { color: var(--ar-gold); }
+.mc-wrap[data-heat='bad'] .mc-word { color: var(--ar-bad); }
+
+.mc-wrap[data-heat='dig'] .mc-word {
+  animation: ar-pulse 0.4s ease-in-out infinite;
+}
+
+.mc-hint {
+  position: relative;
+  z-index: 1;
+  min-height: 18px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ar-dim);
+  text-align: center;
+}
+
+/* 콤보 표시는 위 줄 가운데(보물 칸과 조작 버튼 사이)에 뜬다 */
+.ar-combo {
+  top: 9px;
+}
+
+@keyframes mc-flicker {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes mc-warn {
+  to {
+    box-shadow: 0 0 40px rgba(255, 93, 115, 0.75);
+  }
+}
+
+@media (max-height: 680px) {
+  .mc-wrap {
+    gap: 4px;
+  }
+  .mc-word {
+    font-size: 23px;
+  }
+  .mc-read {
+    min-height: 38px;
+  }
+}

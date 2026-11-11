@@ -1,116 +1,442 @@
-/* Game specific styles */
-.game-area {
-    text-align: center;
-    position: relative;
-    padding: 20px;
+/* 타임 스나이퍼 */
+
+:root {
+  --ts-perfect: #ffd166;
+  --ts-great: #3ddc97;
+  --ts-good: #36a8ff;
+  --ts-miss: rgba(255, 93, 115, 0.3);
 }
 
-#timer {
-    font-size: 100px;
-    font-weight: bold;
-    margin: 40px 0;
-    font-family: 'Courier New', Courier, monospace;
-    /* Monospace for stable width */
-    color: var(--text-color);
-    transition: color 0.3s ease;
+/* 콤보 표시는 라운드 칩과 같은 줄의 오른쪽 끝에 둔다 */
+.ar-combo {
+  top: 2px;
+  left: auto;
+  right: 0;
+  transform: none;
 }
 
-/* Blind Mode Styles */
-.blind-mode-active #timer {
-    color: transparent;
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-    /* Subtle hint or just completely hidden */
+.ar-combo.bump {
+  animation: ts-combo 0.3s ease;
 }
 
-/* Dark mode support for blind mode hint */
-[data-theme="dark"] .blind-mode-active #timer {
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+.ts-top {
+  align-self: stretch;
+  flex: none;
+  display: flex;
+  align-items: center;
+  min-height: 32px;
 }
 
-.control-panel {
-    margin-top: 30px;
+.ts-round {
+  font-family: var(--ar-mono);
 }
 
-#result {
-    font-size: 24px;
-    margin-top: 30px;
-    min-height: 1.5em;
-    font-weight: bold;
+.ts-main {
+  --ts-size: min(62vw, 30vh, 260px);
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
 }
 
-.diff-value {
-    font-size: 0.8em;
-    color: #666;
-    margin-left: 10px;
+/* ---------- 목표 시간 ---------- */
+.ts-target {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ar-dim);
+  line-height: 1;
 }
 
-/* Animations */
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.05);
-    }
-
-    100% {
-        transform: scale(1);
-    }
+.ts-target b {
+  font-family: var(--ar-mono);
+  font-size: 44px;
+  font-weight: 900;
+  color: var(--ar-gold);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
 }
 
-.success-anim {
-    animation: pulse 0.5s ease-in-out;
-    color: var(--success-color) !important;
+/* ---------- 시계 ---------- */
+.ts-dial-wrap {
+  position: relative;
+  width: 100%;
+  display: grid;
+  place-items: center;
 }
 
-.fail-anim {
-    animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
-    color: var(--danger-color) !important;
+.ts-dial {
+  --p: 0;
+  position: relative;
+  width: var(--ts-size);
+  height: var(--ts-size);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: radial-gradient(circle at 50% 28%, #2b3680, #10142e 72%);
+  border: 2px solid var(--ar-line);
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.3);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-@keyframes shake {
-
-    10%,
-    90% {
-        transform: translate3d(-1px, 0, 0);
-    }
-
-    20%,
-    80% {
-        transform: translate3d(2px, 0, 0);
-    }
-
-    30%,
-    50%,
-    70% {
-        transform: translate3d(-4px, 0, 0);
-    }
-
-    40%,
-    60% {
-        transform: translate3d(4px, 0, 0);
-    }
+/* 진행 고리: 보이는 숫자를 따라 찬다 (가짜 시계라면 고리도 거짓말을 한다) */
+.ts-dial::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: conic-gradient(var(--ar-accent) calc(var(--p) * 360deg), rgba(255, 255, 255, 0.09) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 10px), #000 calc(100% - 9px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 10px), #000 calc(100% - 9px));
 }
 
-/* Mode Toggle Switch */
-.mode-switch {
-    display: inline-flex;
-    align-items: center;
-    margin-bottom: 20px;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 10px 20px;
-    border-radius: 30px;
+.ts-dial.run {
+  border-color: var(--ar-accent);
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.3), 0 0 26px rgba(54, 214, 255, 0.35);
 }
 
-.switch-label {
-    margin-right: 10px;
-    font-weight: bold;
+.ts-dial.over::before {
+  background: var(--ar-bad);
 }
 
-/* Instructions */
-.target-time {
-    font-size: 32px;
-    color: var(--primary-color);
-    font-weight: bold;
+.ts-dial.beat {
+  animation: ts-beat 0.28s ease-out;
+}
+
+.ts-dial.perfect {
+  border-color: var(--ts-perfect);
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 209, 102, 0.7);
+}
+
+.ts-dial.great {
+  border-color: var(--ts-great);
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.3), 0 0 30px rgba(61, 220, 151, 0.5);
+}
+
+.ts-dial.good {
+  border-color: var(--ts-good);
+}
+
+.ts-dial.miss {
+  border-color: var(--ar-bad);
+}
+
+.ts-digits {
+  position: relative;
+  font-family: var(--ar-mono);
+  font-size: calc(var(--ts-size) * 0.26);
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
+}
+
+.ts-tag {
+  position: relative;
+  min-height: 24px;
+  padding: 2px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 900;
+  color: #10142e;
+  background: var(--ar-accent-2);
+}
+
+.ts-tag:empty {
+  visibility: hidden;
+}
+
+/* 눈가리개: 시계가 사라졌을 때 숫자와 고리를 모두 덮는다 */
+.ts-cover {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: radial-gradient(circle at 50% 28%, #222a62, #0b0e24 75%);
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.15s, transform 0.2s cubic-bezier(0.2, 1.4, 0.4, 1);
+  pointer-events: none;
+}
+
+.ts-cover span {
+  font-size: calc(var(--ts-size) * 0.36);
+  line-height: 1;
+}
+
+.ts-cover small {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ar-dim);
+}
+
+.ts-dial.blind .ts-cover {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- 방해꾼 ---------- */
+.ts-heckler {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
+  font-size: 42px;
+  line-height: 52px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 3;
+  will-change: transform;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
+
+.ts-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: 96%;
+  transform: translateX(-50%);
+  padding: 3px 11px;
+  border-radius: 13px;
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.3;
+  white-space: nowrap;
+  color: #10142e;
+  background: #fff;
+}
+
+/* ---------- 판정 글 ---------- */
+.ts-msg {
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.ts-grade {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: 0.06em;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+.ts-grade:empty {
+  display: none;
+}
+
+.ts-grade.perfect {
+  color: var(--ts-perfect);
+}
+
+.ts-grade.great {
+  color: var(--ts-great);
+}
+
+.ts-grade.good {
+  color: var(--ts-good);
+}
+
+.ts-grade.miss {
+  color: var(--ar-bad);
+}
+
+.ts-detail {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.ts-detail b {
+  color: var(--ar-gold);
+}
+
+/* ---------- 과녁 막대 ---------- */
+.ts-gauge {
+  width: 100%;
+  max-width: 340px;
+  padding-top: 16px;
+}
+
+.ts-bar {
+  position: relative;
+  height: 18px;
+  border-radius: 9px;
+  box-shadow: inset 0 0 0 1px var(--ar-line);
+}
+
+/* 한가운데 목표 선 */
+.ts-bar::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: #10142e;
+}
+
+/* 지난 라운드에 멈춘 자리 */
+.ts-dot {
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.55;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+
+/* 이번에 멈춘 자리 */
+.ts-marker {
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  width: 6px;
+  margin-left: -3px;
+  border-radius: 3px;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.5), 0 0 12px rgba(255, 255, 255, 0.8);
+  z-index: 2;
+}
+
+.ts-marker::before {
+  content: '▼';
+  position: absolute;
+  left: 50%;
+  top: -15px;
+  transform: translateX(-50%);
+  font-size: 13px;
+  line-height: 1;
+  color: #fff;
+}
+
+.ts-marker.perfect,
+.ts-marker.perfect::before {
+  color: var(--ts-perfect);
+}
+
+.ts-marker.perfect {
+  background: var(--ts-perfect);
+}
+
+.ts-marker.miss {
+  background: var(--ar-bad);
+}
+
+.ts-marker.miss::before {
+  color: var(--ar-bad);
+}
+
+.ts-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ar-dim);
+}
+
+/* ---------- 아래 버튼 ---------- */
+.ar-footer > .ts-bet {
+  flex: 0 0 36%;
+  flex-direction: column;
+  gap: 0;
+  min-height: 72px;
+  padding: 8px 6px;
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.ts-bet b {
+  font-size: 17px;
+  color: var(--ar-gold);
+}
+
+.ts-bet.on {
+  color: #3a2300;
+  background: linear-gradient(180deg, #ffe7a3, #ffb938);
+  border-color: transparent;
+}
+
+.ts-bet.on b {
+  color: #3a2300;
+}
+
+.ar-footer > .ts-go {
+  min-height: 72px;
+  font-size: 28px;
+  font-weight: 900;
+  touch-action: none;
+}
+
+@keyframes ts-beat {
+  0% {
+    box-shadow: 0 10px 0 rgba(0, 0, 0, 0.3), 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  100% {
+    box-shadow: 0 10px 0 rgba(0, 0, 0, 0.3), 0 0 0 16px rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes ts-combo {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.3) rotate(-3deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 키가 큰 화면에서는 시계를 조금 더 키운다 */
+@media (min-height: 760px) {
+  .ts-main {
+    --ts-size: min(68vw, 32vh, 290px);
+  }
+}
+
+@media (max-height: 700px) {
+  .ts-main {
+    gap: 8px;
+  }
+  .ts-target b {
+    font-size: 36px;
+  }
+  .ts-msg {
+    min-height: 52px;
+  }
+  .ts-grade {
+    font-size: 26px;
+  }
+  .ts-detail {
+    font-size: 15px;
+  }
+  .ar-footer > .ts-bet,
+  .ar-footer > .ts-go {
+    min-height: 62px;
+  }
 }

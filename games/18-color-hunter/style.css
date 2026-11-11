@@ -1,257 +1,528 @@
-/* Game Area */
-.game-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
+/* 컬러 헌터 */
+
+/* 콤보 표시는 팔레트를 가리지 않게 카메라 화면 아래쪽(미터 위)에 띄운다 */
+.ar-combo {
+  top: auto;
+  bottom: 96px;
 }
 
-/* Top Section: Mission + Color Comparison */
-.top-section {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    margin-bottom: 15px;
+.ar-stage {
+  justify-content: flex-start;
+  gap: 10px;
 }
 
-/* Mission Display */
-.mission-box {
-    flex: 1;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 12px;
-    text-align: center;
-    border: 2px solid var(--border-color, #444);
+/* ---------- 팔레트 ---------- */
+.ch-palette {
+  flex: none;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 10px 10px 8px;
+  border-radius: 24px 24px 24px 40px;
+  background: linear-gradient(180deg, #f8efdc, #e7d3ae);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.32), inset 0 2px 0 rgba(255, 255, 255, 0.7);
+  color: #3b2a14;
 }
 
-.mission-text {
-    font-size: 0.95rem;
-    margin-bottom: 8px;
+.ch-slot {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 96px;
+  min-height: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 2px 3px;
+  border-radius: 16px;
+  transition: background 0.2s;
 }
 
-.target-color-display {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 16px;
-    font-weight: bold;
-    color: #000;
-    font-size: 1.2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+.ch-dot {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  /* 빈 칸: 목표 색 위에 빗금. 아직 물감을 모으지 못했다는 뜻 */
+  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.32) 0 5px, transparent 5px 10px), var(--c);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.18), 0 3px 0 rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s cubic-bezier(0.2, 1.4, 0.4, 1);
 }
 
-/* Camera Container */
-.camera-container {
-    position: relative;
-    width: 100%;
-    max-width: 350px;
-    aspect-ratio: 1/1;
-    background-color: #000;
-    border-radius: 16px;
-    overflow: hidden;
-    margin: 0 auto 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+.ch-in {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
 }
 
-#cameraFeed {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    transform: scaleX(-1);
-    /* Mirror effect */
+.ch-tag {
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  transform: translateX(-50%);
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  font-family: var(--ar-mono);
+  color: #fff;
+  background: #2a1a05;
+  white-space: nowrap;
 }
 
-/* Crosshair Overlay */
-.camera-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
-    pointer-events: none;
-    z-index: 10;
+.ch-tag:empty {
+  display: none;
 }
 
-.crosshair {
-    width: 100%;
-    height: 100%;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3);
-    position: relative;
+.ch-name {
+  max-width: 100%;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.crosshair::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 6px;
-    height: 6px;
-    background-color: red;
-    border-radius: 50%;
+/* 지금 고른 칸 */
+.ch-slot.sel {
+  background: rgba(255, 255, 255, 0.75);
 }
 
-/* Instructions on Camera */
-.camera-instruction {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    color: white;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-    pointer-events: none;
-    font-size: 0.9rem;
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 5px;
+.ch-slot.sel .ch-dot {
+  box-shadow: 0 0 0 3px #fff, 0 0 0 5px #2a1a05, 0 4px 10px rgba(0, 0, 0, 0.35);
+  animation: ch-bob 0.9s ease-in-out infinite;
 }
 
-/* Controls */
-.controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
+.ch-slot.sel .ch-name {
+  color: #d6286f;
 }
 
-.btn-capture {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background-color: white;
-    border: 4px solid #ccc;
-    position: relative;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+/* 채운 칸: 바깥 고리는 목표 색, 안쪽은 찍은 색 */
+.ch-slot.done .ch-dot,
+.ch-slot.perfect .ch-dot {
+  background: var(--c);
 }
 
-.btn-capture::after {
-    content: '';
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    background-color: var(--primary-color, #4facfe);
-    display: block;
+.ch-slot.done .ch-in,
+.ch-slot.perfect .ch-in {
+  width: 72%;
+  height: 72%;
+  box-shadow: 0 0 0 2px #fff;
 }
 
-.btn-capture:active {
-    transform: scale(0.95);
+.ch-slot.perfect .ch-dot {
+  box-shadow: 0 0 0 3px var(--ar-gold), 0 0 16px rgba(255, 209, 102, 0.9);
 }
 
-.btn-capture:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.ch-slot.perfect .ch-tag {
+  background: linear-gradient(180deg, #ffe7a3, #ffb938);
+  color: #3a2300;
 }
 
-
-.hidden {
-    display: none !important;
+.ch-slot.pass .ch-dot {
+  background: #b9ab93;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.15);
 }
 
-/* Color Comparison UI */
-.color-comparison {
-    flex: 1;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 10px;
-    border: 1px solid var(--border-color, #444);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.ch-slot.pass .ch-in {
+  font-size: 13px;
 }
 
-.comparison-title {
-    text-align: center;
-    font-size: 0.85rem;
-    color: #aaa;
-    margin-bottom: 8px;
-    display: none;
-    /* 제목 숨김 */
+.ch-slot.pass .ch-name {
+  text-decoration: line-through;
+  opacity: 0.6;
 }
 
-.comparison-boxes {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    margin-bottom: 6px;
+/* 순서 팔레트: 아직 차례가 아닌 칸 */
+.ch-slot.later {
+  opacity: 0.55;
 }
 
-.color-box {
-    text-align: center;
+.ch-arrow {
+  flex: none;
+  align-self: center;
+  margin-top: -18px;
+  font-size: 22px;
+  font-weight: 900;
+  color: #a8875a;
 }
 
-.color-sample {
-    width: 50px;
-    height: 50px;
-    border-radius: 8px;
-    margin: 0 auto 4px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    background-color: rgba(255, 255, 255, 0.1);
+/* ---------- 카메라 화면 ---------- */
+.ch-view {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #070914;
+  border: 4px solid var(--goal, #fff);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+  touch-action: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
 }
 
-.color-label {
-    font-size: 0.7rem;
-    color: #aaa;
+.ch-view.hot {
+  box-shadow: 0 0 0 3px var(--ar-gold), 0 0 26px rgba(255, 209, 102, 0.55);
 }
 
-.comparison-arrow {
-    font-size: 1.2rem;
-    color: #888;
-    margin: 0 2px;
+.ch-view.miss {
+  animation: ch-miss 0.5s ease;
 }
 
-.comparison-result {
-    text-align: center;
-    padding: 4px 6px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    line-height: 1.2;
+.ch-video,
+.ch-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
 }
 
-.comparison-result.success {
-    background-color: rgba(76, 175, 80, 0.2);
-    color: #4CAF50;
+.ch-video {
+  object-fit: cover;
 }
 
-.comparison-result.fail {
-    background-color: rgba(244, 67, 54, 0.2);
-    color: #F44336;
+.ch-view.cam .ch-video,
+.ch-view.has .ch-photo {
+  display: block;
 }
 
-/* Responsive adjustments */
-@media (max-width: 480px) {
-    .top-section {
-        flex-direction: column;
-        gap: 10px;
-    }
+/* 십자선: 동그라미 안쪽이 실제로 평균 내는 영역이다 */
+.ch-cross {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--ring, 32px);
+  height: var(--ring, 32px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.55), inset 0 0 0 2px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
 
-    .camera-container {
-        max-width: 100%;
-    }
+.ch-cross::before,
+.ch-cross::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.9));
+}
 
-    .color-comparison {
-        max-width: 100%;
-    }
+.ch-cross::before {
+  width: calc(100% + 56px);
+  height: 3px;
+  background: linear-gradient(90deg, #fff 0 18px, transparent 18px calc(100% - 18px), #fff calc(100% - 18px));
+}
 
-    .color-sample {
-        width: 45px;
-        height: 45px;
-    }
+.ch-cross::after {
+  width: 3px;
+  height: calc(100% + 56px);
+  background: linear-gradient(180deg, #fff 0 18px, transparent 18px calc(100% - 18px), #fff calc(100% - 18px));
+}
 
-    .comparison-result {
-        font-size: 0.7rem;
-    }
+.ch-view.hot .ch-cross {
+  border-color: var(--ar-gold);
+}
+
+/* 카메라가 없을 때: 사진 올리기 안내 */
+.ch-empty {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  text-align: center;
+}
+
+.ch-empty-icon {
+  font-size: 46px;
+  line-height: 1;
+}
+
+.ch-empty-title {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.ch-empty-sub {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ar-dim);
+}
+
+.ch-empty-title b,
+.ch-empty-sub b {
+  color: var(--ar-gold);
+}
+
+.ch-photo-btn {
+  position: relative;
+  margin-top: 4px;
+  min-width: 200px;
+}
+
+.ch-retake {
+  position: absolute !important;
+  top: 8px;
+  right: 8px;
+  min-height: 48px;
+  background: rgba(8, 10, 26, 0.72);
+}
+
+/* 파일 고르기 창은 버튼(label)이 연다. 실제 입력칸은 보이지 않게 둔다 */
+.ch-file {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* 실시간 미리보기: 지금 색 · 일치도 막대 · 목표 색 */
+.ch-meter {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  display: grid;
+  grid-template-columns: 50px 1fr 50px;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 18px;
+  background: rgba(8, 10, 26, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  pointer-events: none;
+}
+
+.ch-sw {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  transition: background 0.12s;
+}
+
+.ch-sw.none {
+  background: repeating-linear-gradient(45deg, #2a2f52 0 6px, #1b1f3d 6px 12px);
+}
+
+.ch-sw small {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 3px #000, 0 1px 2px #000;
+}
+
+.ch-mid {
+  min-width: 0;
+}
+
+.ch-mtop {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.ch-tname {
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ch-pct {
+  flex: none;
+  font-family: var(--ar-mono);
+  font-size: 20px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.ch-bar {
+  position: relative;
+  height: 12px;
+  margin: 5px 0 5px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.ch-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #3d6bff, #36d6ff);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.ch-bar.warm i {
+  background: linear-gradient(90deg, #ffb347, #ff7ab6);
+}
+
+.ch-bar.hot i {
+  background: linear-gradient(90deg, #ff7ab6, #ffd43b);
+}
+
+.ch-bar.perfect i {
+  background: linear-gradient(90deg, #ffd43b, #fff3c4);
+  box-shadow: 0 0 12px rgba(255, 220, 120, 0.9);
+}
+
+/* 기준선 */
+.ch-bar b {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  left: var(--need);
+  width: 3px;
+  margin-left: -1px;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.ch-warm {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ar-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ch-bar.hot + .ch-warm,
+.ch-bar.perfect + .ch-warm {
+  color: var(--ar-gold);
+}
+
+/* ---------- 아래 버튼 ---------- */
+.ar-footer > .ch-pass {
+  flex: 0 0 31%;
+  padding: 10px 8px;
+  font-size: 16px;
+}
+
+.ch-shoot {
+  min-height: 64px;
+}
+
+.ch-shoot.ready {
+  animation: ch-ready 0.7s ease-in-out infinite;
+}
+
+/* 찍은 색이 팔레트로 날아간다 */
+.ch-fly {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  z-index: 50;
+  pointer-events: none;
+}
+
+@keyframes ch-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes ch-ready {
+  0%,
+  100% {
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.35), 0 0 0 3px #fff3c4, 0 0 14px rgba(255, 212, 59, 0.55);
+  }
+  50% {
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.35), 0 0 0 4px #ffd43b, 0 0 28px rgba(255, 212, 59, 0.95);
+  }
+}
+
+@keyframes ch-miss {
+  0%,
+  60% {
+    border-color: var(--ar-bad);
+  }
+}
+
+/* 작은 화면 */
+@media (max-height: 700px) {
+  .ar-stage {
+    gap: 8px;
+  }
+  .ch-palette {
+    padding: 8px 8px 6px;
+  }
+  .ch-slot {
+    min-height: 72px;
+    gap: 4px;
+  }
+  .ch-dot {
+    width: 46px;
+    height: 46px;
+  }
+  .ch-name {
+    font-size: 11px;
+  }
+  .ch-meter {
+    grid-template-columns: 44px 1fr 44px;
+    gap: 8px;
+    padding: 6px 8px;
+  }
+  .ch-sw {
+    width: 44px;
+    height: 44px;
+  }
+  .ch-empty {
+    bottom: 72px;
+  }
+  .ch-empty-icon {
+    font-size: 36px;
+  }
+  .ch-shoot {
+    min-height: 58px;
+  }
+  .ar-combo {
+    bottom: 84px;
+  }
 }

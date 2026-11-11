@@ -4,62 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>05 Sliding Puzzle - 관리자 설정</title>
+    <title>숫자 퍼즐 - 관리자 설정</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="../../assets/css/admin-theme.css">
 </head>
 
 <body>
-    <div class="container">
-        <a href="../../admin.html" class="main-link">
-            ← 전체 게임 목록
-        </a>
-
-        <header class="admin-header">
-            <h1>🔧 05 Sliding Puzzle 설정</h1>
-            <div class="subtitle">게임 설정 관리</div>
-        </header>
-
-        <div class="admin-form-card">
-            <form id="settingsForm">
-
-                <!-- Game Specific Settings -->
-                <h2>⚙️ 게임 상세 설정</h2>
-
-                <div class="form-group">
-                    <label for="gridSize">퍼즐 크기 (Grid Size): <span id="gridSizeValue">3</span>x<span
-                            id="gridSizeValue2">3</span></label>
-                    <input type="range" id="gridSize" class="form-input" min="3" max="6" value="3">
-                    <p class="description">퍼즐의 크기를 설정합니다. (3x3 ~ 6x6)</p>
-                </div>
-
-                <div class="form-group">
-                    <label for="timeLimit">제한 시간 (Time Limit): 초(s)</label>
-                    <input type="number" id="timeLimit" class="form-input" value="120" min="10" step="10">
-                    <p class="description">게임 제한 시간을 초 단위로 설정합니다.</p>
-                </div>
-
-                <div class="form-group">
-                    <label for="themeSelect">퍼즐 테마 (Theme Style)</label>
-                    <select id="themeSelect" class="form-input">
-                        <option value="default">기본 (Default)</option>
-                        <option value="candy">캔디 (Candy - Pink)</option>
-                        <option value="sky">스카이 (Sky - Blue)</option>
-                    </select>
-                </div>
-
-
-
-                <div class="btn-group">
-                    <button type="button" class="btn btn-home" onclick="location.href='index.html'">게임으로</button>
-                    <button type="button" class="btn btn-reset" id="resetBtn">초기화</button>
-                    <button type="submit" class="btn btn-save">저장하기</button>
-                </div>
-
-            </form>
-        </div>
-    </div>
-
-    <script src="../../assets/js/common.js"></script>
+    <script src="../../assets/js/admin-kit.js"></script>
     <script src="admin.js"></script>
 </body>
 

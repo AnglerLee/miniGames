@@ -4,57 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>22 Wifi Hacker - 관리자 설정</title>
+    <title>와이파이 해커 - 관리자 설정</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="../../assets/css/admin-theme.css">
 </head>
 
 <body>
-    <div class="container">
-        <a href="../../admin.html" class="main-link">
-            ← 전체 게임 목록
-        </a>
-
-        <header class="admin-header">
-            <h1>🔧 22 Wifi Hacker 설정</h1>
-            <div class="subtitle">게임 설정 관리</div>
-        </header>
-
-        <div class="admin-form-card">
-            <form id="settingsForm">
-
-                <h2>🎮 게임 고유 설정</h2>
-
-                <div class="form-group">
-                    <label for="missionGoal">🎯 목표 문구</label>
-                    <input type="text" id="missionGoal" class="form-input" placeholder="예: Wi-Fi 비밀번호를 찾아라!">
-                    <small>게임 상단에 표시될 목표 안내 문구</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="targetName">📡 타겟 이름</label>
-                    <input type="text" id="targetName" class="form-input" placeholder="예: SECRET_BASE_WIFI">
-                    <small>해킹 대상 이름 (Wi-Fi, 금고 등)</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">🔐 비밀번호 (4자리)</label>
-                    <input type="text" id="password" class="form-input" maxlength="4" placeholder="1234">
-                    <small>정답 비밀번호 (4자리 숫자)</small>
-                </div>
-
-
-
-                <div class="btn-group">
-                    <button type="button" class="btn btn-home" onclick="location.href='index.html'">게임으로</button>
-                    <button type="button" class="btn btn-reset" id="resetBtn">초기화</button>
-                    <button type="submit" class="btn btn-save">저장하기</button>
-                </div>
-
-            </form>
-        </div>
-    </div>
-
-    <script src="../../assets/js/common.js"></script>
+    <script src="../../assets/js/admin-kit.js"></script>
     <script src="admin.js"></script>
 </body>
 

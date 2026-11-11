@@ -3,56 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>동시 터치 협동 🤝</title>
-    <link rel="stylesheet" href="../../assets/css/common.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>둘이서 한 호흡</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="../../assets/css/arcade.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="container">
-        <div class="game-header">
-            <h1>🤝 동시 터치 협동</h1>
-
-        </div>
-
-        <div class="game-area">
-            <div class="settings-panel">
-                <button id="startBtn" class="start-btn">게임 시작</button>
-            </div>
-
-            <p class="instruction-text" style="text-align: center; display: none;" id="instructionText">
-                두 버튼을 동시에 누르세요!
-            </p>
-
-            <div class="touch-zone-container">
-                <div class="connection-line">
-                    <div class="connection-active"></div>
-                </div>
-
-                <div class="touch-btn left" id="leftBtn">
-                    <i class="icon">👈</i>
-                </div>
-
-                <div class="touch-btn right" id="rightBtn">
-                    <i class="icon">👉</i>
-                </div>
-            </div>
-
-            <div class="status-display">
-                <div id="timer" class="timer-text">0.00s</div>
-                <div id="message" class="message-text">준비...</div>
-            </div>
-
-            <!-- Desktop helper -->
-            <div class="keyboard-hint">
-                (PC 테스트: 'A' + 'L' 키 동시 입력)
-            </div>
-        </div>
-    </div>
-
-    <script src="../../assets/js/common.js"></script>
-    <script src="script.js"></script>
+    <script src="../../assets/js/arcade.js"></script>
+    <script src="game.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,542 @@
+/* 단어 탐정 */
+
+.ws-wrap {
+  flex: 1 1 auto;
+  align-self: stretch;
+  min-height: 0;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ---------- 찾을 단어 목록 ---------- */
+.ws-words {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  min-height: 26px;
+}
+
+.ws-word {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 20px;
+  letter-spacing: 0.03em;
+  background: var(--ar-panel-2);
+  border: 1px solid var(--ar-line);
+  transition: background 0.25s, color 0.25s, border-color 0.25s;
+}
+
+.ws-word.found {
+  background: var(--c);
+  border-color: transparent;
+  color: #12162e;
+  text-decoration-line: line-through;
+  text-decoration-thickness: 2px;
+}
+
+/* ---------- 격자 ---------- */
+.ws-box {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ws-board {
+  --n: 6;
+  --s: 40px;
+  --g: 3px;
+  --pad: 6px;
+  --p: 43px;
+  position: relative;
+  padding: var(--pad);
+  border-radius: 16px;
+  background: linear-gradient(160deg, #fbf7ea, #ece2c6);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.35), inset 0 0 0 2px rgba(120, 96, 40, 0.18);
+  touch-action: none;
+  transition: box-shadow 0.25s;
+}
+
+.ws-board.code {
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.35), 0 0 0 3px var(--ar-gold), 0 0 26px rgba(255, 209, 102, 0.55);
+}
+
+.ws-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(var(--n), var(--s));
+  grid-auto-rows: var(--s);
+  gap: var(--g);
+  touch-action: none;
+}
+
+.ws-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 28%;
+  font-size: calc(var(--s) * 0.56);
+  font-weight: 900;
+  line-height: 1;
+  color: #262b4f;
+  background: rgba(38, 43, 79, 0.04);
+  transition: color 0.3s calc(var(--i) * 5ms), opacity 0.35s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+/* 안내 띠가 떠 있는 동안에는 글자를 가린다 */
+.ws-board.veil .ws-cell {
+  color: transparent;
+  transition-delay: 0s;
+}
+
+.ws-cell.glow,
+.ws-cell.pick,
+.ws-cell.hint {
+  transition-delay: 0s;
+}
+
+.ws-cell.hint {
+  background: #ffd166;
+  animation: ws-hint 0.45s ease-in-out infinite alternate;
+}
+
+/* 암호 먼저 맞히기에서 고른 칸 */
+.ws-cell.pick {
+  background: #ffd166;
+  color: #3a2300;
+  box-shadow: 0 0 0 2px #ffb938;
+}
+
+.ws-cell[data-n]::after {
+  content: attr(data-n);
+  position: absolute;
+  top: 1px;
+  right: 3px;
+  font-size: calc(var(--s) * 0.27);
+  font-weight: 900;
+  color: #9a5b00;
+}
+
+.ws-cell.cracked {
+  box-shadow: inset 0 0 0 2px #ffb938;
+}
+
+/* 다 찾은 뒤: 찾은 칸은 어두워지고, 암호 칸만 빛난다 */
+.ws-board.reveal .ws-cell.used {
+  color: rgba(38, 43, 79, 0.16);
+}
+
+.ws-board.reveal .ws-bands {
+  opacity: 0.25;
+}
+
+.ws-board.only-code .ws-cell:not(.glow) {
+  color: rgba(38, 43, 79, 0.12);
+}
+
+.ws-cell.glow {
+  z-index: 3;
+  color: #3a2300;
+  background: linear-gradient(180deg, #ffe7a3, #ffb938);
+  box-shadow: 0 0 0 2px #fff3c4, 0 0 18px rgba(255, 185, 56, 0.95);
+  animation: ws-glow 0.4s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+/* ---------- 색 띠: 첫 칸 가운데를 축으로 돌린 알약 ---------- */
+.ws-bands {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+.ws-band {
+  position: absolute;
+  left: calc(var(--pad) + var(--c0) * var(--p) + var(--s) / 2);
+  top: calc(var(--pad) + var(--r0) * var(--p) + var(--s) / 2);
+  width: calc(var(--len) * var(--p) + var(--s) * 0.84);
+  height: calc(var(--s) * 0.84);
+  margin: calc(var(--s) * -0.42) 0 0 calc(var(--s) * -0.42);
+  border-radius: 999px;
+  transform-origin: calc(var(--s) * 0.42) 50%;
+  transform: rotate(var(--ang));
+  background: var(--c, var(--ar-accent));
+  opacity: 0.55;
+}
+
+.ws-band.sel {
+  background: var(--ar-accent);
+  opacity: 0.5;
+  box-shadow: inset 0 0 0 2px rgba(20, 120, 70, 0.6);
+}
+
+.ws-band.done {
+  animation: ws-done 0.3s ease;
+}
+
+.ws-band.miss {
+  background: var(--ar-bad);
+  animation: ws-miss 0.45s ease forwards;
+}
+
+/* ---------- 사건 카드: 수수께끼와 암호 칸 ---------- */
+.ws-case {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(47, 209, 122, 0.16), rgba(47, 209, 122, 0.05));
+  border: 1px solid rgba(182, 243, 106, 0.35);
+}
+
+.ws-slotrow {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 암호가 5글자 이상: 암호 칸은 아래 줄, 사건 이름 줄은 빼고 콤보는 암호 칸 왼쪽 */
+.ws-case.stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.ws-case.stack .ws-tagrow {
+  display: none;
+}
+
+.ws-case.stack .ws-slotrow {
+  justify-content: flex-end;
+}
+
+.ws-case.stack .ws-slotrow > .ws-combo {
+  margin-right: auto;
+  min-width: 0;
+}
+
+.ws-case.stack .ws-slots {
+  gap: 3px;
+}
+
+.ws-case.stack .ws-slot {
+  width: 30px;
+  height: 34px;
+  font-size: 19px;
+}
+
+.ws-q {
+  flex: 1;
+  min-width: 0;
+}
+
+.ws-tag {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ar-accent-2);
+}
+
+.ws-riddle {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.ws-slots {
+  flex: none;
+  display: flex;
+  gap: 4px;
+}
+
+.ws-slot {
+  width: 34px;
+  height: 40px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 21px;
+  font-weight: 900;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.25);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.ws-slot.on {
+  border: 2px solid var(--ar-accent-2);
+  background: rgba(182, 243, 106, 0.16);
+  animation: ar-bump 0.25s ease;
+}
+
+.ws-slot.next {
+  border-color: var(--ar-gold);
+  animation: ar-pulse 0.8s ease-in-out infinite;
+}
+
+.ws-slots.solved .ws-slot {
+  color: #3a2300;
+  background: linear-gradient(180deg, #ffe7a3, #ffb938);
+  border: 2px solid transparent;
+}
+
+.ws-slots.bad {
+  animation: ar-shake 0.35s ease;
+}
+
+/* ---------- 아래 버튼과 글자 타일 ---------- */
+.ws-btn {
+  height: 50px;
+  min-height: 50px;
+  padding: 4px 10px;
+  flex-direction: column;
+  gap: 0;
+  font-size: 16px;
+  line-height: 1.15;
+}
+
+.ws-btn small {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+.ws-tray {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  height: 50px;
+}
+
+.ws-tile {
+  flex: 0 1 50px;
+  min-width: 0;
+  height: 50px;
+  border-radius: 12px;
+  font-size: 24px;
+  font-weight: 900;
+  color: #262b4f;
+  background: linear-gradient(180deg, #fffaf0, #ece2c6);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.35);
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.ws-tile:active {
+  transform: translateY(2px);
+}
+
+.ws-tile.used {
+  opacity: 0.2;
+  transform: scale(0.9);
+  pointer-events: none;
+}
+
+.ws-tile.wait {
+  visibility: hidden;
+}
+
+.ws-fly-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 50; /* 판 위, 일시 정지 화면(60) 아래 */
+  pointer-events: none;
+}
+
+.ws-fly {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  font-weight: 900;
+  color: #3a2300;
+  background: linear-gradient(180deg, #ffe7a3, #ffb938);
+  box-shadow: 0 0 18px rgba(255, 185, 56, 0.85);
+  will-change: transform;
+}
+
+/* 엔진의 콤보 띠는 단어 목록이나 수수께끼를 가리므로 끄고, 사건 카드 안의 .ws-combo 로 보여 준다 */
+.ar-combo {
+  display: none;
+}
+
+.ws-tagrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 18px;
+}
+
+.ws-tagrow .ws-tag {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ws-combo {
+  position: relative;
+  flex: none;
+  display: none;
+  padding: 0 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 18px;
+  white-space: nowrap;
+  color: #2a1500;
+  background: rgba(255, 209, 102, 0.35);
+}
+
+.ws-combo.on {
+  display: block;
+}
+
+/* 암호 칸 줄에서는 보였다 사라져도 암호 칸 자리가 흔들리지 않게 visibility 로 감춘다 */
+.ws-case.stack .ws-combo {
+  display: block;
+  flex: 0 1 auto;
+  visibility: hidden;
+}
+
+.ws-case.stack .ws-combo.on {
+  visibility: visible;
+}
+
+.ws-combo span {
+  position: relative;
+  z-index: 1;
+}
+
+.ws-combo b {
+  position: absolute;
+  inset: 0;
+}
+
+.ws-combo i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(180deg, #ffe08a, #ffb347);
+  transform-origin: left center;
+}
+
+.ws-combo.hot i {
+  background: linear-gradient(180deg, #ff9a8b, #ff5d73);
+}
+
+@keyframes ws-hint {
+  from {
+    box-shadow: 0 0 0 2px #ffb938, 0 0 6px rgba(255, 185, 56, 0.6);
+    transform: scale(1);
+  }
+  to {
+    box-shadow: 0 0 0 3px #ff9a3c, 0 0 20px rgba(255, 185, 56, 1);
+    transform: scale(1.12);
+  }
+}
+
+@keyframes ws-glow {
+  from {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.25);
+  }
+}
+
+@keyframes ws-done {
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes ws-miss {
+  0% {
+    translate: 0 0;
+    opacity: 0.6;
+  }
+  20% {
+    translate: -5px 0;
+  }
+  40% {
+    translate: 5px 0;
+  }
+  60% {
+    translate: -3px 0;
+    opacity: 0.5;
+  }
+  100% {
+    translate: 0 0;
+    opacity: 0;
+  }
+}
+
+/* 키가 큰 화면: 격자는 폭에 막히므로 남는 높이를 글자 크기로 쓴다 */
+@media (min-height: 760px) {
+  .ws-wrap {
+    gap: 14px;
+  }
+  .ws-words {
+    gap: 7px;
+  }
+  .ws-word {
+    padding: 5px 13px;
+    font-size: 17px;
+    line-height: 22px;
+  }
+  .ws-case {
+    padding: 12px 14px;
+  }
+  .ws-tag {
+    font-size: 13px;
+  }
+  .ws-riddle {
+    font-size: 17px;
+  }
+  .ws-slot {
+    width: 38px;
+    height: 46px;
+    font-size: 24px;
+  }
+}
+
+@media (max-height: 700px) {
+  .ws-wrap {
+    gap: 6px;
+  }
+  .ws-word {
+    padding: 2px 9px;
+    font-size: 14px;
+    line-height: 19px;
+  }
+  .ws-case {
+    padding: 6px 10px;
+  }
+  .ws-riddle {
+    font-size: 14px;
+  }
+  .ws-slot {
+    width: 30px;
+    height: 34px;
+    font-size: 18px;
+  }
+}
